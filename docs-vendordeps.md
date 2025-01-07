@@ -43,6 +43,12 @@
   - Used for: Limelight camera integration
   - Documentation: [Limelight Docs](https://docs.limelightvision.io/)
 
+### Choreo
+- **Choreo**
+  - URL: https://lib.choreo.autos/dep/ChoreoLib2025.json
+  - Used for autonomous path planning
+  - Documentation: [Choreo Docs](https://choreo.autos/)
+
 ## Additional Libraries
 
 ### Playing With Fusion
