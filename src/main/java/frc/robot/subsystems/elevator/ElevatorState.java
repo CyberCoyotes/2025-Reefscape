@@ -1,7 +1,7 @@
 package frc.robot.subsystems.elevator;
 
 public enum ElevatorState {
-    START(ElevatorConfigs.Positions.START),
+    HOME(ElevatorConfigs.Positions.HOME),
     L1(ElevatorConfigs.Positions.L1),
     L2(ElevatorConfigs.Positions.L2),
     L3(ElevatorConfigs.Positions.L3),

@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public final class ElevatorConfigs {
     // Hardware Configuration
     public static final int MOTOR_ID = 1;
-    public static final String CAN_BUS = "rio";
+    public static final String CAN_BUS = "canivore"; // TODO: Update with actual CAN bus name
     
     // Control Settings
     public static final double MAX_VOLTAGE = 11.0;
@@ -31,7 +31,7 @@ public final class ElevatorConfigs {
     
     // State positions in rotations
     public static final class Positions {
-        public static final double START = 0.0;
+        public static final double HOME = 0.0;
         public static final double L1 = 10.0;
         public static final double L2 = 20.0;
         public static final double L3 = 30.0;

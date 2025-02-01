@@ -1,6 +1,6 @@
-package frc.robot.subsystems.intake;
+package frc.robot.subsystems.endEffector;
 
-public interface IntakeIO {
+public interface EffectorIO {
 
     default void updateInputs(IntakeIOInputs inputs) {}
 

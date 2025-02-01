@@ -12,7 +12,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX motor;
     private final PositionVoltage positionRequest;
     private final VoltageOut percentRequest;
-    private ElevatorState currentState = ElevatorState.START;
+    private ElevatorState currentState = ElevatorState.HOME;
 
     public ElevatorSubsystem() {
         motor = new TalonFX(ElevatorConfigs.MOTOR_ID, ElevatorConfigs.CAN_BUS);
