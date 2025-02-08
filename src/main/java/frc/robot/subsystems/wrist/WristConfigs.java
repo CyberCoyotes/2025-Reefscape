@@ -8,7 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
-public class WristIOPhoenix6 {
+public class WristConfigs {
 
     public static void applyArmConfigs(TalonFX m_arm) {
 

@@ -8,7 +8,8 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem2 extends SubsystemBase {
-    private final TalonFX elevatorMotor;
+    private final TalonFX elevatorLeadMotor; // Right side motor
+    private final TalonFX elevatorFollowMotor; // Left side motor
     private final VoltageOut voltageRequest; // For manual control
     private final PositionVoltage positionRequest; // For position control
 
@@ -18,8 +19,8 @@ public class ElevatorSubsystem2 extends SubsystemBase {
 
     public ElevatorSubsystem2() {
         // Initialize motor with device ID and CAN bus name
-        elevatorMotor = new TalonFX(20, "canivore"); // Adjust ID as needed
-        
+        elevatorLeadMotor = new TalonFX(23, "rio"); // CORRECT
+        elevatorFollowMotor = new TalonFX(24, "rio"); // CORRECT
         // Create control requests
         voltageRequest = new VoltageOut(0);
         positionRequest = new PositionVoltage(0);
@@ -52,19 +53,19 @@ public class ElevatorSubsystem2 extends SubsystemBase {
         slot0.kG = 0.45; // Adjust for gravity compensation
 
         // Apply the configuration
-        elevatorMotor.getConfigurator().apply(config);
+        elevatorLeadMotor.getConfigurator().apply(config);
     }
 
     // Manual control method for joystick input
     public void manualControl(double speed) {
         // Apply a speed limit for safety
         speed = Math.max(-0.7, Math.min(0.7, speed));
-        elevatorMotor.setControl(voltageRequest.withOutput(speed * 12.0));
+        elevatorLeadMotor.setControl(voltageRequest.withOutput(speed * 12.0));
     }
 
     // Position control methods
     public void setPosition(double position) {
-        elevatorMotor.setControl(positionRequest.withPosition(position));
+        elevatorLeadMotor.setControl(positionRequest.withPosition(position));
     }
 
     /*
@@ -74,7 +75,7 @@ public class ElevatorSubsystem2 extends SubsystemBase {
     */
 
     public void stop() {
-        elevatorMotor.setControl(voltageRequest.withOutput(0));
+        elevatorLeadMotor.setControl(voltageRequest.withOutput(0));
     }
 
     @Override
