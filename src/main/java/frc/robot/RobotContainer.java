@@ -20,8 +20,10 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.wrist.WristStates;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
+import frc.robot.commands.SetWristPositionCommand;
 
 public class RobotContainer {
 
@@ -49,8 +51,8 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
 
-        SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
-            wrist.setWristZero(); // Verify encoder reading resets
+        // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
+            // wrist.setWristZero(); // Verify encoder reading resets
     }
 
     private void configureBindings() {
@@ -93,11 +95,12 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
-    
-         // Set default command to ensure the effector stops when no buttons are pressed
-        /* endEffector.setDefaultCommand(
-            new SetEndEffectorCommand(endEffector, EffectorState.STOP)
-        */
+
+        // Example button bindings in RobotContainer
+        driverController.povUp().onTrue(wrist.goToLoadingPosition());
+        driverController.povLeft().onTrue(wrist.goToScoreL2());
+        driverController.povRight().onTrue(wrist.goToScoreL3());
+        driverController.povDown().onTrue(wrist.goToScoreL4());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
