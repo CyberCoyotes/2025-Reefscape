@@ -1,4 +1,4 @@
-package frc.robot.subsystems.endEffector;
+package frc.robot.subsystems.EndEffector;
 
 // EffectorState.java
 public enum EffectorState {
