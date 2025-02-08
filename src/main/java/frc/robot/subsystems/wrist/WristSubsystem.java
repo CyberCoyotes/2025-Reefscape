@@ -1,45 +1,147 @@
+// WristSubsystem.java
 package frc.robot.subsystems.wrist;
 
-public class WristSubsystem {
-          /* Arm has been set to invert so positive values for arm poses */
-          public static final double DEG_TO_ARM_NATIVE = 0.93;// -83.7 / 90
-          public static final double ARM_NATIVE_TO_DEG = 1 / DEG_TO_ARM_NATIVE;
-          public static final double ARM_MAX_DUTY_CYCLE_OUT = 0.6;
-          public static final double ARM_SUPPLY_CURRENT_LIMIT = 5;
-          public static final double ARM_STATOR_CURRENT_LIMIT = 20;
-      
-          /* Arm poses */
-          public static final int ARM_REV_LIMIT = 0;
-          public static final double ARM_HOME_POSE = 0;
-          public static final double ARM_LOW_POSE = 10;
-          public static final double ARM_MID_POSE = 25.5; // 30 // 20
-          public static final double ARM_HIGH_POSE = 55;
-          public static final double ARM_AMP_POSE = 90; // 90 -> 85 -> 80 -> 70
-          // public static final double ARM_SAFETY_POSE = 27.5;
-          public static final int ARM_FWD_LIMIT = 100; // Previous event 91
-      
-          /* Distances (inches) from front Bumper Speaker Base to front Bumper and arm in canon units
-          Pose 0 is at the base, Pose 1 is at the leg of the Stage, i.e. "Safety Pose"
-      
-          | Pose  | Dist  | Arm |
-          |------ |-----  | --- |
-          | 0     | 0     | 0   |
-          | 1     | 126   | 20  | Stage / Safety Pose
-          | 2     | 150   | 00  |
-          | 3     | 180   | 00  |
-          | 4     | 200   | 00  |
-          
-          */
-      
-      
-          public static final int ARM_MAX_ACCEL = 100;
-          public static final int ARM_MAX_VEL = 200;
-          public static final int ARM_JERK = 0;
-      
-          public static final int ARM_STATOR_LIMIT = 15;
-          public static final int ARM_SUPPLY_LIMIT = 15;
-          public static final double ARM_ROTATION_LIMIT_NATIVE = 0;
-      
-          public static final double ARM_MANUAL_POWER = 6; // for Voltage control
-      
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class WristSubsystem extends SubsystemBase {
+    private final TalonFX wristMotor;
+    private final PositionVoltage positionRequest;
+    
+    private String currentPositionName = "Unknown";
+    private double targetPosition = 0.0;
+
+    public WristSubsystem() {
+        wristMotor = new TalonFX(WristConstants.MOTOR_CAN_ID, "rio");
+        positionRequest = new PositionVoltage(0).withSlot(0);
+        
+        configureMotor();
+    }
+
+    private void configureMotor() {
+        var motorConfig = new TalonFXConfiguration();
+        
+        // Current limits
+        var currentLimits = motorConfig.CurrentLimits;
+        currentLimits.StatorCurrentLimit = WristConstants.STATOR_CURRENT_LIMIT;
+        currentLimits.StatorCurrentLimitEnable = true;
+        currentLimits.SupplyCurrentLimit = WristConstants.SUPPLY_CURRENT_LIMIT;
+        currentLimits.SupplyCurrentLimitEnable = true;
+
+        // Motor output configuration
+        var motorOutput = motorConfig.MotorOutput;
+        motorOutput.NeutralMode = NeutralModeValue.Brake;
+        motorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+        // Feedback configuration
+        var feedback = motorConfig.Feedback;
+        feedback.SensorToMechanismRatio = WristConstants.GEAR_RATIO * WristConstants.ENCODER_TO_MECHANISM_RATIO;
+        
+        // Soft limits
+        var softLimits = motorConfig.SoftwareLimitSwitch;
+        softLimits.ForwardSoftLimitEnable = true;
+        softLimits.ForwardSoftLimitThreshold = WristConstants.MAX_POSITION;
+        softLimits.ReverseSoftLimitEnable = true;
+        softLimits.ReverseSoftLimitThreshold = WristConstants.MIN_POSITION;
+
+        // PID configuration
+        var slot0 = motorConfig.Slot0;
+        slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        slot0.kP = WristConstants.Gains.kP;
+        slot0.kI = WristConstants.Gains.kI;
+        slot0.kD = WristConstants.Gains.kD;
+        slot0.kG = WristConstants.Gains.kG;
+        slot0.kV = WristConstants.Gains.kV;
+        slot0.kS = WristConstants.Gains.kS;
+        slot0.kA = WristConstants.Gains.kA;
+
+        wristMotor.getConfigurator().apply(motorConfig);
+    }
+
+    // Command factory methods
+    public Command goToLoadingPosition() {
+        return run(() -> {
+            setPosition(WristConstants.Positions.LOADING);
+            currentPositionName = "Loading";
+        }).until(this::atPosition)
+          .withName("Wrist To Loading");
+    }
+
+    public Command goToScoreL1() {
+        return run(() -> {
+            setPosition(WristConstants.Positions.SCORE_L1);
+            currentPositionName = "Score L1";
+        }).until(this::atPosition)
+          .withName("Wrist To L1");
+    }
+
+    public Command goToScoreL2() {
+        return run(() -> {
+            setPosition(WristConstants.Positions.SCORE_L2);
+            currentPositionName = "Score L2";
+        }).until(this::atPosition)
+          .withName("Wrist To L2");
+    }
+
+    public Command goToScoreL3() {
+        return run(() -> {
+            setPosition(WristConstants.Positions.SCORE_L3);
+            currentPositionName = "Score L3";
+        }).until(this::atPosition)
+          .withName("Wrist To L3");
+    }
+
+    public Command goToScoreL4() {
+        return run(() -> {
+            setPosition(WristConstants.Positions.SCORE_L4);
+            currentPositionName = "Score L4";
+        }).until(this::atPosition)
+          .withName("Wrist To L4");
+    }
+
+    // Basic control methods
+    public void setPosition(double targetPositionRotations) {
+        targetPosition = targetPositionRotations;
+        wristMotor.setControl(positionRequest.withPosition(targetPositionRotations));
+    }
+
+    public double getPosition() {
+        return wristMotor.getPosition().getValueAsDouble();
+    }
+
+    public boolean atPosition() {
+        return Math.abs(wristMotor.getClosedLoopError().getValue()) < WristConstants.POSITION_TOLERANCE;
+    }
+
+    public void stop() {
+        wristMotor.stopMotor();
+    }
+
+    public void setWristZero() {
+        wristMotor.setPosition(0);
+        System.out.println("Wrist encoder zeroed");
+        SmartDashboard.putBoolean("Wrist/WasZeroed", true);
+    }
+
+    @Override
+    public void periodic() {
+        // Basic position telemetry
+        SmartDashboard.putString("Wrist/CurrentPosition", currentPositionName);
+        SmartDashboard.putNumber("Wrist/CurrentRotations", getPosition());
+        SmartDashboard.putNumber("Wrist/TargetRotations", targetPosition);
+        SmartDashboard.putBoolean("Wrist/AtPosition", atPosition());
+        
+        // Diagnostic data
+        // SmartDashboard.putNumber("Wrist/StatorCurrent", wristMotor.getStatorCurrent().getValue());
+        // SmartDashboard.putNumber("Wrist/SupplyCurrent", wristMotor.getSupplyCurrent().getValue());
+        SmartDashboard.putNumber("Wrist/ClosedLoopError", wristMotor.getClosedLoopError().getValue());
+    }
 }

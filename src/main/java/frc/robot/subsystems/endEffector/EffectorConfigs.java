@@ -7,14 +7,14 @@ import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 
-public class EndEffectorConfigs {
-    public static final TalonFXConfiguration EFFECTOR_CONFIG = new TalonFXConfiguration();
+public class EffectorConfigs {
 
-    // Current Limits
-    public static final Current INTAKE_CURRENT = Units.Amps.of(20);  // Fast intake
-    public static final Current SCORE_CURRENT = Units.Amps.of(15);   // Controlled scoring
-    public static final Current HOLD_CURRENT = Units.Amps.of(5);     // Light holding force
-    public static final Current STOP_CURRENT = Units.Amps.of(0);     // Fully stopped
+    // CAN settings
+    public static final int EFFECTOR_MOTOR_ID = 21; // Adjust ID as needed
+    public static final String CANBUS_NAME = "rio"; // or "canivore" if using CANivore
+
+
+    public static final TalonFXConfiguration EFFECTOR_CONFIG = new TalonFXConfiguration();
 
     static {
         // Motor output settings
@@ -22,8 +22,8 @@ public class EndEffectorConfigs {
         EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         // Current limiting settings
-        EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0;  // Maximum allowed current
+        EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current
         EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
-    }
-}
+    }  
 
+}

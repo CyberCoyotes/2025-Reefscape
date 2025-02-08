@@ -12,20 +12,28 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorState;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.wrist.WristStates;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
+import frc.robot.commands.SetWristPositionCommand;
 
 public class RobotContainer {
+
+    private final EffectorSubsystem endEffector = new EffectorSubsystem();
+
+    private final WristSubsystem wrist = new WristSubsystem();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
-    private final EndEffectorSubsystem endEffector = new EndEffectorSubsystem(10, "rio");
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -42,6 +50,9 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
+
+        // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
+            // wrist.setWristZero(); // Verify encoder reading resets
     }
 
     private void configureBindings() {
@@ -56,10 +67,12 @@ public class RobotContainer {
             )
         );
 
+        /* FIXME Comment out for Testing of other commands 
         driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
         driverController.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
         ));
+         */
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -71,11 +84,24 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-            // driverController.a().whileTrue(new SetEndEffectorCommand(endEffector, EndEffectorState.INTAKE));
-            // driverController.b().onTrue(new SetEndEffectorCommand(endEffector, EndEffectorState.SCORE));
-            // driverController.x().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.HOLD));
-            // driverController.y().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.STOP));
-    
+        driverController.leftBumper()
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CHORAL));
+        driverController.rightBumper()
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CHORAL));
+        
+        driverController.leftBumper().and(driverController.a())
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
+        driverController.rightBumper().and(driverController.a())
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+        driverController.x()
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
+
+        // Example button bindings in RobotContainer
+        driverController.povUp().onTrue(wrist.goToLoadingPosition());
+        driverController.povLeft().onTrue(wrist.goToScoreL2());
+        driverController.povRight().onTrue(wrist.goToScoreL3());
+        driverController.povDown().onTrue(wrist.goToScoreL4());
+
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 

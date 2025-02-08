@@ -1,26 +1,37 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
-import frc.robot.subsystems.endEffector.EndEffectorState;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorState;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorState;
 
 public class SetEndEffectorCommand extends Command {
-    private final EndEffectorSubsystem endEffector;
-    private final EndEffectorState targetState;
+    private final EffectorSubsystem effector;
+    private final EffectorState targetState;
 
-    public SetEndEffectorCommand(EndEffectorS endEffector, EndEffector.EndEffectorState state) {
-        this.endEffector = endEffector;
-        this.targetState = state;
-        addRequirements(endEffector);
+    public SetEndEffectorCommand(EffectorSubsystem effector, EffectorState targetState) {
+        this.effector = effector;
+        this.targetState = targetState;
+        addRequirements(effector);
     }
 
     @Override
     public void initialize() {
-        endEffector.setState(targetState);
+        System.out.println("Setting Effector to: " + targetState);
+        effector.setState(targetState);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        System.out.println("Effector command stopped. Setting to STOP.");
+        effector.setState(EffectorState.STOP);
     }
 
     @Override
     public boolean isFinished() {
-        return true; // One-time state change
+        return false; // Runs while button is held
     }
 }
