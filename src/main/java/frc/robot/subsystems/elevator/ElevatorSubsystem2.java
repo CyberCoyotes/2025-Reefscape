@@ -19,8 +19,8 @@ public class ElevatorSubsystem2 extends SubsystemBase {
 
     public ElevatorSubsystem2() {
         // Initialize motor with device ID and CAN bus name
-        elevatorLeadMotor = new TalonFX(23, "rio"); // CORRECT
-        elevatorFollowMotor = new TalonFX(24, "rio"); // CORRECT
+        elevatorLeadMotor = new TalonFX(24, "rio"); // CORRECT
+        elevatorFollowMotor = new TalonFX(23, "rio"); // CORRECT
         // Create control requests
         voltageRequest = new VoltageOut(0);
         positionRequest = new PositionVoltage(0);
@@ -45,12 +45,12 @@ public class ElevatorSubsystem2 extends SubsystemBase {
         
         // Configure closed-loop gains for position control
         var slot0 = config.Slot0;
-        slot0.kP = 24.0; // Adjust these gains for your elevator
+        slot0.kP = 0.1; // Adjust these gains for your elevator
         slot0.kI = 0;
-        slot0.kD = 0.1;
-        slot0.kS = 0.25; // Adjust for static friction
+        slot0.kD = 0.0;
+        slot0.kS = 0.05; // Adjust for static friction
         slot0.kV = 0.12; // Adjust for velocity feedforward
-        slot0.kG = 0.45; // Adjust for gravity compensation
+        slot0.kG = 0.00; // Adjust for gravity compensation
 
         // Apply the configuration
         elevatorLeadMotor.getConfigurator().apply(config);
