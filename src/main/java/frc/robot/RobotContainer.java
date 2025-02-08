@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
@@ -28,6 +29,8 @@ public class RobotContainer {
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
+
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -93,6 +96,8 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
+
+        driverController.y().onTrue(elevator.moveToTestPose());
     
          // Set default command to ensure the effector stops when no buttons are pressed
         /* endEffector.setDefaultCommand(
