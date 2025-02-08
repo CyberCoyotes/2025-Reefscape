@@ -1,4 +1,4 @@
-package frc.robot.subsystems.EndEffector;
+package frc.robot.subsystems.endEffector;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -6,8 +6,8 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.EndEffector.EndEffectorConfigs;
-import frc.robot.subsystems.EndEffector.EndEffectorConstants;
+import frc.robot.subsystems.endEffector.EndEffectorConfigs;
+import frc.robot.subsystems.endEffector.EndEffectorConstants;
 
 public class EndEffector extends SubsystemBase {
 

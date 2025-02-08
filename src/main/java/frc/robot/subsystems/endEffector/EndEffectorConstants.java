@@ -1,4 +1,4 @@
-package frc.robot.subsystems.EndEffector;
+package frc.robot.subsystems.endEffector;
 
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.Units;

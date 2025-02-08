@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.EndEffector.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffector;
 import frc.robot.commands.SetEndEffectorCommand;
 
 public class RobotContainer {

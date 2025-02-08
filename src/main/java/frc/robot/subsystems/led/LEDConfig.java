@@ -5,6 +5,8 @@ import java.util.List;
 
 import com.ctre.phoenix.led.CANdle.LEDStripType;
 import com.ctre.phoenix.led.CANdle.VBatOutputMode;
+import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.Animation;
 
 public class LEDConfig {
     public static final class Constants {

@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.EndEffector.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffector;
 
 public class SetEndEffectorCommand extends Command {
     private final EndEffector endEffector;
