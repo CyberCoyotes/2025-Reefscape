@@ -6,8 +6,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.led.LEDState;
-import frc.robot.subsystems.led.LEDSubsystem;
+// import frc.robot.subsystems.led.LEDState;
+// import frc.robot.subsystems.led.LEDSubsystem;
 import frc.robot.subsystems.vision.VisionState;
 
 
@@ -15,7 +15,7 @@ public class VisionSubsystem extends SubsystemBase {
     private final String tableName;
     private final NetworkTable limelightTable;
     private final CommandSwerveDrivetrain drivetrain;
-    private final LEDSubsystem leds;
+    // private final LEDSubsystem leds;
     
     // NetworkTable entries
     private final NetworkTableEntry tv; // Whether there are valid targets
@@ -31,10 +31,10 @@ public class VisionSubsystem extends SubsystemBase {
     private VisionState currentState = VisionState.NO_TARGET;
     private boolean ledsEnabled = false;
 
-    public VisionSubsystem(String tableName, CommandSwerveDrivetrain drivetrain, LEDSubsystem leds) {
+    public VisionSubsystem(String tableName, CommandSwerveDrivetrain drivetrain/* , LEDSubsystem leds*/) {
         this.tableName = tableName;
         this.drivetrain = drivetrain;
-        this.leds = leds;
+        // this.leds = leds;
         
         // Initialize NetworkTable
         limelightTable = NetworkTableInstance.getDefault().getTable(tableName);
@@ -63,7 +63,7 @@ public class VisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         updateVisionState();
-        updateLEDs();
+        // updateLEDs();
         logData();
     }
 
@@ -86,6 +86,7 @@ public class VisionSubsystem extends SubsystemBase {
         limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1); // 3=force on, 1=force off
     }
 
+    /*
     private void updateLEDs() {
         if (leds != null) {
             switch (currentState) {
@@ -101,7 +102,8 @@ public class VisionSubsystem extends SubsystemBase {
                     break;
             }
         }
-    }
+    } 
+    */
 
     private void logData() {
         SmartDashboard.putString("Vision/State", currentState.toString());

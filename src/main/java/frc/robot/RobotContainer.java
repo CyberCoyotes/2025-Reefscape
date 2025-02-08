@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.endEffector.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
 
 public class RobotContainer {
@@ -25,7 +25,7 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
-    private final EndEffector endEffector = new EndEffector(10, "rio");
+    private final EndEffectorSubsystem endEffector = new EndEffectorSubsystem(10, "rio");
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -71,10 +71,10 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-            driverController.a().whileTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.INTAKE));
-            driverController.b().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.SCORE));
-            driverController.x().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.HOLD));
-            driverController.y().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.STOP));
+            // driverController.a().whileTrue(new SetEndEffectorCommand(endEffector, EndEffectorState.INTAKE));
+            // driverController.b().onTrue(new SetEndEffectorCommand(endEffector, EndEffectorState.SCORE));
+            // driverController.x().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.HOLD));
+            // driverController.y().onTrue(new SetEndEffectorCommand(endEffector, EndEffector.EndEffectorState.STOP));
     
         drivetrain.registerTelemetry(logger::telemeterize);
     }

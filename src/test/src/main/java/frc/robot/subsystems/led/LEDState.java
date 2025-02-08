@@ -12,12 +12,11 @@ public enum LEDState {
     INTAKING(0, 255, 255),         // Cyan/Aqua
     SCORING(255, 105, 180),         // Pink
     NO_TARGET(120, 120, 120),     // Dark Gray
-    ERROR(255, 0, 0);              // Pure Red
-
-    // RAINBOW(255, 0, 255),      // Purple
-    // SCANNER_RED(255, 0, 0), // Red with scanner effect  
-    // SCANNER_BLUE(0, 0, 255),   // Blue with scanner effect
-    // COLOR_FLOW(255, 165, 0);   // Orange with color flow
+    ERROR(255, 0, 0),            // Pure Red
+    RAINBOW(255, 0, 255),      // Purple
+    SCANNER_RED(255, 0, 0), // Red with scanner effect  
+    SCANNER_BLUE(0, 0, 255),   // Blue with scanner effect
+    COLOR_FLOW(255, 165, 0);   // Orange with color flow
 
 
 

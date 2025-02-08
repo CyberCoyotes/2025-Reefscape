@@ -1,13 +1,14 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.endEffector.EndEffector;
+import frc.robot.subsystems.endEffector.EndEffectorSubsystem;
+import frc.robot.subsystems.endEffector.EndEffectorState;
 
 public class SetEndEffectorCommand extends Command {
-    private final EndEffector endEffector;
-    private final EndEffector.EndEffectorState targetState;
+    private final EndEffectorSubsystem endEffector;
+    private final EndEffectorState targetState;
 
-    public SetEndEffectorCommand(EndEffector endEffector, EndEffector.EndEffectorState state) {
+    public SetEndEffectorCommand(EndEffectorS endEffector, EndEffector.EndEffectorState state) {
         this.endEffector = endEffector;
         this.targetState = state;
         addRequirements(endEffector);
