@@ -94,6 +94,7 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+            
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
 

@@ -17,13 +17,20 @@ public class ElevatorConstants {
 
     // PID and FF Gains
     public static final class Gains {
-        public static final double kP = 0.20;
+        public static final double kP = 0.80;
         public static final double kI = 0.00;
-        public static final double kD = 0.00;
-        public static final double kS = 0.05;
+        public static final double kD = 0.10;
+        public static final double kS = 2.50;
         public static final double kV = 0.12;
         public static final double kA = 0.00;
         public static final double kG = 0.00;
     }
+
+    /*
+    | kP    | kI    | kD    | kS    | kV    | kA    | kG    | Notes
+    ----------------------------------------------------------------------------
+    | 0.20  | 0.00  | 0.00  | 0.05  | 0.12  | 0.00  | 0.00  | Not enough power
+    */
+
 
 }

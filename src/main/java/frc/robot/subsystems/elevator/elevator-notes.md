@@ -32,3 +32,5 @@ Reference [Claude Chat](https://claude.ai/chat/b4e23ed0-c67c-4e1b-b2dc-a6ba6b4c0
 Reference from 2/8 [Claude Chat 2/8](https://claude.ai/chat/0ce7068c-23be-4766-8674-02b8326b7997)
 
 DutyCycleOut 0.1 to maintain a slow, steady climb   |   position of 26-30
+
+Reference [Claude Chat 2/8 5PM](https://claude.ai/chat/dcffea4e-d55c-42a0-92e6-1e2061f5df57)
