@@ -30,7 +30,13 @@ public class ElevatorConstants {
     | kP    | kI    | kD    | kS    | kV    | kA    | kG    | Notes
     ----------------------------------------------------------------------------
     | 0.20  | 0.00  | 0.00  | 0.05  | 0.12  | 0.00  | 0.00  | Not enough power
-    */
 
+    Adding motion magic CRUISE and ACCELARATION values worked!
+    */
+    public static final class MotionMagic {
+        public static final double CRUISE_VELOCITY = 40;
+        public static final double ACCELERATION = 40;
+        public static final double JERK = 100; // 400 suggested
+    }
 
 }

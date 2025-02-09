@@ -6,6 +6,8 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -65,6 +67,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         slot0.kV = ElevatorConstants.Gains.kV; // Adjust for velocity feedforward
         slot0.kA = ElevatorConstants.Gains.kA; // Adjust for acceleration feedforward
         slot0.kG = ElevatorConstants.Gains.kG; // Adjust for gravity compensation
+
+                // Add these lines in configureMotor()
+        var motionMagic = config.MotionMagic;
+        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY; // Adjust based on your needs
+        motionMagic.MotionMagicAcceleration = ElevatorConstants.MotionMagic.ACCELERATION; // Adjust based on your needs
+        motionMagic.MotionMagicJerk = ElevatorConstants.MotionMagic.JERK; // Optional, for smoother motion
+
 
         // Apply the configuration
         elevatorLeadMotor.getConfigurator().apply(config);
@@ -137,7 +146,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     }
 
     public Command moveToTestPose() {
-        return moveToPreset(2);
+        return moveToPreset(1); // TODO Test this position
     }
 
     public boolean isAtPosition(double targetPosition) {
@@ -161,6 +170,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Add any periodic logging here if needed
+       // Log data
+    SmartDashboard.putNumber("Elevator/Position", getPosition());
+    SmartDashboard.putNumber("Elevator/Target Position", targetPosition.Position);
+    SmartDashboard.putNumber("Elevator/Lead Current", elevatorLeadMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putNumber("Elevator/Follow Current", elevatorFollowMotor.getStatorCurrent().getValueAsDouble());
+    SmartDashboard.putBoolean("Elevator/At Position", isAtPosition(targetPosition.Position));
+    
+    // Clear control request when disabled
+    if (!DriverStation.isEnabled()) {
+        stop();
+    }
     }
 }

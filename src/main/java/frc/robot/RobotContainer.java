@@ -62,8 +62,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward) // Had to switch
-                    .withVelocityY(driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -95,10 +95,14 @@ public class RobotContainer {
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
             
-        driverController.x()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
+        // driverController.x()
+            // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
 
-        driverController.y().onTrue(elevator.moveToTestPose());
+        // driverController.y().onTrue(elevator.moveToTestPose());
+
+        driverController.y().onTrue(elevator.moveToPositionAndWait(4));
+        driverController.x().onTrue(elevator.moveToPositionAndWait(2));
+
     
          // Set default command to ensure the effector stops when no buttons are pressed
         /* endEffector.setDefaultCommand(
