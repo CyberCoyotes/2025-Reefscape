@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.playingwithfusion.CANVenom.BrakeCoastMode;
 
 import java.util.logging.Logger;
 
@@ -38,7 +39,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         resetEncoders();
         configureMotor();
 
-    }
+        elevatorLeadMotor.setNeutralMode(NeutralModeValue.Brake);
+        elevatorFollowMotor.setNeutralMode(NeutralModeValue.Coast);
+
+        elevatorLeadMotor.setInverted(false);
+        elevatorFollowMotor.setInverted(true);
+
+    } // End of ElevatorSubsystem() constructor 
 
     private void configureMotor() {
         var config = new TalonFXConfiguration();
@@ -50,7 +57,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         config.CurrentLimits.SupplyCurrentLimitEnable = true;
 
         // Set motor to brake mode
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        // config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         // Soft limits
         var softLimits = config.SoftwareLimitSwitch;
@@ -75,25 +82,25 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Add these lines in configureMotor()
         var motionMagic = config.MotionMagic;
-        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY; // Adjust based on your
-                                                                                               // needs
-        motionMagic.MotionMagicAcceleration = ElevatorConstants.MotionMagic.ACCELERATION; // Adjust based on your needs
-        motionMagic.MotionMagicJerk = ElevatorConstants.MotionMagic.JERK; // Optional, for smoother motion
+        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY; // TODO Adjust cruise as needed                                                                                              // needs
+        motionMagic.MotionMagicAcceleration = ElevatorConstants.MotionMagic.ACCELERATION; // TODO adjust acceleration as needed
+        motionMagic.MotionMagicJerk = ElevatorConstants.MotionMagic.JERK; // TODO Optional adjustment
 
         // Apply the configuration
         elevatorLeadMotor.getConfigurator().apply(config);
-        elevatorFollowMotor.getConfigurator().apply(config);
+        // elevatorFollowMotor.getConfigurator().apply(config); // Commented out because motors seem to be opposing each other
 
         // Set up follower motor to follow the lead motor
         // false parameter means it should not invert the leader's signal
         elevatorFollowMotor.setControl(
-                new com.ctre.phoenix6.controls.Follower(elevatorLeadMotor.getDeviceID(), true));
+                new com.ctre.phoenix6.controls.Follower(elevatorLeadMotor.getDeviceID(), false));
+                 // Commented out because motors seem to be opposing each other
 
     }
 
     public void manualControl(double speed) {
         // Apply a speed limit for safety
-        speed = Math.max(-0.1, Math.min(0.1, speed));
+        // speed = Math.max(-0.1, Math.min(0.1, speed));
 
         // Only need to control the lead motor since the follower will match
         elevatorLeadMotor.setControl(targetVoltage.withOutput(speed * 12.0));
@@ -159,6 +166,42 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeadMotor.setControl(targetVoltage.withOutput(0));
         elevatorFollowMotor.setControl(targetVoltage.withOutput(0));
     }
+
+    // FIXME for testing purposes
+
+    public void testLeadMotor(double voltage) {
+        elevatorFollowMotor.setControl(new VoltageOut(0)); // Disable follower
+        elevatorLeadMotor.setControl(targetVoltage.withOutput(voltage));
+    }
+
+    public void testFollowMotor(double voltage) {
+        elevatorLeadMotor.setControl(new VoltageOut(0)); // Disable lead
+        elevatorFollowMotor.setControl(targetVoltage.withOutput(voltage));
+    }
+
+    // Command factory methods
+    public Command testLeadMotorCommand() {
+        return run(() -> {
+            testLeadMotor(2.0); // Start with 2V
+        })
+            .withName("Test Lead Motor")
+            .until(() -> getPosition() == 4.0) // Stop after 5 rotations
+            .finallyDo((interrupted) -> stop());
+    }
+    
+    
+
+     // Command factory methods
+     public Command testFollowMotorCommand() {
+        return run(() -> {
+            testFollowMotor(2.0); // Start with 2V
+        })
+            .withName("Test Follow Motor")
+            .until(() -> getPosition() == 10.0) // Stop after 5 rotations
+            .finallyDo((interrupted) -> stop());
+    }
+    
+
 
     @Override
     public void periodic() {
