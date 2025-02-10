@@ -2,6 +2,9 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import java.util.logging.Logger;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
@@ -32,7 +35,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         targetPosition = new MotionMagicVoltage(0); // Early version suggested new PositionVoltage()
 
         // Configure the elevator motor
+        resetEncoders();
         configureMotor();
+
     }
 
     private void configureMotor() {
@@ -68,29 +73,21 @@ public class ElevatorSubsystem extends SubsystemBase {
         slot0.kA = ElevatorConstants.Gains.kA; // Adjust for acceleration feedforward
         slot0.kG = ElevatorConstants.Gains.kG; // Adjust for gravity compensation
 
-                // Add these lines in configureMotor()
+        // Add these lines in configureMotor()
         var motionMagic = config.MotionMagic;
-        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY; // Adjust based on your needs
+        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY; // Adjust based on your
+                                                                                               // needs
         motionMagic.MotionMagicAcceleration = ElevatorConstants.MotionMagic.ACCELERATION; // Adjust based on your needs
         motionMagic.MotionMagicJerk = ElevatorConstants.MotionMagic.JERK; // Optional, for smoother motion
 
-
         // Apply the configuration
         elevatorLeadMotor.getConfigurator().apply(config);
-        // Configure follower motor
         elevatorFollowMotor.getConfigurator().apply(config);
 
         // Set up follower motor to follow the lead motor
         // false parameter means it should not invert the leader's signal
-        elevatorFollowMotor.setControl(new com.ctre.phoenix6.controls.Follower(
-                elevatorLeadMotor.getDeviceID(), true));
-
-        // var motionMagic = config.MotionMagic;
-        // motionMagic.MotionMagicCruiseVelocity = 40; //
-        // ElevatorConstants.MotionMagic.CRUISE_VELOCITY;
-        // motionMagic.MotionMagicAcceleration = 40; //
-        // ElevatorConstants.MotionMagic.ACCELERATION;
-        // motionMagic.MotionMagicJerk = 0 // 400 // ElevatorConstants.MotionMagic.JERK;
+        elevatorFollowMotor.setControl(
+                new com.ctre.phoenix6.controls.Follower(elevatorLeadMotor.getDeviceID(), true));
 
     }
 
@@ -100,7 +97,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Only need to control the lead motor since the follower will match
         elevatorLeadMotor.setControl(targetVoltage.withOutput(speed * 12.0));
-        // Follower will automatically follow the lead motor
     }
 
     // Command factory methods
@@ -145,10 +141,6 @@ public class ElevatorSubsystem extends SubsystemBase {
                 runOnce(() -> System.out.println("Elevator reached position: " + presetPosition)));
     }
 
-    public Command moveToTestPose() {
-        return moveToPreset(1); // TODO Test this position
-    }
-
     public boolean isAtPosition(double targetPosition) {
         double currentPosition = getPosition();
         return Math.abs(currentPosition - targetPosition) <= ElevatorConstants.POSITION_TOLERANCE;
@@ -160,7 +152,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public void resetEncoders() {
         elevatorLeadMotor.setPosition(0);
-        // Don't need to reset follower as it's following the leader
+        elevatorFollowMotor.setPosition(0);
     }
 
     public void stop() {
@@ -170,16 +162,24 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-       // Log data
-    SmartDashboard.putNumber("Elevator/Position", getPosition());
-    SmartDashboard.putNumber("Elevator/Target Position", targetPosition.Position);
-    SmartDashboard.putNumber("Elevator/Lead Current", elevatorLeadMotor.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Elevator/Follow Current", elevatorFollowMotor.getStatorCurrent().getValueAsDouble());
-    SmartDashboard.putBoolean("Elevator/At Position", isAtPosition(targetPosition.Position));
-    
-    // Clear control request when disabled
-    if (!DriverStation.isEnabled()) {
-        stop();
-    }
+        // Log data
+        SmartDashboard.putNumber("Elevator/Position", getPosition());
+        SmartDashboard.putNumber("Elevator/Target Position", targetPosition.Position);
+        SmartDashboard.putNumber("Elevator/Lead Current", elevatorLeadMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Elevator/Follow Current", elevatorFollowMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putBoolean("Elevator/At Position", isAtPosition(targetPosition.Position));
+
+        Logger.getLogger("Elevator").info("Elevator Position: " + getPosition());
+        Logger.getLogger("Elevator").info("Elevator Target Position: " + targetPosition.Position);
+        Logger.getLogger("Elevator")
+                .info("Elevator Lead Current: " + elevatorLeadMotor.getStatorCurrent().getValueAsDouble());
+        Logger.getLogger("Elevator")
+                .info("Elevator Follow Current: " + elevatorFollowMotor.getStatorCurrent().getValueAsDouble());
+        Logger.getLogger("Elevator").info("Elevator At Position: " + isAtPosition(targetPosition.Position));
+
+        // Clear control request when disabled
+        if (!DriverStation.isEnabled()) {
+            stop();
+        }
     }
 }
