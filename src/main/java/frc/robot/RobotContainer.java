@@ -21,8 +21,12 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.wrist.WristStates;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
+import frc.robot.commands.SetWristPositionCommand;
+import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
+
 
 public class RobotContainer {
 
@@ -49,11 +53,12 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    
     public RobotContainer() {
         configureBindings();
 
-        SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
-            wrist.setWristZero(); // Verify encoder reading resets
+        // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
+            // wrist.setWristZero(); // Verify encoder reading resets
     }
 
     private void configureBindings() {
@@ -94,20 +99,16 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
-            
-        // driverController.x()
-            // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
 
-        // driverController.y().onTrue(elevator.moveToTestPose());
 
+        // Example button bindings in RobotContainer
+        driverController.povUp().onTrue(wrist.goToLoadingPosition());
+        driverController.povLeft().onTrue(wrist.goToScoreL2());
+        driverController.povRight().onTrue(wrist.goToScoreL3());
+        driverController.povDown().onTrue(wrist.goToScoreL4());
+    
         driverController.y().onTrue(elevator.moveToPositionAndWait(4));
         driverController.x().onTrue(elevator.moveToPositionAndWait(2));
-
-    
-         // Set default command to ensure the effector stops when no buttons are pressed
-        /* endEffector.setDefaultCommand(
-            new SetEndEffectorCommand(endEffector, EffectorState.STOP)
-        */
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
