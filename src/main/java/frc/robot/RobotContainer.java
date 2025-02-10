@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristStates;
@@ -32,6 +33,8 @@ public class RobotContainer {
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
+
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -64,8 +67,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward) // Had to switch
-                    .withVelocityY(driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -96,14 +99,16 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
-        driverController.x()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
+
 
         // Example button bindings in RobotContainer
         driverController.povUp().onTrue(wrist.goToLoadingPosition());
         driverController.povLeft().onTrue(wrist.goToScoreL2());
         driverController.povRight().onTrue(wrist.goToScoreL3());
         driverController.povDown().onTrue(wrist.goToScoreL4());
+    
+        driverController.y().onTrue(elevator.moveToPositionAndWait(4));
+        driverController.x().onTrue(elevator.moveToPositionAndWait(2));
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
