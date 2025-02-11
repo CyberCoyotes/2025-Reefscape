@@ -45,7 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Set motor inversions
         elevatorLeadMotor.setInverted(false);
-        elevatorFollowMotor.setInverted(true);
+        // elevatorFollowMotor.setInverted(true);
 
     } // End of ElevatorSubsystem() constructor
 
@@ -74,9 +74,9 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Configure closed-loop gains for position control
         var slot0 = config.Slot0;
-        slot0.kP = ElevatorConstants.Gains.kP; // Adjust these gains for your elevator
-        slot0.kI = ElevatorConstants.Gains.kI;
-        slot0.kD = ElevatorConstants.Gains.kD;
+        slot0.kP = ElevatorConstants.Gains.kP; // Adjust for proportional control
+        slot0.kI = ElevatorConstants.Gains.kI; // Adjust for integral control
+        slot0.kD = ElevatorConstants.Gains.kD; // Adjust for derivative control
         slot0.kS = ElevatorConstants.Gains.kS; // Adjust for static friction
         slot0.kV = ElevatorConstants.Gains.kV; // Adjust for velocity feedforward
         slot0.kA = ElevatorConstants.Gains.kA; // Adjust for acceleration feedforward

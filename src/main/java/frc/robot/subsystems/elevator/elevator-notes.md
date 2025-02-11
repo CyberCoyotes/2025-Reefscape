@@ -34,3 +34,8 @@ Reference from 2/8 [Claude Chat 2/8](https://claude.ai/chat/0ce7068c-23be-4766-8
 DutyCycleOut 0.1 to maintain a slow, steady climb   |   position of 26-30
 
 Reference [Claude Chat 2/8 5PM](https://claude.ai/chat/dcffea4e-d55c-42a0-92e6-1e2061f5df57)
+
+
+https://v6.docs.ctr-electronics.com/en/stable/docs/migration/migration-guide/control-requests-guide.html
+
+https://api.ctr-electronics.com/phoenix6/release/java/com/ctre/phoenix6/controls/Follower.html
