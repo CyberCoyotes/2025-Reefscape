@@ -20,8 +20,9 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristStates;
-import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist_4.WristCommands;
+// import frc.robot.subsystems.wrist.WristStates;
+import frc.robot.subsystems.wrist_4.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.SetWristPositionCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -100,10 +101,12 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
 
         // Example button bindings in RobotContainer
-        driverController.povUp().onTrue(wrist.goToLoadingPosition());
-        driverController.povLeft().onTrue(wrist.goToScoreL2());
-        driverController.povRight().onTrue(wrist.goToScoreL3());
-        driverController.povDown().onTrue(wrist.goToScoreL4());
+        // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
+
+        driverController.povUp().onTrue(WristCommands.Positions.loadChoral(wrist));
+        driverController.povLeft().onTrue(WristCommands.Positions.elevatorSafe(wrist));
+        driverController.povRight().onTrue(WristCommands.Positions.wristL2(wrist));
+        // driverController.povDown().onTrue(wrist.goToScoreL4());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
