@@ -1,8 +1,8 @@
-package frc.robot.subsystems.wrist_4;
+package frc.robot.subsystems.wrist;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.wrist_4.WristSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 
 /**
  * Factory for creating wrist-related commands.

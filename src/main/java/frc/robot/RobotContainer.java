@@ -20,9 +20,9 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist_4.WristConstants;
-import frc.robot.subsystems.wrist_4.WristCommands;
-import frc.robot.subsystems.wrist_4.WristSubsystem;
+import frc.robot.subsystems.wrist.WristCommands;
+import frc.robot.subsystems.wrist.WristConstants;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
 
 public class RobotContainer {
@@ -105,12 +105,6 @@ public class RobotContainer {
 
         // Example button bindings in RobotContainer
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
-
-        // Example button bindings in RobotContainer
-        driverController.povUp().onTrue(wrist.goToLoadingPosition());
-        driverController.povLeft().onTrue(wrist.goToScoreL2());
-        driverController.povRight().onTrue(wrist.goToScoreL3());
-        driverController.povDown().onTrue(wrist.goToScoreL4());
     
         // Hold buttons for manual movement
         driverController.b().whileTrue(elevator.moveToPosition(10));

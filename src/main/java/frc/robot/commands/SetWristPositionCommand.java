@@ -1,7 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.wrist.WristSubsystemOLD;
+import frc.robot.subsystems.wristOLD.WristSubsystemOLD;
 
 public class SetWristPositionCommand extends Command {
     private final WristSubsystemOLD wrist;

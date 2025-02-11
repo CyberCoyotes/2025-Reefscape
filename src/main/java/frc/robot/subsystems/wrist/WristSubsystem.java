@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist_4;
+package frc.robot.subsystems.wrist;
 
 import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -25,9 +25,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-
-import frc.robot.subsystems.wrist_4.WristConstants;  
+import frc.robot.subsystems.wrist.WristConstants;  
    
 
     public class WristSubsystem extends SubsystemBase {
