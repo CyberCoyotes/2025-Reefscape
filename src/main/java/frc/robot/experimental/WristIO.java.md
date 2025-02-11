@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.experimental;
 
 public interface WristIO {
 

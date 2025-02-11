@@ -11,29 +11,27 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist_4.WristConstants;
 import frc.robot.subsystems.wrist_4.WristCommands;
-// import frc.robot.subsystems.wrist.WristStates;
 import frc.robot.subsystems.wrist_4.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
-import frc.robot.commands.SetWristPositionCommand;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
+
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -66,8 +64,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward) // Had to switch
-                    .withVelocityY(driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -101,11 +99,29 @@ public class RobotContainer {
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
+
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
 
         // Example button bindings in RobotContainer
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
+
+        // Example button bindings in RobotContainer
+        driverController.povUp().onTrue(wrist.goToLoadingPosition());
+        driverController.povLeft().onTrue(wrist.goToScoreL2());
+        driverController.povRight().onTrue(wrist.goToScoreL3());
+        driverController.povDown().onTrue(wrist.goToScoreL4());
+    
+    // Hold buttons for manual movement
+    driverController.b().whileTrue(elevator.manualVoltage(0.15));
+    driverController.a().whileTrue(elevator.manualVoltage(-0.15));
+
+    // driverController.b().whileTrue(elevator.moveUp());
+    // driverController.a().whileTrue(elevator.moveDown());
+    
+    // One-time position commands
+    driverController.y().onTrue(elevator.moveToTestPosition());
+    driverController.x().onTrue(elevator.moveToHome());
 
         driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
         driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
