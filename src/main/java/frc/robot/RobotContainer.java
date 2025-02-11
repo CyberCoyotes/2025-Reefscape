@@ -13,6 +13,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,10 +42,10 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
-   /*  private final AutoFactory autoFactory;
+     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
-*/
+
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -60,12 +61,27 @@ public class RobotContainer {
 
     
     public RobotContainer() {
+        
+        
+        autoFactory = drivetrain.createAutoFactory();
+        autoRoutines = new AutoRoutines(autoFactory, drivetrain);
         configureBindings();
-       // autoFactory = drivetrain.createAutoFactory();
-        //autoRoutines = new AutoRoutines(autoFactory, drivetrain);
-
+        configureAutoRoutines();
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
             // wrist.setWristZero(); // Verify encoder reading resets
+    }
+    private void configureAutoRoutines() {
+        
+       // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
+       // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
+        autoChooser.addRoutine("Test", autoRoutines::Test);
+
+        
+        //autoChooser.addRoutine("Testing Events", autoRoutines::testEvents);
+        // autoBETAChooser.addRoutine("Drive and Align", autoRoutines::driveAndAlign);
+
+        SmartDashboard.putData("Autonomous", autoChooser);
+       // SmartDashboard.putData("BETA Autos", autoChooser);
     }
 
     private void configureBindings() {
