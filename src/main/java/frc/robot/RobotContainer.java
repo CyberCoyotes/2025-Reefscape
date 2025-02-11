@@ -11,8 +11,7 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -21,12 +20,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristStates;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
-import frc.robot.commands.SetWristPositionCommand;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-
 
 public class RobotContainer {
 

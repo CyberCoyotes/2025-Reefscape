@@ -1,16 +1,11 @@
 package frc.robot.subsystems.endEffector;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class EffectorSubsystem extends SubsystemBase {
 
