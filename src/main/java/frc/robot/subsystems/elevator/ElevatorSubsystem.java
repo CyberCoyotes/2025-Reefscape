@@ -147,32 +147,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     /*********************************
      * Command factory methods
      *******************************/
-
-         // Command factory methods
-    // Command factory methods
-    public Command manualVoltage(double speed) {
-        return run(() -> manualControl(speed))
-               .withName("Manual Elevator Control")
-               .finallyDo((interrupted) -> stop()); // Make sure it stops when command ends
-    }
-
-    // And update moveUp/moveDown to use voltage values
-public Command moveUp() {
-    return run(() -> manualControl(0.3))
-           .withName("Move Up")
-           .finallyDo((interrupted) -> stop());
-}
-
-public Command moveDown() {
-    return run(() -> manualControl(-0.2))
-           .withName("Move Down")
-           .finallyDo((interrupted) -> stop());
-}
-
-     public Command moveToPosition(double position) {
-        return runOnce(() -> setPosition(position));
-    }
-
     public Command stopElevator() {
         return runOnce(this::stop);
     }
@@ -181,6 +155,29 @@ public Command moveDown() {
         return runOnce(this::resetEncoders);
     }
 
+    public Command manualVoltage(double speed) {
+        return run(() -> manualControl(speed))
+               .withName("Manual Elevator Control")
+               .finallyDo((interrupted) -> stop()); // Make sure it stops when command ends
+    }
+
+    public Command moveUp() {
+        return run(() -> manualControl(0.15))
+            .withName("Move Up")
+            .finallyDo((interrupted) -> stop());
+    }
+
+    public Command moveDown() {
+        return run(() -> manualControl(-0.15))
+            .withName("Move Down")
+            .finallyDo((interrupted) -> stop());
+    }
+
+     public Command moveToPosition(double position) {
+        return runOnce(() -> setPosition(position));
+    }
+
+  
     // Example of a more complex command that waits for completion
     public Command moveToPositionAndWait(double position) {
         return run(() -> setPosition(position))
@@ -199,7 +196,7 @@ public Command moveDown() {
     }
 
     public Command moveToTestPosition() {
-        return moveToPositionAndWait(5.0)
+        return moveToPositionAndWait(10.0)
                 .withName("Move To Test Position");
     }
 

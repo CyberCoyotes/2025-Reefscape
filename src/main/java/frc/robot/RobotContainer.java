@@ -86,9 +86,9 @@ public class RobotContainer {
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driverController.leftBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CHORAL));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_coral));
         driverController.rightBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CHORAL));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_coral));
         
         driverController.leftBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
@@ -102,16 +102,16 @@ public class RobotContainer {
         driverController.povRight().onTrue(wrist.goToScoreL3());
         driverController.povDown().onTrue(wrist.goToScoreL4());
     
-    // Hold buttons for manual movement
-    driverController.b().whileTrue(elevator.manualVoltage(0.15));
-    driverController.a().whileTrue(elevator.manualVoltage(-0.15));
+        // Hold buttons for manual movement
+        driverController.b().whileTrue(elevator.moveToPosition(10));
+        driverController.a().whileTrue(elevator.moveToPositionAndWait(10));
 
-    // driverController.b().whileTrue(elevator.moveUp());
-    // driverController.a().whileTrue(elevator.moveDown());
+        // driverController.b().whileTrue(elevator.moveUp());
+        // driverController.a().whileTrue(elevator.moveDown());
     
-    // One-time position commands
-    driverController.y().onTrue(elevator.moveToTestPosition());
-    driverController.x().onTrue(elevator.moveToHome());
+        // One-time position commands
+        driverController.y().onTrue(elevator.moveToTestPosition());
+        driverController.x().onTrue(elevator.moveToHome());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
