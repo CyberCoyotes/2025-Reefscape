@@ -103,22 +103,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorFollowMotor.setControl(
                 new com.ctre.phoenix6.controls.Follower(elevatorLeadMotor.getDeviceID(), true));
 
+                System.out.println("Follower setup complete - Following device ID: " + elevatorLeadMotor.getDeviceID());
+
     }
 
     // Write a method to move the elevator by voltage speed
-    public void moveElevator(double speed) {
-        elevatorLeadMotor.setControl(targetVoltage.withOutput(speed));
-    }
+    public void manualControl(double speed) {
+        double voltage = speed * 12.0; // Convert speed to voltage
 
-    // Command factory methods
-    public Command manualVoltage(double speed) {
-        return run(() -> {
-            moveElevator(speed);
-        });
+        elevatorLeadMotor.setControl(targetVoltage.withOutput(voltage));
+        elevatorFollowMotor.setControl(targetVoltage.withOutput(voltage));
+        // elevatorLeadMotor.setControl(targetVoltage.withOutput(speed));
+        // elevatorFollowMotor.setControl(targetVoltage.withOutput(speed));
     }
 
     // Position control methods
     public void setPosition(double position) {
+        // elevatorFollowMotor.setControl(targetPosition.withPosition(position));
+
+        System.out.println("Setting position to: " + position);
         elevatorLeadMotor.setControl(targetPosition.withPosition(position));
     }
 
@@ -144,6 +147,27 @@ public class ElevatorSubsystem extends SubsystemBase {
     /*********************************
      * Command factory methods
      *******************************/
+
+         // Command factory methods
+    // Command factory methods
+    public Command manualVoltage(double speed) {
+        return run(() -> manualControl(speed))
+               .withName("Manual Elevator Control")
+               .finallyDo((interrupted) -> stop()); // Make sure it stops when command ends
+    }
+
+    // And update moveUp/moveDown to use voltage values
+public Command moveUp() {
+    return run(() -> manualControl(0.3))
+           .withName("Move Up")
+           .finallyDo((interrupted) -> stop());
+}
+
+public Command moveDown() {
+    return run(() -> manualControl(-0.2))
+           .withName("Move Down")
+           .finallyDo((interrupted) -> stop());
+}
 
      public Command moveToPosition(double position) {
         return runOnce(() -> setPosition(position));
@@ -187,7 +211,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Log data
-        // Add these new diagnostics
         SmartDashboard.putNumber("Elevator/Lead Voltage",
                 elevatorLeadMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Elevator/Follow Voltage",

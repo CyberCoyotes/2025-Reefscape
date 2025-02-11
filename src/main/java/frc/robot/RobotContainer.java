@@ -108,12 +108,15 @@ public class RobotContainer {
         driverController.povDown().onTrue(wrist.goToScoreL4());
     
     // Hold buttons for manual movement
-    driverController.a().whileTrue(elevator.manualVoltage(4));
-    driverController.b().whileTrue(elevator.manualVoltage(4));
+    driverController.b().whileTrue(elevator.manualVoltage(0.15));
+    driverController.a().whileTrue(elevator.manualVoltage(-0.15));
+
+    // driverController.b().whileTrue(elevator.moveUp());
+    // driverController.a().whileTrue(elevator.moveDown());
     
     // One-time position commands
-    driverController.x().onTrue(elevator.moveToTestPosition());
-    driverController.y().onTrue(elevator.moveToHome());
+    driverController.y().onTrue(elevator.moveToTestPosition());
+    driverController.x().onTrue(elevator.moveToHome());
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }
