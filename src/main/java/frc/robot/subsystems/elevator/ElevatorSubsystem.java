@@ -27,25 +27,27 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final MotionMagicVoltage targetPosition; // For position control
 
     public ElevatorSubsystem() {
-        // Initialize motor with device ID and CAN bus name
-        elevatorLeadMotor = new TalonFX(ElevatorConstants.LEFT_ELEVATOR_ID, "rio"); // CORRECT
-        elevatorFollowMotor = new TalonFX(ElevatorConstants.RIGHT_ELEVATOR_ID, "rio"); // CORRECT
+        // Initialize motors
+        elevatorLeadMotor = new TalonFX(ElevatorConstants.LEFT_ELEVATOR_ID, "rio");
+        elevatorFollowMotor = new TalonFX(ElevatorConstants.RIGHT_ELEVATOR_ID, "rio");
 
         // Create control requests
         targetVoltage = new VoltageOut(0);
-        targetPosition = new MotionMagicVoltage(0); // Early version suggested new PositionVoltage()
+        targetPosition = new MotionMagicVoltage(0);
 
-        // Configure the elevator motor
+        // Configure motors
         resetEncoders();
         configureMotor();
 
+        // Set both motors to brake mode for better position holding
         elevatorLeadMotor.setNeutralMode(NeutralModeValue.Brake);
-        elevatorFollowMotor.setNeutralMode(NeutralModeValue.Coast);
+        elevatorFollowMotor.setNeutralMode(NeutralModeValue.Brake);
 
+        // Set motor inversions
         elevatorLeadMotor.setInverted(false);
         elevatorFollowMotor.setInverted(true);
 
-    } // End of ElevatorSubsystem() constructor 
+    } // End of ElevatorSubsystem() constructor
 
     private void configureMotor() {
         var config = new TalonFXConfiguration();
@@ -82,34 +84,36 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Add these lines in configureMotor()
         var motionMagic = config.MotionMagic;
-        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY; // TODO Adjust cruise as needed                                                                                              // needs
-        motionMagic.MotionMagicAcceleration = ElevatorConstants.MotionMagic.ACCELERATION; // TODO adjust acceleration as needed
-        motionMagic.MotionMagicJerk = ElevatorConstants.MotionMagic.JERK; // TODO Optional adjustment
 
-        // Apply the configuration
+        // TODO Adjust cruise as needed
+        motionMagic.MotionMagicCruiseVelocity = ElevatorConstants.MotionMagic.CRUISE_VELOCITY;
+
+        // TODO adjust acceleration as needed
+        motionMagic.MotionMagicAcceleration = ElevatorConstants.MotionMagic.ACCELERATION;
+
+        // TODO Optional adjustment
+        motionMagic.MotionMagicJerk = ElevatorConstants.MotionMagic.JERK;
+
+        // Apply the configuration to both motors
         elevatorLeadMotor.getConfigurator().apply(config);
-        // elevatorFollowMotor.getConfigurator().apply(config); // Commented out because motors seem to be opposing each other
+        elevatorFollowMotor.getConfigurator().apply(config);
 
-        // Set up follower motor to follow the lead motor
-        // false parameter means it should not invert the leader's signal
+        // Set up follower motor with oppositeLeader=true since we want it to run
+        // opposite
         elevatorFollowMotor.setControl(
-                new com.ctre.phoenix6.controls.Follower(elevatorLeadMotor.getDeviceID(), false));
-                 // Commented out because motors seem to be opposing each other
+                new com.ctre.phoenix6.controls.Follower(elevatorLeadMotor.getDeviceID(), true));
 
     }
 
-    public void manualControl(double speed) {
-        // Apply a speed limit for safety
-        // speed = Math.max(-0.1, Math.min(0.1, speed));
-
-        // Only need to control the lead motor since the follower will match
-        elevatorLeadMotor.setControl(targetVoltage.withOutput(speed * 12.0));
+    // Write a method to move the elevator by voltage speed
+    public void moveElevator(double speed) {
+        elevatorLeadMotor.setControl(targetVoltage.withOutput(speed));
     }
 
     // Command factory methods
     public Command manualVoltage(double speed) {
         return run(() -> {
-            manualControl(speed);
+            moveElevator(speed);
         });
     }
 
@@ -118,8 +122,30 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeadMotor.setControl(targetPosition.withPosition(position));
     }
 
-    // Command factory methods
-    public Command moveToPosition(double position) {
+    public boolean isAtPosition(double targetPosition) {
+        double currentPosition = getPosition();
+        return Math.abs(currentPosition - targetPosition) <= ElevatorConstants.POSITION_TOLERANCE;
+    }
+
+    public double getPosition() {
+        return elevatorLeadMotor.getPosition().getValueAsDouble(); // Changed to getValueAsDouble() from getValue()
+    }
+
+    public void resetEncoders() {
+        elevatorLeadMotor.setPosition(0);
+        elevatorFollowMotor.setPosition(0);
+    }
+
+    public void stop() {
+        elevatorLeadMotor.setControl(targetVoltage.withOutput(0));
+        elevatorFollowMotor.setControl(targetVoltage.withOutput(0));
+    }
+
+    /*********************************
+     * Command factory methods
+     *******************************/
+
+     public Command moveToPosition(double position) {
         return runOnce(() -> setPosition(position));
     }
 
@@ -148,64 +174,29 @@ public class ElevatorSubsystem extends SubsystemBase {
                 runOnce(() -> System.out.println("Elevator reached position: " + presetPosition)));
     }
 
-    public boolean isAtPosition(double targetPosition) {
-        double currentPosition = getPosition();
-        return Math.abs(currentPosition - targetPosition) <= ElevatorConstants.POSITION_TOLERANCE;
+    public Command moveToTestPosition() {
+        return moveToPositionAndWait(5.0)
+                .withName("Move To Test Position");
     }
 
-    public double getPosition() {
-        return elevatorLeadMotor.getPosition().getValueAsDouble(); // Changed to getValueAsDouble() from getValue()
+    public Command moveToHome() {
+        return moveToPositionAndWait(0)
+                .withName("Move To Home");
     }
-
-    public void resetEncoders() {
-        elevatorLeadMotor.setPosition(0);
-        elevatorFollowMotor.setPosition(0);
-    }
-
-    public void stop() {
-        elevatorLeadMotor.setControl(targetVoltage.withOutput(0));
-        elevatorFollowMotor.setControl(targetVoltage.withOutput(0));
-    }
-
-    // FIXME for testing purposes
-
-    public void testLeadMotor(double voltage) {
-        elevatorFollowMotor.setControl(new VoltageOut(0)); // Disable follower
-        elevatorLeadMotor.setControl(targetVoltage.withOutput(voltage));
-    }
-
-    public void testFollowMotor(double voltage) {
-        elevatorLeadMotor.setControl(new VoltageOut(0)); // Disable lead
-        elevatorFollowMotor.setControl(targetVoltage.withOutput(voltage));
-    }
-
-    // Command factory methods
-    public Command testLeadMotorCommand() {
-        return run(() -> {
-            testLeadMotor(2.0); // Start with 2V
-        })
-            .withName("Test Lead Motor")
-            .until(() -> getPosition() == 4.0) // Stop after 5 rotations
-            .finallyDo((interrupted) -> stop());
-    }
-    
-    
-
-     // Command factory methods
-     public Command testFollowMotorCommand() {
-        return run(() -> {
-            testFollowMotor(2.0); // Start with 2V
-        })
-            .withName("Test Follow Motor")
-            .until(() -> getPosition() == 10.0) // Stop after 5 rotations
-            .finallyDo((interrupted) -> stop());
-    }
-    
-
 
     @Override
     public void periodic() {
         // Log data
+        // Add these new diagnostics
+        SmartDashboard.putNumber("Elevator/Lead Voltage",
+                elevatorLeadMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Elevator/Follow Voltage",
+                elevatorFollowMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putBoolean("Elevator/Lead Direction",
+                elevatorLeadMotor.getMotorVoltage().getValueAsDouble() > 0);
+        SmartDashboard.putBoolean("Elevator/Follow Direction",
+                elevatorFollowMotor.getMotorVoltage().getValueAsDouble() > 0);
+
         SmartDashboard.putNumber("Elevator/Position", getPosition());
         SmartDashboard.putNumber("Elevator/Target Position", targetPosition.Position);
         SmartDashboard.putNumber("Elevator/Lead Current", elevatorLeadMotor.getStatorCurrent().getValueAsDouble());
@@ -226,3 +217,37 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 }
+
+// https://claude.ai/chat/db526c8f-c875-4b99-bf07-fac5c0e1019d
+
+/*
+ * 
+ * public void testLeadMotor(double voltage) {
+ * elevatorFollowMotor.setControl(new VoltageOut(0)); // Disable follower
+ * elevatorLeadMotor.setControl(targetVoltage.withOutput(voltage));
+ * }
+ * 
+ * public void testFollowMotor(double voltage) {
+ * elevatorLeadMotor.setControl(new VoltageOut(0)); // Disable lead
+ * elevatorFollowMotor.setControl(targetVoltage.withOutput(voltage));
+ * }
+ * 
+ * public Command testLeadMotorCommand() {
+ * return run(() -> {
+ * testLeadMotor(2.0); // Start with 2V
+ * })
+ * .withName("Test Lead Motor")
+ * .until(() -> getPosition() == 4.0) // Stop after 5 rotations
+ * .finallyDo((interrupted) -> stop());
+ * }
+ * 
+ * // Command factory methods
+ * public Command testFollowMotorCommand() {
+ * return run(() -> {
+ * testFollowMotor(2.0); // Start with 2V
+ * })
+ * .withName("Test Follow Motor")
+ * .until(() -> getPosition() == 10.0) // Stop after 5 rotations
+ * .finallyDo((interrupted) -> stop());
+ * }
+ */
