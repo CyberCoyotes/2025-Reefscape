@@ -11,6 +11,8 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,6 +26,7 @@ import frc.robot.subsystems.wrist_4.WristConstants;
 import frc.robot.subsystems.wrist_4.WristCommands;
 // import frc.robot.subsystems.wrist.WristStates;
 import frc.robot.subsystems.wrist_4.WristSubsystem;
+import frc.robot.auto.AutoRoutines;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.SetWristPositionCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -38,7 +41,10 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
-
+   /*  private final AutoFactory autoFactory;
+    private final AutoRoutines autoRoutines;
+    private final AutoChooser autoChooser = new AutoChooser();
+*/
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
@@ -55,6 +61,8 @@ public class RobotContainer {
     
     public RobotContainer() {
         configureBindings();
+       // autoFactory = drivetrain.createAutoFactory();
+        //autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
             // wrist.setWristZero(); // Verify encoder reading resets
@@ -89,13 +97,13 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // CHORAL
+        // CORAL
         driverController.leftBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CHORAL));
         driverController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CHORAL));
         
-        // ALGAE a.k.a reverse CHORAL
+        // ALGAE a.k.a reverse CORAL
         driverController.leftBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
