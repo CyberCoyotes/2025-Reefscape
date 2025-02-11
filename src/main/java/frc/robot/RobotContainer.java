@@ -20,8 +20,10 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristStates;
-import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist_4.WristConstants;
+import frc.robot.subsystems.wrist_4.WristCommands;
+// import frc.robot.subsystems.wrist.WristStates;
+import frc.robot.subsystems.wrist_4.WristSubsystem;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.SetWristPositionCommand;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -87,24 +89,32 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
+        // CHORAL
         driverController.leftBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CHORAL));
         driverController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CHORAL));
         
+        // ALGAE a.k.a reverse CHORAL
         driverController.leftBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
 
         // Example button bindings in RobotContainer
-        driverController.povUp().onTrue(wrist.goToLoadingPosition());
-        driverController.povLeft().onTrue(wrist.goToScoreL2());
-        driverController.povRight().onTrue(wrist.goToScoreL3());
-        driverController.povDown().onTrue(wrist.goToScoreL4());
+        // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
+        driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
+        driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
+        
+        // driverController.a().and(driverController.povDown().onTrue(WristCommands.L1(wrist)));
+        driverController.povLeft().onTrue(WristCommands.L2(wrist));
+        driverController.povRight().onTrue(WristCommands.L4(wrist));
+        // driverController.povUp().onTrue(WristCommands.L4(wrist));
+        
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
