@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class WristSubsystem extends SubsystemBase {
+public class WristSubsystemOLD extends SubsystemBase {
     private final TalonFX wristMotor;
     private final PositionVoltage positionRequest;
     
     private String currentPositionName = "Unknown";
     private double targetPosition = 0.0;
 
-    public WristSubsystem() {
+    public WristSubsystemOLD() {
         wristMotor = new TalonFX(WristConstants.MOTOR_CAN_ID, "rio");
         positionRequest = new PositionVoltage(0).withSlot(0);
         
