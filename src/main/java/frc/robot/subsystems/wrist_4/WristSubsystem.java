@@ -59,7 +59,8 @@ import frc.robot.subsystems.wrist_4.WristConstants;
             var encoderConfig = new CANcoderConfiguration();
             encoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
             encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-            encoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0.064453125)); // Offset from Tuner X zeroing
+            encoderConfig.MagnetSensor.withMagnetOffset(Rotations.of(0.160400390625)); // Offset from Tuner X zeroing
+            // 0.064208984375 converted; actual 0.160400390625
             
             // Apply encoder config and wait for completion
             var encoderResult = encoder.getConfigurator().apply(encoderConfig, 0.050);
@@ -190,7 +191,7 @@ import frc.robot.subsystems.wrist_4.WristConstants;
             SmartDashboard.putNumber("Wrist/Position", getPosition());
             SmartDashboard.putNumber("Wrist/Velocity", getVelocity());
             SmartDashboard.putNumber("Wrist/Target", motionMagicRequest.Position);
-            SmartDashboard.putBoolean("Wrist/AtTarget", atTargetPosition(WristConstants.POSITION_TOLERANCE));
+            SmartDashboard.putBoolean("Wrist/AtTarget", atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE));
             SmartDashboard.putBoolean("Wrist/HasFault", anyFault);
         }
     }
