@@ -17,10 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    /*
-     * ElevatorLeft CAN ID: 24
-     * ElevatorRight CAN ID: 23
-     */
+
     private final TalonFX elevatorLeadMotor; // Currently the Left
     private final TalonFX elevatorFollowMotor; // Currently the Right
     private final VoltageOut targetVoltage; // For manual control
@@ -30,6 +27,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Initialize motors
         elevatorLeadMotor = new TalonFX(ElevatorConstants.LEFT_ELEVATOR_ID, "rio");
         elevatorFollowMotor = new TalonFX(ElevatorConstants.RIGHT_ELEVATOR_ID, "rio");
+        
+        // A device’s configs can be explicitly restored to the factory defaults by passing a newly-created Configuration object to the device Configurator.
+        // m_talonFX.getConfigurator().apply(new TalonFXConfiguration());
+        // Users can perform a full factory default by passing a new device configuration object.
+        elevatorLeadMotor.getConfigurator().apply(new TalonFXConfiguration());
+        elevatorFollowMotor.getConfigurator().apply(new TalonFXConfiguration());
 
         // Create control requests
         targetVoltage = new VoltageOut(0);
@@ -50,6 +53,10 @@ public class ElevatorSubsystem extends SubsystemBase {
     } // End of ElevatorSubsystem() constructor
 
     private void configureMotor() {
+
+
+
+
         var config = new TalonFXConfiguration();
 
         // Configure current limits to prevent brownouts
@@ -270,4 +277,7 @@ public class ElevatorSubsystem extends SubsystemBase {
  * .until(() -> getPosition() == 10.0) // Stop after 5 rotations
  * .finallyDo((interrupted) -> stop());
  * }
+ */
+
+ /*Generally, you do not want to tell a closed loop system like Motion Magic to stop functioning to let nature take the reins, and just let it stay in closed loop mode and do it’s thing.
  */

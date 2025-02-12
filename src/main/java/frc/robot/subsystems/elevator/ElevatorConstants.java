@@ -5,6 +5,7 @@ public class ElevatorConstants {
     // Initialize motor with device ID and CAN bus name
     public final static int LEFT_ELEVATOR_ID = 24;
     public final static int RIGHT_ELEVATOR_ID = 23;
+    
 
     // Elevator Current limits
     public static final double STATOR_CURRENT_LIMIT = 80.0; // TODO Adjust to actual values after testing
