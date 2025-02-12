@@ -107,22 +107,22 @@ public class RobotContainer {
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
     
         // Hold buttons for manual movement
-        driverController.b().whileTrue(elevator.moveToPosition(10));
-        driverController.a().whileTrue(elevator.moveToPositionAndWait(10));
+        // driverController.b().whileTrue(elevator.moveToPosition(10));
+        // driverController.a().whileTrue(elevator.moveToPositionAndWait(10));
 
-        // driverController.b().whileTrue(elevator.moveUp());
+        driverController.b().whileTrue(elevator.moveToHigh());
         // driverController.a().whileTrue(elevator.moveDown());
     
         // One-time position commands
-        driverController.y().onTrue(elevator.moveToTestPosition());
-        driverController.x().onTrue(elevator.moveToHome());
+        driverController.y().onTrue(elevator.moveToGround());
+        driverController.x().onTrue(elevator.moveToMiddle());
 
-        driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
-        driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
+        // driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
+        // driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
         
         // driverController.a().and(driverController.povDown().onTrue(WristCommands.L1(wrist)));
-        driverController.povLeft().onTrue(WristCommands.L2(wrist));
-        driverController.povRight().onTrue(WristCommands.L4(wrist));
+        // driverController.povLeft().onTrue(WristCommands.L2(wrist));
+        // driverController.povRight().onTrue(WristCommands.L4(wrist));
         // driverController.povUp().onTrue(WristCommands.L4(wrist));
         
         drivetrain.registerTelemetry(logger::telemeterize);

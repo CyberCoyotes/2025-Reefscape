@@ -2,16 +2,13 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.hardware.core.CoreTalonFX;
-import com.ctre.phoenix6.StatusCode;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
     private final TalonFX elevatorLeadMotor;
