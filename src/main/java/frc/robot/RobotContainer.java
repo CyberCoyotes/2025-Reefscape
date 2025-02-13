@@ -24,15 +24,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-
-import frc.robot.subsystems.wrist.WristCommands;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
+import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
 
@@ -70,8 +70,11 @@ public class RobotContainer {
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
-        elevatorCommands = new ElevatorCommands(elevator);  // Initialize the ElevatorCommands object
+        elevatorCommands = new ElevatorCommands(elevator, wrist);  // Initialize the ElevatorCommands object
         
+        // TODO Toggle - True is safety mode, false is performance mode
+        elevator.setSafetyMode(true);
+    
         configureBindings();
         configureAutoRoutines();
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
@@ -151,18 +154,22 @@ public class RobotContainer {
         // driverController.a().whileTrue(elevator.moveDown());
     
         // One-time position commands
-        driverController.x().onTrue(elevatorCommands.moveToL1());
-        driverController.y().onTrue(elevatorCommands.moveToL2());
-        driverController.b().onTrue(elevatorCommands.moveToL3());
-        driverController.a().onTrue(elevatorCommands.moveToBase());
+        // driverController.x().onTrue(elevatorCommands.moveToL1()); // Works
+        driverController.b().onTrue(elevatorCommands.safeMoveToL1()); // Testing
 
-        // driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
-        // driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
+        // driverController.y().onTrue(elevatorCommands.moveToL2()); Testing
+        driverController.y().onTrue(elevatorCommands.moveWithWristSafety(ElevatorConstants.L1_POSE));
+        driverController.x().onTrue(elevatorCommands.moveWithWristSafety(ElevatorConstants.BASE_POSE));
+
         
-        // driverController.a().and(driverController.povDown().onTrue(WristCommands.L1(wrist)));
-        // driverController.povLeft().onTrue(WristCommands.L2(wrist));
-        // driverController.povRight().onTrue(WristCommands.L4(wrist));
-        // driverController.povUp().onTrue(WristCommands.L4(wrist));
+        // driverController.a().onTrue(elevatorCommands.moveToBase()); // Workd
+        driverController.a().onTrue(elevatorCommands.safeMoveToBase()); // Testing
+        // driverController.b().onTrue(elevatorCommands.moveToL3()); // Works
+
+        driverController.povUp().onTrue(WristCommands.loadCoral(wrist));
+        driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
+        driverController.povLeft().onTrue(WristCommands.L2(wrist));
+        driverController.povRight().onTrue(WristCommands.L4(wrist));
         
         drivetrain.registerTelemetry(logger::telemeterize);
     }
