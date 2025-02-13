@@ -22,7 +22,7 @@ public class AlignToPoseCommand extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final VisionSubsystem vision;
     private final Pose2d targetPose;
-    private final ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
+//     private final ShuffleboardTab visionTab = Shuffleboard.getTab("Vision");
 
     // Add these near your other constants/Default class
     private static final boolean LIMELIGHT_MOUNTED_ON_BACK = true;
