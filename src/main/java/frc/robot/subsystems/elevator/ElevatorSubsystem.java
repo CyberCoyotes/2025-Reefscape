@@ -1,148 +1,132 @@
 package frc.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    private final TalonFX elevatorLeadMotor;
-    private final TalonFX elevatorFollowMotor;
+    private final TalonFX elevatorLeader;
+    private final TalonFX elevatorFollower;
     
-    // Motion Magic Control Request
-    private final MotionMagicVoltage motionMagic = new MotionMagicVoltage(0);
+    // Control requests for different modes
+    private final MotionMagicVoltage motionMagicRequest;
+    private final VoltageOut manualVoltageRequest;
     
-    // Manual Control Request
-    private final DutyCycleOut manualOutput = new DutyCycleOut(0);
-    
-    // Status signals for monitoring
-    private final StatusSignal<Double> position; // Will store position in rotations
-    private final StatusSignal<Double> velocity; // Will store velocity in rotations per second
-    
+    // Gear ratio (9:1)
+    private static final double GEAR_RATIO = 9.0;
+
     public ElevatorSubsystem() {
-        elevatorLeadMotor = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID);
-        elevatorFollowMotor = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID);
+        // Initialize motors
+        elevatorLeader = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID);
+        elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID);
         
-        // Configure both motors
+        // Configure the motors
         configureMotors();
         
-        // Set up status signals with correct units
-        position = elevatorLeadMotor.getPosition().clone();
-        velocity = elevatorLeadMotor.getVelocity().clone();
-        
-        // Set up periodic status frame rates
-        position.setUpdateFrequency(50);
-        velocity.setUpdateFrequency(50);
+        // Initialize control requests
+        motionMagicRequest = new MotionMagicVoltage(0)
+            .withSlot(0)
+            .withEnableFOC(true);
+            
+        manualVoltageRequest = new VoltageOut(0)
+            .withEnableFOC(true);
     }
     
     private void configureMotors() {
-        // Create and configure settings for both motors
-        TalonFXConfiguration configs = new TalonFXConfiguration();
+        // Create configurations for both motors
+        TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
+        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
         
-        // Motion Magic configurations
-        configs.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY; // RPS
-        configs.MotionMagic.MotionMagicAcceleration = ElevatorConstants.ACCELERATION; // RPS/S
-        configs.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK; // RPS/S/S
+        // Configure leader motor
+        leaderConfig.Slot0.kP = ElevatorConstants.kP;
+        leaderConfig.Slot0.kI = ElevatorConstants.kI;
+        leaderConfig.Slot0.kD = ElevatorConstants.kD;
+        leaderConfig.Slot0.kV = ElevatorConstants.kV;
+        leaderConfig.Slot0.kS = ElevatorConstants.kS;
+        leaderConfig.Slot0.kG = ElevatorConstants.kG;
         
-        // Voltage-based configuration
-        configs.Voltage.PeakForwardVoltage = 12.0;
-        configs.Voltage.PeakReverseVoltage = -12.0;
+        // Configure motion magic
+        leaderConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
+        leaderConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.ACCELERATION;
+        leaderConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
         
-        // PID and Feed Forward configuration
-        configs.Slot0.kP = ElevatorConstants.kP;
-        configs.Slot0.kI = ElevatorConstants.kI;
-        configs.Slot0.kD = ElevatorConstants.kD;
-        configs.Slot0.kV = ElevatorConstants.kV;
-        configs.Slot0.kS = ElevatorConstants.kS;
-        configs.Slot0.kG = ElevatorConstants.kG; // Gravity compensation
+        // Configure soft limits
+        leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
         
-        // Soft limits
-        configs.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        configs.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT;
-        configs.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        configs.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT;
+        // Configure feedback and motor direction
+        leaderConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leaderConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
         
-        // Apply configs to lead motor
-        elevatorLeadMotor.getConfigurator().apply(configs);
+        // Configure gravity compensation for vertical mechanism
+        // leaderConfig.Voltage. GravityCompensation = GravityTypeValue.Elevator_Static;
         
-        // Set brake mode
-        elevatorLeadMotor.setNeutralMode(NeutralModeValue.Brake);
+        // Apply configurations
+        elevatorLeader.getConfigurator().apply(leaderConfig);
         
-        // Configure follow motor to oppose the lead motor
-        elevatorFollowMotor.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
-        elevatorFollowMotor.setNeutralMode(NeutralModeValue.Brake);
+        // Configure follower motor to oppose the leader
+        followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        elevatorFollower.getConfigurator().apply(followerConfig);
+        
+        // Set up follower to follow leader with opposite direction
+        elevatorFollower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
     }
     
     /**
-     * Sets the elevator to a specific position using Motion Magic
-     * @param targetPosition The target position in rotations
+     * Sets the elevator position using motion magic
+     * @param positionRotations The target position in rotations
      */
-    public void setPosition(double targetPosition) {
-        elevatorLeadMotor.setControl(motionMagic.withPosition(targetPosition));
+    public void setPosition(double positionRotations) {
+        // Apply deadband to avoid small movements
+        if (Math.abs(positionRotations - getPosition()) < ElevatorConstants.DEADBAND) {
+            return;
+        }
+        
+        elevatorLeader.setControl(motionMagicRequest.withPosition(positionRotations * GEAR_RATIO));
     }
     
     /**
-     * Manually control the elevator using percent output
-     * @param percentOutput The percent output (-1.0 to 1.0)
+     * Sets manual control voltage
+     * @param percentOutput The percent output (-1 to 1)
      */
     public void setManualOutput(double percentOutput) {
-        // Apply deadband and limit the output
+        // Apply deadband to prevent small unintended movements
         if (Math.abs(percentOutput) < ElevatorConstants.DEADBAND) {
             percentOutput = 0;
         }
-        elevatorLeadMotor.setControl(manualOutput.withOutput(percentOutput));
+        
+        // Convert percent to voltage (assuming 12V system)
+        double voltage = percentOutput * 12.0;
+        elevatorLeader.setControl(manualVoltageRequest.withOutput(voltage));
     }
     
     /**
-     * Move elevator to preset positions
-     */
-    public void setToGround() {
-        setPosition(ElevatorConstants.GROUND_POSITION);
-    }
-    
-    public void setToMiddle() {
-        setPosition(ElevatorConstants.MIDDLE_POSITION);
-    }
-    
-    public void setToHigh() {
-        setPosition(ElevatorConstants.HIGH_POSITION);
-    }
-    
-    /**
-     * Get the current position of the elevator
-     * @return Current position in rotations
+     * Gets the current position of the elevator in rotations
+     * @return The current position in rotations
      */
     public double getPosition() {
-        return position.getValue();
+
+        /* Changed getValue() to getValueAsDouble() when getting the position from the TalonFX */
+        return elevatorLeader.getPosition().getValueAsDouble() / GEAR_RATIO;
     }
     
     /**
-     * Get the current velocity of the elevator
-     * @return Current velocity in rotations per second
-     */
-    public double getVelocity() {
-        return velocity.getValue();
-    }
-    
-    /**
-     * Check if the elevator is at the target position
+     * Checks if the elevator is at the target position
      * @param targetPosition The target position to check against
-     * @return true if the elevator is within tolerance of the target position
+     * @return True if at position, false otherwise
      */
     public boolean isAtPosition(double targetPosition) {
         return Math.abs(getPosition() - targetPosition) < ElevatorConstants.POSITION_TOLERANCE;
-    }
-    
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        // Refresh our status signals
-        position.refresh();
-        velocity.refresh();
     }
 }

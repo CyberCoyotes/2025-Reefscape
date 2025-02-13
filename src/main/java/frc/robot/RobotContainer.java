@@ -23,6 +23,7 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristCommands;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 
 public class RobotContainer {
@@ -32,6 +33,8 @@ public class RobotContainer {
     private final WristSubsystem wrist = new WristSubsystem();
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    private final ElevatorCommands elevatorCommands;  // Add this field
+
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -52,6 +55,9 @@ public class RobotContainer {
 
     
     public RobotContainer() {
+
+        elevatorCommands = new ElevatorCommands(elevator);  // Initialize the ElevatorCommands object
+        
         configureBindings();
 
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
@@ -100,8 +106,10 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
 
+            /*
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
+         */
 
         // Example button bindings in RobotContainer
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
@@ -110,12 +118,12 @@ public class RobotContainer {
         // driverController.b().whileTrue(elevator.moveToPosition(10));
         // driverController.a().whileTrue(elevator.moveToPositionAndWait(10));
 
-        driverController.b().whileTrue(elevator.moveToHigh());
+        driverController.b().whileTrue(elevatorCommands.moveToHigh());
         // driverController.a().whileTrue(elevator.moveDown());
     
         // One-time position commands
-        driverController.y().onTrue(elevator.moveToGround());
-        driverController.x().onTrue(elevator.moveToMiddle());
+        driverController.y().onTrue(elevatorCommands.moveToGround());
+        driverController.x().onTrue(elevatorCommands.moveToMiddle());
 
         // driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
         // driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
