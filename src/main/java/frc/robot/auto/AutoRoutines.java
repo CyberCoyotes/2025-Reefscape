@@ -14,11 +14,37 @@ public class AutoRoutines {
     public AutoRoutines(AutoFactory factory, CommandSwerveDrivetrain drivetrain) {
         m_factory = factory;
         m_drivetrain = drivetrain;
-        // m_elevator = new ElevatorSubsystem(); // Competition robot only
-        // m_intake = new IntakeSubsystem(); // Competition robot only
-        // m_score = new ScoreSubsystem(); // Competition robot only
+        // m_elevator = new ElevatorSubsystem(); 
+        // m_intake = new IntakeSubsystem(); 
+        // m_score = new ScoreSubsystem(); 
         }
-        public AutoRoutine Test() {
+        public AutoRoutine TwoMeters() {
+                final AutoRoutine routine = m_factory.newRoutine("TwoMeters");
+                final AutoTrajectory TwoMeters = routine.trajectory("TwoMeters");
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                TwoMeters.resetOdometry(), // Always reset odometry first
+                                TwoMeters.cmd() // Follow the path
+                                // TwoMeters.done() // TODO add a Done command
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine TwoMetersBack() {
+                final AutoRoutine routine = m_factory.newRoutine("TwoMetersBack");
+                final AutoTrajectory TwoMetersBack = routine.trajectory("TwoMetersBack");
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                TwoMetersBack.resetOdometry(), // Always reset odometry first
+                                TwoMetersBack.cmd() // Follow the path
+                                //TwoMetersBack.done() // TODO add a Done command
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine STA() {
             final AutoRoutine routine = m_factory.newRoutine("ST-A");
             final AutoTrajectory STA = routine.trajectory("ST-A");
     
@@ -26,7 +52,7 @@ public class AutoRoutines {
                     Commands.sequence(
                             STA.resetOdometry(), // Always reset odometry first
                             STA.cmd() // Follow the path
-                            // driveForward.done() // TODO add a done command
+                            // STA.done() // TODO add a Done command
                     ));
     
             return routine;

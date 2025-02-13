@@ -74,14 +74,17 @@ public class RobotContainer {
         
        // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
        // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
-        autoChooser.addRoutine("Test", autoRoutines::Test);
+       autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
+       autoChooser.addRoutine("TwoMetersBack", autoRoutines::TwoMetersBack); 
+       //autoChooser.addRoutine("STA", autoRoutines::STA);
+
 
         
         //autoChooser.addRoutine("Testing Events", autoRoutines::testEvents);
-        // autoBETAChooser.addRoutine("Drive and Align", autoRoutines::driveAndAlign);
+         // autoBETAChooser.addRoutine("Drive and Align", autoRoutines::driveAndAlign);
 
         SmartDashboard.putData("Autonomous", autoChooser);
-       // SmartDashboard.putData("BETA Autos", autoChooser);
+       
     }
 
     private void configureBindings() {
