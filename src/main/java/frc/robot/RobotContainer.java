@@ -11,6 +11,13 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import frc.robot.auto.AutoRoutines;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,6 +27,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+
 import frc.robot.subsystems.wrist.WristCommands;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
@@ -39,6 +47,9 @@ public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     
+     private final AutoFactory autoFactory;
+    private final AutoRoutines autoRoutines;
+    private final AutoChooser autoChooser = new AutoChooser();
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -55,13 +66,32 @@ public class RobotContainer {
 
     
     public RobotContainer() {
+        
+        autoFactory = drivetrain.createAutoFactory();
+        autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
         elevatorCommands = new ElevatorCommands(elevator);  // Initialize the ElevatorCommands object
         
         configureBindings();
-
+        configureAutoRoutines();
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
             // wrist.setWristZero(); // Verify encoder reading resets
+    }
+    private void configureAutoRoutines() {
+        
+       // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
+       // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
+       autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
+       autoChooser.addRoutine("TwoMetersBack", autoRoutines::TwoMetersBack); 
+       //autoChooser.addRoutine("STA", autoRoutines::STA);
+
+
+        
+        //autoChooser.addRoutine("Testing Events", autoRoutines::testEvents);
+         // autoBETAChooser.addRoutine("Drive and Align", autoRoutines::driveAndAlign);
+
+        SmartDashboard.putData("Autonomous", autoChooser);
+       
     }
 
     private void configureBindings() {
@@ -93,13 +123,13 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // CHORAL
+        // CORAL
         driverController.leftBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_coral));
         driverController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_coral));
         
-        // ALGAE a.k.a reverse CHORAL
+        // ALGAE a.k.a reverse CORAL
         driverController.leftBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
