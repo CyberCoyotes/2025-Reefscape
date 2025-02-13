@@ -118,12 +118,13 @@ public class RobotContainer {
         // driverController.b().whileTrue(elevator.moveToPosition(10));
         // driverController.a().whileTrue(elevator.moveToPositionAndWait(10));
 
-        driverController.b().whileTrue(elevatorCommands.moveToHigh());
         // driverController.a().whileTrue(elevator.moveDown());
     
         // One-time position commands
-        driverController.y().onTrue(elevatorCommands.moveToGround());
-        driverController.x().onTrue(elevatorCommands.moveToMiddle());
+        driverController.x().onTrue(elevatorCommands.moveToL1());
+        driverController.y().onTrue(elevatorCommands.moveToL2());
+        driverController.b().onTrue(elevatorCommands.moveToL3());
+        driverController.a().onTrue(elevatorCommands.moveToBase());
 
         // driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
         // driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
