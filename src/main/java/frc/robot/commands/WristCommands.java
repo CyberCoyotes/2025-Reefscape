@@ -39,26 +39,26 @@ public final class WristCommands {
     // public static final class Positions {
         // private Positions() {}
 
-        public static Command loadCoral(WristSubsystem wrist) {
+        public static Command setLoadCoral(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.LOAD_CHORAL).withName("LoadCoral");
         }
         
-        public static Command elevatorSafe(WristSubsystem wrist) {
+        public static Command setElevatorSafe(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.ELEVATOR_SAFE).withName("WristSafeForElevator");
         }
 
-        public static Command L1(WristSubsystem wrist) {
+        public static Command setL1(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.L1).withName("WristL1");
         }
 
-        public static Command L2(WristSubsystem wrist) {
+        public static Command setL2(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.L2).withName("WristL2");
         }
 
-        public static Command L3(WristSubsystem wrist) {
+        public static Command setL3(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.L3).withName("WristL3");
         }
-        public static Command L4(WristSubsystem wrist) {
+        public static Command setL4(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.L4).withName("WristL4");
         }
         // Add more preset positions as needed
@@ -71,8 +71,8 @@ public final class WristCommands {
         private Sequences() {}
 
         public static Command loadToSafe(WristSubsystem wrist) {
-            return loadCoral(wrist)
-                    .andThen(elevatorSafe(wrist))
+            return setLoadCoral(wrist)
+                    .andThen(setElevatorSafe(wrist))
                     .withName("Stow To Ground");
         }
 

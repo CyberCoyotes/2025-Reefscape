@@ -42,7 +42,8 @@ public class ElevatorCommands {
      * @param targetPosition The position to move to in rotations
      * @return Command to run
      */
-    private Command createMoveToPositionCommand(double targetPosition) {
+    private Command createMoveToPositionRaw(double targetPosition) {
+        // Does not check wrist safety
         return new FunctionalCommand(
                 // Initialize - Nothing to initialize
                 () -> {
@@ -61,8 +62,8 @@ public class ElevatorCommands {
     /**
      * Creates a command to move the elevator to ground position
      */
-    public Command moveToBase() {
-        return createMoveToPositionCommand(ElevatorConstants.BASE_POSE)
+    public Command moveToBaseRaw() {
+        return createMoveToPositionRaw(ElevatorConstants.BASE_POSE)
                 .withName("MoveElevatorToBase");
     }
 /*
@@ -71,44 +72,44 @@ public class ElevatorCommands {
     /**
      * Creates a command to move the elevator to middle position
      */
-    public Command moveToL1() {
-        /* TODO Check Wrist position-state
+    public Command moveToL1Raw() {
+        /*
         * If wrist is in the way, move wrist to safe position
         */
-        return createMoveToPositionCommand(ElevatorConstants.L1_POSE)
+        return createMoveToPositionRaw(ElevatorConstants.L1_POSE)
                 .withName("MoveElevatorToL1");
     }
 
     /**
      * Creates a command to move the elevator to high position
      */
-    public Command moveToL2() {
-        /* TODO Check Wrist position-state
+    public Command moveToL2Raw() {
+        /*
         * If wrist is in the way, move wrist to safe position
         */
-        return createMoveToPositionCommand(ElevatorConstants.L2_POSE)
+        return createMoveToPositionRaw(ElevatorConstants.L2_POSE)
                 .withName("MoveElevatorToL2");
     }
 
     /**
      * Creates a command to move the elevator to high position
      */
-    public Command moveToL3() {
-        /* TODO Check Wrist position-state
+    public Command moveToL3Raw() {
+        /* 
         * If wrist is in the way, move wrist to safe position
         */
-        return createMoveToPositionCommand(ElevatorConstants.L3_POSE)
+        return createMoveToPositionRaw(ElevatorConstants.L3_POSE)
                 .withName("MoveElevatorToL3");
     }
 
     /**
      * Creates a command to move the elevator to high position
      */
-    public Command moveToL4() {
-        /* TODO Check Wrist position-state
+    public Command moveToL4Raw() {
+        /*
         * If wrist is in the way, move wrist to safe position
         */
-        return createMoveToPositionCommand(ElevatorConstants.L4_POSE)
+        return createMoveToPositionRaw(ElevatorConstants.L4_POSE)
                 .withName("MoveElevatorToL4");
     }
 
@@ -136,12 +137,12 @@ public class ElevatorCommands {
     /***********************************************************************
      * Creates a command that safely moves the elevator to a target position
      *************************************************************************/
-    private Command createSafeMoveToPositionCommand(double targetPosition) {
+    private Command createMoveToPosition(double targetPosition) {
         return Commands.sequence(
             // First check if wrist is safe
             Commands.either(
                 // If wrist is safe, proceed with elevator movement
-                createMoveToPositionCommand(targetPosition),
+                createMoveToPositionRaw(targetPosition),
                 
                 // If wrist is unsafe, do nothing but log warning
                 Commands.none(),
@@ -155,56 +156,56 @@ public class ElevatorCommands {
     /**
      * Creates a command to safely move the elevator to ground position
      */
-    public Command safeMoveToBase() {
-        return createSafeMoveToPositionCommand(ElevatorConstants.BASE_POSE)
+    public Command moveToBase() {
+        return createMoveToPosition(ElevatorConstants.BASE_POSE)
                 .withName("SafeMoveElevatorToBase");
     }
 
     /**
      * Creates a command to safely move the elevator to L1 position
      */
-    public Command safeMoveToL1() {
-        return createSafeMoveToPositionCommand(ElevatorConstants.L1_POSE)
+    public Command moveToL1() {
+        return createMoveToPosition(ElevatorConstants.L1_POSE)
                 .withName("SafeMoveElevatorToL1");
     }
 
     /**
      * Creates a command to safely move the elevator to L2 position
      */
-    public Command safeMoveToL2() {
-        return createSafeMoveToPositionCommand(ElevatorConstants.L2_POSE)
+    public Command moveToL2() {
+        return createMoveToPosition(ElevatorConstants.L2_POSE)
                 .withName("SafeMoveElevatorToL2");
     }
 
     /**
      * Creates a command to safely move the elevator to L3 position
      */
-    public Command safeMoveToL3() {
-        return createSafeMoveToPositionCommand(ElevatorConstants.L3_POSE)
+    public Command moveToL3() {
+        return createMoveToPosition(ElevatorConstants.L3_POSE)
                 .withName("SafeMoveElevatorToL3");
     }
 
     /**
      * Creates a command to safely move the elevator to L4 position
      */
-    public Command safeMoveToL4() {
-        return createSafeMoveToPositionCommand(ElevatorConstants.L4_POSE)
+    public Command moveToL4() {
+        return createMoveToPosition(ElevatorConstants.L4_POSE)
                 .withName("SafeMoveElevatorToL4");
     }
 
         /**
      * Creates a command that moves wrist to safe position then moves elevator
      */
-    public Command moveWithWristSafety(double targetPosition) {
+    public Command moveWristMoveElevator(double targetPosition) {
         return Commands.sequence(
             // First move wrist to safe position
-            WristCommands.elevatorSafe(wrist),
+            WristCommands.setElevatorSafe(wrist),
             
             // Wait until wrist is in position
             Commands.waitUntil(() -> wrist.atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE)),
             
             // Then move elevator
-            createMoveToPositionCommand(targetPosition)
+            createMoveToPositionRaw(targetPosition)
         ).withName("MoveElevatorWithWristSafety" + targetPosition);
     }
 }

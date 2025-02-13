@@ -155,21 +155,17 @@ public class RobotContainer {
     
         // One-time position commands
         // driverController.x().onTrue(elevatorCommands.moveToL1()); // Works
-        driverController.b().onTrue(elevatorCommands.safeMoveToL1()); // Testing
 
-        // driverController.y().onTrue(elevatorCommands.moveToL2()); Testing
-        driverController.y().onTrue(elevatorCommands.moveWithWristSafety(ElevatorConstants.L1_POSE));
-        driverController.x().onTrue(elevatorCommands.moveWithWristSafety(ElevatorConstants.BASE_POSE));
+        // Wrist safety check is now default behavior with elevator
+        driverController.a().onTrue(elevatorCommands.moveToBase()); // Moves the wrist, then moves elevator
+        driverController.b().onTrue(elevatorCommands.moveToL1());
+        driverController.y().onTrue(elevatorCommands.moveToL2());
+        driverController.x().onTrue(elevatorCommands.moveToL3());
 
-        
-        // driverController.a().onTrue(elevatorCommands.moveToBase()); // Workd
-        driverController.a().onTrue(elevatorCommands.safeMoveToBase()); // Testing
-        // driverController.b().onTrue(elevatorCommands.moveToL3()); // Works
-
-        driverController.povUp().onTrue(WristCommands.loadCoral(wrist));
-        driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
-        driverController.povLeft().onTrue(WristCommands.L2(wrist));
-        driverController.povRight().onTrue(WristCommands.L4(wrist));
+        driverController.povUp().onTrue(WristCommands.setLoadCoral(wrist));
+        driverController.povDown().onTrue(WristCommands.setElevatorSafe(wrist));
+        driverController.povLeft().onTrue(WristCommands.setL2(wrist));
+        driverController.povRight().onTrue(WristCommands.setL4(wrist));
         
         drivetrain.registerTelemetry(logger::telemeterize);
     }
