@@ -15,9 +15,9 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"CST.x", "val":1.6}, "y":{"exp":"CST.y", "val":7.27}, "heading":{"exp":"CST.heading", "val":-0.94}, "intervals":22, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"CST.x", "val":1.5}, "y":{"exp":"CST.y", "val":7.0}, "heading":{"exp":"CST.heading", "val":-0.94}, "intervals":22, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"L.x", "val":3.62}, "y":{"exp":"L.y", "val":5.2}, "heading":{"exp":"L.heading", "val":-1.0508279424738416}, "intervals":22, "split":true, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"CST.x", "val":1.6}, "y":{"exp":"CST.y", "val":7.27}, "heading":{"exp":"CST.heading", "val":-0.94}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"CST.x", "val":1.5}, "y":{"exp":"CST.y", "val":7.0}, "heading":{"exp":"CST.heading", "val":-0.94}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
