@@ -1,8 +1,9 @@
+
+
 /* From Official Limelight 
  * LimelightHelpers v1.9 (REQUIRES 2024.9.1)
 */
 
-package frc.robot.subsystems.vision;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

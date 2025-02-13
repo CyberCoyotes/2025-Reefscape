@@ -29,7 +29,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
-import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystemMotor;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
@@ -37,6 +37,11 @@ import frc.robot.commands.WristCommands;
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
+<<<<<<< Updated upstream
+=======
+    private final WristSubsystemMotor wrist = new WristSubsystemMotor();
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+>>>>>>> Stashed changes
 
     private final WristSubsystem wrist = new WristSubsystem();
 
@@ -70,7 +75,13 @@ public class RobotContainer {
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
+<<<<<<< Updated upstream
         elevatorCommands = new ElevatorCommands(elevator, wrist);  // Initialize the ElevatorCommands object
+=======
+        elevatorCommands = new ElevatorCommands(elevator, wristMotor);  // Initialize the ElevatorCommands object
+        effectorCommands = new EndEffectorCommands(endEffector); // Initialize the EndEffectorCommands object
+
+>>>>>>> Stashed changes
         
         // TODO Toggle - True is safety mode, false is performance mode
         elevator.setSafetyMode(true);
@@ -162,10 +173,10 @@ public class RobotContainer {
         driverController.y().onTrue(elevatorCommands.moveToL2());
         driverController.x().onTrue(elevatorCommands.moveToL3());
 
-        driverController.povUp().onTrue(WristCommands.setLoadCoral(wrist));
-        driverController.povDown().onTrue(WristCommands.setElevatorSafe(wrist));
-        driverController.povLeft().onTrue(WristCommands.setL2(wrist));
-        driverController.povRight().onTrue(WristCommands.setL4(wrist));
+        driverController.povUp().onTrue(WristCommands.setLoadCoral(wristMotor));
+        driverController.povDown().onTrue(WristCommands.setElevatorSafe(wristMotor));
+        driverController.povLeft().onTrue(WristCommands.setL2(wristMotor));
+        driverController.povRight().onTrue(WristCommands.setL4(wristMotor));
         
         drivetrain.registerTelemetry(logger::telemeterize);
     }

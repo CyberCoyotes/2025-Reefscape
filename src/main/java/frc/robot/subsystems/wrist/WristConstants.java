@@ -1,4 +1,3 @@
-// WristConstants.java
 package frc.robot.subsystems.wrist;
 
 public final class WristConstants {
@@ -6,8 +5,8 @@ public final class WristConstants {
     public static final int WRIST_ID = 20;
     public static final int WRIST_ENCODER_ID = 14;
     public static final String canBus = "rio";
-    public static final double GEAR_RATIO = 50.0; // TODO Determine the actual gear ratio; suggested 75.0
-    public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; // TODO Determine the actual ratio
+    // Remove gear ratio since CANcoder is direct on wrist shaft
+    public static final double ENCODER_TO_MECHANISM_RATIO = 1.0;
 
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 10.0;
@@ -24,8 +23,8 @@ public final class WristConstants {
     public static final double MOTION_MAGIC_JERK = 100.0; // rotations per second^3
     public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
     
-    // Wrist angle limits in rotations // Move these to WristCconstants
-    public static final double MIN_ROTATION = -0.25; // -90 degrees
+    // Wrist angle limits in rotations
+    public static final double MIN_ROTATION = 0.00; // -90 degrees
     public static final double MAX_ROTATION = 0.50;  // 90 degrees
 
     // PID and FF Gains
@@ -38,8 +37,6 @@ public final class WristConstants {
         public static final double kS = 0.25;
         public static final double kA = 0.01;
     }
-
-
 
     // Named positions
     public static final class Positions {

@@ -7,16 +7,16 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
-import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystemMotor;
 
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
-    private final WristSubsystem wrist;
+    private final WristSubsystemMotor wristMotor;
 
 
-    public ElevatorCommands(ElevatorSubsystem elevator, WristSubsystem wrist) {
+    public ElevatorCommands(ElevatorSubsystem elevator, WristSubsystemMotor wristMotor) {
         this.elevator = elevator;
-        this.wrist = wrist;
+        this.wristMotor = wristMotor;
 
     }
 
@@ -25,7 +25,7 @@ public class ElevatorCommands {
      * @return true if safe, false if unsafe
      */
     private boolean isWristSafe() {
-        double wristPos = wrist.getPosition();
+        double wristPos = wristMotor.getPosition();
         // Check if wrist is within safe zone around ELEVATOR_SAFE position
         boolean isSafe = Math.abs(wristPos - WristConstants.Positions.ELEVATOR_SAFE) < WristConstants.WRIST_POSE_TOLERANCE;
         
@@ -199,10 +199,10 @@ public class ElevatorCommands {
     public Command moveWristMoveElevator(double targetPosition) {
         return Commands.sequence(
             // First move wrist to safe position
-            WristCommands.setElevatorSafe(wrist),
+            WristCommands.setElevatorSafe(wristMotor),
             
             // Wait until wrist is in position
-            Commands.waitUntil(() -> wrist.atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE)),
+            Commands.waitUntil(() -> wristMotor.atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE)),
             
             // Then move elevator
             createMoveToPositionRaw(targetPosition)
