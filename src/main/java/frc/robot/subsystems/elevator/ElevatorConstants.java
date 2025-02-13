@@ -44,4 +44,5 @@ public final class ElevatorConstants {
     // Control Parameters
     public static final double DEADBAND = 0.02;
     public static final double POSITION_TOLERANCE = 0.02;
+    public static final double POSITION_HOME_TOLERANCE = 0.00;
 }
