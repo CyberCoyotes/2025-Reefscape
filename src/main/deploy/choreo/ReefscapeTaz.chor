@@ -1,5 +1,5 @@
 {
- "name":"BabyTaz",
+ "name":"ReefscapeTaz",
  "version":1,
  "type":"Swerve",
  "variables":{
@@ -7,8 +7,8 @@
   "poses":{
    "A":{
     "x":{
-     "exp":"3.05 m",
-     "val":3.05
+     "exp":"2.87 m",
+     "val":2.87
     },
     "y":{
      "exp":"4.2 m",
@@ -53,8 +53,8 @@
      "val":1.6
     },
     "y":{
-     "exp":"0.76 m",
-     "val":0.76
+     "exp":"1.86 m",
+     "val":1.86
     },
     "heading":{
      "exp":"0.94 rad",
