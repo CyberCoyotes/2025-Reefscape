@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 // import frc.robot.subsystems.led.LEDState;
 // import frc.robot.subsystems.led.LEDSubsystem;
-import frc.robot.subsystems.vision.VisionState;
 
 
 public class VisionSubsystem extends SubsystemBase {
@@ -134,18 +133,4 @@ public class VisionSubsystem extends SubsystemBase {
         return (int) tid.getDouble(0);
     }
 
-    public void resetPoseEstimate() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'resetPoseEstimate'");
-    }
-
-    public void disable() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'disable'");
-    }
-
-    public void enable() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'enable'");
-    }
 }

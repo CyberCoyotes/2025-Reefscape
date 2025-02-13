@@ -1,4 +1,4 @@
-package frc.robot.subsystems.wrist;
+package frc.robot.subsystems.wristOLD;
 /* FIXME These values could change as the wrist starts using the encoder instead */
 public enum WristStates {
     // Define the states of the wrist
