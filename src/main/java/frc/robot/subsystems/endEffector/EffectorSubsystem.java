@@ -1,37 +1,45 @@
 package frc.robot.subsystems.endEffector;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix6.controls.DutyCycleOut;
-
 public class EffectorSubsystem extends SubsystemBase {
-
+    // Hardware
     private final TalonFX motor;
+
+    // Control requests (reuse to avoid object allocation)
+    private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
+    
+    // State tracking  
     private EffectorState currentState = EffectorState.STOP;
 
     public EffectorSubsystem() {
-        motor = new TalonFX(EffectorConfigs.EFFECTOR_MOTOR_ID, EffectorConfigs.CANBUS_NAME);
+        motor = new TalonFX(EffectorConstants.EFFECTOR_MOTOR_ID, EffectorConstants.CANBUS_NAME);
         configureMotor();
     }
 
     private void configureMotor() {
-        motor.getConfigurator().apply(EffectorConfigs.EFFECTOR_CONFIG);
+        motor.getConfigurator().apply(EffectorConstants.EFFECTOR_CONFIG);
     }
 
+    /**
+     * Sets the effector state and applies corresponding duty cycle
+     */
     public void setState(EffectorState state) {
         this.currentState = state;
-        motor.setControl(new DutyCycleOut(state.dutyCycle));
+        motor.setControl(dutyCycleRequest.withOutput(state.dutyCycle));
     }
 
+    /**
+     * Gets the current effector state
+     */
     public EffectorState getState() {
         return currentState;
     }
 
     @Override
     public void periodic() {
-        // Debugging purposes
-        // System.out.println("Effector State: " + currentState + " | Power: " + currentState.dutyCycle);
+        // Add dashboard data or logging if needed
     }
 }

@@ -31,17 +31,18 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
-
     private final WristSubsystem wrist = new WristSubsystem();
-
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands;  // Add this field
+
+    private final ElevatorCommands elevatorCommands;
+    private final EndEffectorCommands effectorCommands;
 
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -71,6 +72,8 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
         elevatorCommands = new ElevatorCommands(elevator, wrist);  // Initialize the ElevatorCommands object
+        effectorCommands = new EndEffectorCommands(endEffector); // Initialize the EndEffectorCommands object
+
         
         // TODO Toggle - True is safety mode, false is performance mode
         elevator.setSafetyMode(true);
@@ -127,17 +130,26 @@ public class RobotContainer {
         // driverController.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CORAL
+        /* ORIGINAL Coral commands 
         driverController.leftBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_coral));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CORAL));
         driverController.rightBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_coral));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
         
         // ALGAE a.k.a reverse CORAL
         driverController.leftBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+        */
+        
+        // Example button bindings using command factories
+        driverController.leftBumper().whileTrue(effectorCommands.intakeCoral());
+        driverController.rightBumper().whileTrue(effectorCommands.scoreCoral());
+        driverController.leftBumper().and(driverController.a().whileTrue(effectorCommands.intakeAlgae()));
+        driverController.rightBumper().and(driverController.a().whileTrue(effectorCommands.scoreAlgae()));
 
+        // driverController.leftBumper().whileTrue(effectorCommands.hold());
 
             /*
         driverController.x()

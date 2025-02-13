@@ -4,12 +4,14 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class EffectorConfigs {
+public class EffectorConstants {
 
     // CAN settings
     public static final int EFFECTOR_MOTOR_ID = 21; // Adjust ID as needed
+    public static final int CORAL_DETECTION_LASER_ID = 44; // Adjust ID as needed
     public static final String CANBUS_NAME = "rio"; // or "canivore" if using CANivore
 
+    public static final double CORAL_DETECTION_DISTANCE = 0.04; // Distance in meters for coral detection, e.g. 4 cm is 0.04 m
 
     public static final TalonFXConfiguration EFFECTOR_CONFIG = new TalonFXConfiguration();
 
