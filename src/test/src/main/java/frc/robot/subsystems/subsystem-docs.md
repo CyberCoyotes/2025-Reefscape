@@ -19,11 +19,11 @@
 
 ## EndEffectorSubsystem "The Claw"
 
-- C-shaped structure that handles CHORAL coming in and out, and also handles ALGAE
+- C-shaped structure that handles coral coming in and out, and also handles ALGAE
 - (1 Kraken) Motor powers wheels above and below, only reduction is from pulleys
 - Power mode in an on/off and bi-directional `EFFECTOR_INTAKE` and `EFFECTOR_SCORE`
-- (ThirftyBot) CAN ToF sensor as "CHORAL Detector" to turn off the motor intake direction when "beam break" distance condition is met;
-- End Effector States returns `NO_CHORAL` and `CHORAL_DETECTED`
+- (ThirftyBot) CAN ToF sensor as "coral Detector" to turn off the motor intake direction when "beam break" distance condition is met;
+- End Effector States returns `NO_coral` and `coral_DETECTED`
 
 ## LEDSubsystem
 

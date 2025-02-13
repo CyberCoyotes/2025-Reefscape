@@ -13,31 +13,36 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import frc.robot.auto.AutoRoutines;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist_4.WristConstants;
-import frc.robot.subsystems.wrist_4.WristCommands;
-// import frc.robot.subsystems.wrist.WristStates;
-import frc.robot.subsystems.wrist_4.WristSubsystem;
-import frc.robot.auto.AutoRoutines;
-import frc.robot.commands.SetEndEffectorCommand;
-import frc.robot.commands.SetWristPositionCommand;
-import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
+import frc.robot.subsystems.wrist.WristCommands;
+import frc.robot.subsystems.wrist.WristConstants;
+import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.SetEndEffectorCommand;
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
+
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    private final ElevatorCommands elevatorCommands;  // Add this field
+
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -62,9 +67,11 @@ public class RobotContainer {
     
     public RobotContainer() {
         
-        
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
+
+        elevatorCommands = new ElevatorCommands(elevator);  // Initialize the ElevatorCommands object
+        
         configureBindings();
         configureAutoRoutines();
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
@@ -93,8 +100,8 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward) // Had to switch
-                    .withVelocityY(driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
                     .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
@@ -118,9 +125,9 @@ public class RobotContainer {
 
         // CORAL
         driverController.leftBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CHORAL));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_coral));
         driverController.rightBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CHORAL));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_coral));
         
         // ALGAE a.k.a reverse CORAL
         driverController.leftBumper().and(driverController.a())
@@ -128,18 +135,33 @@ public class RobotContainer {
         driverController.rightBumper().and(driverController.a())
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
+
+            /*
         driverController.x()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.HOLD));
+         */
 
         // Example button bindings in RobotContainer
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
+    
+        // Hold buttons for manual movement
+        // driverController.b().whileTrue(elevator.moveToPosition(10));
+        // driverController.a().whileTrue(elevator.moveToPositionAndWait(10));
 
-        driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
-        driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
+        // driverController.a().whileTrue(elevator.moveDown());
+    
+        // One-time position commands
+        driverController.x().onTrue(elevatorCommands.moveToL1());
+        driverController.y().onTrue(elevatorCommands.moveToL2());
+        driverController.b().onTrue(elevatorCommands.moveToL3());
+        driverController.a().onTrue(elevatorCommands.moveToBase());
+
+        // driverController.povUp().onTrue(WristCommands.loadChoral(wrist));
+        // driverController.povDown().onTrue(WristCommands.elevatorSafe(wrist));
         
         // driverController.a().and(driverController.povDown().onTrue(WristCommands.L1(wrist)));
-        driverController.povLeft().onTrue(WristCommands.L2(wrist));
-        driverController.povRight().onTrue(WristCommands.L4(wrist));
+        // driverController.povLeft().onTrue(WristCommands.L2(wrist));
+        // driverController.povRight().onTrue(WristCommands.L4(wrist));
         // driverController.povUp().onTrue(WristCommands.L4(wrist));
         
         drivetrain.registerTelemetry(logger::telemeterize);
