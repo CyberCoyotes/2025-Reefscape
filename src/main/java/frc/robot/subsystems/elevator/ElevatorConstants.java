@@ -3,7 +3,8 @@ package frc.robot.subsystems.elevator;
 public final class ElevatorConstants {
     public static final int ELEVATOR_LEAD_ID = 24; // Change to your CAN ID
     public static final int ELEVATOR_FOLLOW_ID = 23; // Change to your CAN ID
-    
+    public static final double GEAR_RATIO = 9.0; // Gear ratio (9:1)
+
     // Motion Magic
     public static final double CRUISE_VELOCITY = 160; // Rotations per second
     public static final double ACCELERATION = 160; // Rotations per second^2
@@ -17,7 +18,18 @@ public final class ElevatorConstants {
     public static final double kV = 0.12;
     public static final double kG = 0.50;
 
-    
+    // Safety PID Values for Motion Magic Slot 1
+    public static final double SAFETY_CRUISE_VELOCITY = 80; // Rotations per second
+    public static final double SAFETY_ACCELERATION = 80; // Rotations per second^2
+    public static final double SAFETY_JERK = 200; // Rotations per second^3
+
+    public static final double SAFETY_kP = 1.0;
+    public static final double SAFETY_kI = 0.01;
+    public static final double SAFETY_kD = 0.10;
+    public static final double SAFETY_kS = 0.25;
+    public static final double SAFETY_kV = 0.12;
+    public static final double SAFETY_kG = 0.25;
+ 
     // Soft Limits (in rotations)
     public static final double MAX_HEIGHT = 1;
     public static final double MIN_HEIGHT = 0;
