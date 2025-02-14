@@ -28,6 +28,17 @@ public final class WristConstants {
     public static final double MIN_ROTATION = -0.25; // -90 degrees
     public static final double MAX_ROTATION = 0.50;  // 90 degrees
 
+    
+    public static final class Hardware {
+        public static final int WRIST_ID = 20;
+        public static final int WRIST_ENCODER_ID = 14;
+        public static final String CAN_BUS = "rio";
+        public static final double GEAR_RATIO = 50.0;
+        public static final double ENCODER_TO_MECHANISM_RATIO = 1.0;
+        public static final double STATOR_CURRENT_LIMIT = 10.0;
+        public static final double SUPPLY_CURRENT_LIMIT = 10.0;
+    }
+
     // PID and FF Gains
     public static final class Gains {
         public static final double kP = 4.8;

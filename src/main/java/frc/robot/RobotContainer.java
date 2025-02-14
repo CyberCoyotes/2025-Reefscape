@@ -30,6 +30,7 @@ import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristMotorSubsystem;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
@@ -39,6 +40,7 @@ public class RobotContainer {
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
+    private final WristMotorSubsystem wristMotor = new WristMotorSubsystem();
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands;  // Add this field
@@ -162,11 +164,18 @@ public class RobotContainer {
         driverController.y().onTrue(elevatorCommands.moveToL2());
         driverController.x().onTrue(elevatorCommands.moveToL3());
 
-        driverController.povUp().onTrue(WristCommands.setLoadCoral(wrist));
-        driverController.povDown().onTrue(WristCommands.setElevatorSafe(wrist));
-        driverController.povLeft().onTrue(WristCommands.setL2(wrist));
-        driverController.povRight().onTrue(WristCommands.setL4(wrist));
-        
+        // driverController.povUp().onTrue(WristCommands.setLoadCoral(wrist));
+        // driverController.povDown().onTrue(WristCommands.setElevatorSafe(wrist));
+        // driverController.povLeft().onTrue(WristCommands.setL2(wrist));
+        // driverController.povRight().onTrue(WristCommands.setL4(wrist));
+
+        driverController.povUp().whileTrue(ElevatorCommands.manualUp(elevator));
+        driverController.povDown().whileTrue(ElevatorCommands.manualDown(elevator));
+
+        driverController.povRight().whileTrue(WristCommands.manualUp(wristMotor));
+        driverController.povLeft().whileTrue(WristCommands.manualDown(wristMotor));
+
+
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 
