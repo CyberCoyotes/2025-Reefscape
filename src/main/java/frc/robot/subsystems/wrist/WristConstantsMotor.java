@@ -1,7 +1,7 @@
 // WristConstants.java
-package frc.robot.subsystems.wristOLD;
+package frc.robot.subsystems.wrist;
 
-public final class WristConstants {
+public final class WristConstantsMotor {
     // CAN ID and hardware config
     public static final int MOTOR_CAN_ID = 20;
     public static final double GEAR_RATIO = 75.0; // TODO Determine the actual gear ratio

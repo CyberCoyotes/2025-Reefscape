@@ -1,5 +1,5 @@
 // WristSubsystem.java
-package frc.robot.subsystems.wristOLD;
+package frc.robot.subsystems.wrist;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class WristSubsystemOLD extends SubsystemBase {
+public class WristSubsystemMotor extends SubsystemBase {
     private final TalonFX wristMotor;
     private final PositionVoltage positionRequest;
     
     private String currentPositionName = "Unknown";
     private double targetPosition = 0.0;
 
-    public WristSubsystemOLD() {
-        wristMotor = new TalonFX(WristConstants.MOTOR_CAN_ID, "rio");
+    public WristSubsystemMotor() {
+        wristMotor = new TalonFX(WristConstantsMotor.MOTOR_CAN_ID, "rio");
         positionRequest = new PositionVoltage(0).withSlot(0);
         
         configureMotor();
@@ -31,9 +31,9 @@ public class WristSubsystemOLD extends SubsystemBase {
         
         // Current limits
         var currentLimits = motorConfig.CurrentLimits;
-        currentLimits.StatorCurrentLimit = WristConstants.STATOR_CURRENT_LIMIT;
+        currentLimits.StatorCurrentLimit = WristConstantsMotor.STATOR_CURRENT_LIMIT;
         currentLimits.StatorCurrentLimitEnable = true;
-        currentLimits.SupplyCurrentLimit = WristConstants.SUPPLY_CURRENT_LIMIT;
+        currentLimits.SupplyCurrentLimit = WristConstantsMotor.SUPPLY_CURRENT_LIMIT;
         currentLimits.SupplyCurrentLimitEnable = true;
 
         // Motor output configuration
@@ -43,25 +43,25 @@ public class WristSubsystemOLD extends SubsystemBase {
 
         // Feedback configuration
         var feedback = motorConfig.Feedback;
-        feedback.SensorToMechanismRatio = WristConstants.GEAR_RATIO * WristConstants.ENCODER_TO_MECHANISM_RATIO;
+        feedback.SensorToMechanismRatio = WristConstantsMotor.GEAR_RATIO * WristConstantsMotor.ENCODER_TO_MECHANISM_RATIO;
         
         // Soft limits
         var softLimits = motorConfig.SoftwareLimitSwitch;
         softLimits.ForwardSoftLimitEnable = true;
-        softLimits.ForwardSoftLimitThreshold = WristConstants.MAX_POSITION;
+        softLimits.ForwardSoftLimitThreshold = WristConstantsMotor.MAX_POSITION;
         softLimits.ReverseSoftLimitEnable = true;
-        softLimits.ReverseSoftLimitThreshold = WristConstants.MIN_POSITION;
+        softLimits.ReverseSoftLimitThreshold = WristConstantsMotor.MIN_POSITION;
 
         // PID configuration
         var slot0 = motorConfig.Slot0;
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        slot0.kP = WristConstants.Gains.kP;
-        slot0.kI = WristConstants.Gains.kI;
-        slot0.kD = WristConstants.Gains.kD;
-        slot0.kG = WristConstants.Gains.kG;
-        slot0.kV = WristConstants.Gains.kV;
-        slot0.kS = WristConstants.Gains.kS;
-        slot0.kA = WristConstants.Gains.kA;
+        slot0.kP = WristConstantsMotor.Gains.kP;
+        slot0.kI = WristConstantsMotor.Gains.kI;
+        slot0.kD = WristConstantsMotor.Gains.kD;
+        slot0.kG = WristConstantsMotor.Gains.kG;
+        slot0.kV = WristConstantsMotor.Gains.kV;
+        slot0.kS = WristConstantsMotor.Gains.kS;
+        slot0.kA = WristConstantsMotor.Gains.kA;
 
         wristMotor.getConfigurator().apply(motorConfig);
     }
@@ -69,7 +69,7 @@ public class WristSubsystemOLD extends SubsystemBase {
     // Command factory methods
     public Command goToLoadingPosition() {
         return run(() -> {
-            setPosition(WristConstants.Positions.LOADING);
+            setPosition(WristConstantsMotor.Positions.LOADING);
             currentPositionName = "Loading";
         }).until(this::atPosition)
           .withName("Wrist To Loading");
@@ -77,7 +77,7 @@ public class WristSubsystemOLD extends SubsystemBase {
 
     public Command goToScoreL1() {
         return run(() -> {
-            setPosition(WristConstants.Positions.SCORE_L1);
+            setPosition(WristConstantsMotor.Positions.SCORE_L1);
             currentPositionName = "Score L1";
         }).until(this::atPosition)
           .withName("Wrist To L1");
@@ -85,7 +85,7 @@ public class WristSubsystemOLD extends SubsystemBase {
 
     public Command goToScoreL2() {
         return run(() -> {
-            setPosition(WristConstants.Positions.SCORE_L2);
+            setPosition(WristConstantsMotor.Positions.SCORE_L2);
             currentPositionName = "Score L2";
         }).until(this::atPosition)
           .withName("Wrist To L2");
@@ -93,7 +93,7 @@ public class WristSubsystemOLD extends SubsystemBase {
 
     public Command goToScoreL3() {
         return run(() -> {
-            setPosition(WristConstants.Positions.SCORE_L3);
+            setPosition(WristConstantsMotor.Positions.SCORE_L3);
             currentPositionName = "Score L3";
         }).until(this::atPosition)
           .withName("Wrist To L3");
@@ -101,7 +101,7 @@ public class WristSubsystemOLD extends SubsystemBase {
 
     public Command goToScoreL4() {
         return run(() -> {
-            setPosition(WristConstants.Positions.SCORE_L4);
+            setPosition(WristConstantsMotor.Positions.SCORE_L4);
             currentPositionName = "Score L4";
         }).until(this::atPosition)
           .withName("Wrist To L4");
@@ -118,7 +118,7 @@ public class WristSubsystemOLD extends SubsystemBase {
     }
 
     public boolean atPosition() {
-        return Math.abs(wristMotor.getClosedLoopError().getValue()) < WristConstants.POSITION_TOLERANCE;
+        return Math.abs(wristMotor.getClosedLoopError().getValue()) < WristConstantsMotor.POSITION_TOLERANCE;
     }
 
     public void stop() {
