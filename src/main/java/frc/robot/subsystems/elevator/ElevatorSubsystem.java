@@ -196,22 +196,20 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // Log the current elevator position
-        Logger.recordOutput("Elevator/Position", getPosition());
+        // Position information
+        double currentPosition = getPosition();
+        Logger.recordOutput("Elevator/Position/Current", currentPosition);
+        Logger.recordOutput("Elevator/Position/Named/Base", ElevatorConstants.BASE_POSE);
+        Logger.recordOutput("Elevator/Position/Named/L1", ElevatorConstants.L1_POSE);
+        Logger.recordOutput("Elevator/Position/Named/L2", ElevatorConstants.L2_POSE);
+        Logger.recordOutput("Elevator/Position/Named/L3", ElevatorConstants.L3_POSE);
+        Logger.recordOutput("Elevator/Position/Named/L4", ElevatorConstants.L4_POSE);
 
-        // Log the elevator velocity
-        Logger.recordOutput("Elevator/Velocity", elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
-
-        // Log the applied motor voltage
-        Logger.recordOutput("Elevator/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
-
-        // Log the motor current draw
-        Logger.recordOutput("Elevator/MotorCurrent", elevatorLeader.getSupplyCurrent().getValueAsDouble());
-
-        Logger.recordOutput("Elevator/StatorCurrent", elevatorLeader.getStatorCurrent().getValueAsDouble());
-
-
-        // Log the target position for debugging
-        // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
+        // Motor telemetry
+        Logger.recordOutput("Elevator/Motor/Velocity", elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
+        Logger.recordOutput("Elevator/Motor/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Elevator/Motor/SupplyCurrent", elevatorLeader.getSupplyCurrent().getValueAsDouble());
+        Logger.recordOutput("Elevator/Motor/StatorCurrent", elevatorLeader.getStatorCurrent().getValueAsDouble());
     }
+    
 }

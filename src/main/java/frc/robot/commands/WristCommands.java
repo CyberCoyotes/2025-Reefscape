@@ -40,7 +40,7 @@ public final class WristCommands {
         // private Positions() {}
 
         public static Command setLoadCoral(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.LOAD_CHORAL).withName("LoadCoral");
+            return setPosition(wrist, WristConstants.Positions.LOAD_CORAL).withName("LoadCoral");
         }
         
         public static Command setElevatorSafe(WristSubsystem wrist) {

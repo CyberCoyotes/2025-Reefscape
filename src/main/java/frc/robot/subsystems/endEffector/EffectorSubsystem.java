@@ -33,5 +33,8 @@ public class EffectorSubsystem extends SubsystemBase {
     public void periodic() {
         // Debugging purposes
         // System.out.println("Effector State: " + currentState + " | Power: " + currentState.dutyCycle);
+        
+
+
     }
 }

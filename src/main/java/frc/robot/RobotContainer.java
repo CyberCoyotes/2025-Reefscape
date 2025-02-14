@@ -31,7 +31,6 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristMotorSubsystem;
-import frc.robot.commands.ElevatorAdvancedCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
@@ -45,7 +44,6 @@ public class RobotContainer {
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands;
-    private final ElevatorAdvancedCommands elevatorAdvancedCommands;
 
 // TODO Slomo
     private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -65,6 +63,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
+
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -74,13 +74,11 @@ public class RobotContainer {
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
-        // elevatorCommands = new ElevatorCommands(elevator, wrist);  // Initialize the ElevatorCommands object
+        elevatorCommands = new ElevatorCommands(elevator, wrist);
         
         // TODO Toggle - True is safety mode, false is performance mode
-        elevator.setSafetyMode(true);
-        elevatorCommands.setTestMode(true);  // Remove or set to false for competition
+        elevatorCommands.setTestMode(true);  // Set to FALSE for competition
 
-    
         configureBindings();
         configureAutoRoutines();
         // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
@@ -134,14 +132,14 @@ public class RobotContainer {
 
         // CORAL
         driverController.leftBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_coral));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CORAL));
         driverController.rightBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_coral));
+            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
         
         // ALGAE a.k.a reverse CORAL
-        driverController.leftBumper().and(driverController.a())
+        operatorController.leftBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
-        driverController.rightBumper().and(driverController.a())
+        operatorController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
 
@@ -169,15 +167,21 @@ public class RobotContainer {
         driverController.x().onTrue(elevatorCommands.moveToL3());
 
         // driverController.povUp().onTrue(WristCommands.setLoadCoral(wrist));
-        // driverController.povDown().onTrue(WristCommands.setElevatorSafe(wrist));
+        operatorController.povLeft().onTrue(WristCommands.setElevatorSafe(wrist));
         // driverController.povLeft().onTrue(WristCommands.setL2(wrist));
         // driverController.povRight().onTrue(WristCommands.setL4(wrist));
 
         // driverController.povUp().whileTrue(ElevatorCommands.manualUp(elevator));
         // driverController.povDown().whileTrue(ElevatorCommands.manualDown(elevator));
+        // Bind manual elevator control to the left stick Y-axis
+        elevator.setDefaultCommand(
+            elevatorCommands.createManualCommand(
+                () -> operatorController.getLeftY()
+            )
+        );
 
-        driverController.povRight().whileTrue(WristCommands.manualUp(wristMotor));
-        driverController.povLeft().whileTrue(WristCommands.manualDown(wristMotor));
+        // driverController.povRight().whileTrue(WristCommands.manualUp(wristMotor));
+        // driverController.povLeft().whileTrue(WristCommands.manualDown(wristMotor));
 
 
         drivetrain.registerTelemetry(logger::telemeterize);

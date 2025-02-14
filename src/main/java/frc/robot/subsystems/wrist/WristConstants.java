@@ -54,11 +54,13 @@ public final class WristConstants {
 
     // Named positions
     public static final class Positions {
-        public static final double LOAD_CHORAL = 0.0;
+        
+        public static final double LOAD_CORAL = 0.0;
         public static final double L1 = 0.10;
         public static final double L2 = 0.20;
         public static final double L3 = 0.30;
         public static final double L4 = 0.40;
         public static final double ELEVATOR_SAFE = 0.26;
+
     }
 }

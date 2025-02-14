@@ -1,5 +1,12 @@
 package frc.robot.commands;
 
+import java.time.Period;
+import java.util.function.DoubleSupplier;
+
+import org.littletonrobotics.junction.Logger;
+
+import com.revrobotics.spark.SparkLowLevel.PeriodicFrame;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -9,15 +16,50 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
+/**
+ * Factory class for creating elevator commands.
+ * This class centralizes all elevator command creation to make it easier to modify and maintain.
+ */
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
     private final WristSubsystem wrist;
-
+    private boolean isTestMode = false;
 
     public ElevatorCommands(ElevatorSubsystem elevator, WristSubsystem wrist) {
         this.elevator = elevator;
         this.wrist = wrist;
+    }
 
+    /**
+     * Sets whether the elevator should operate in test mode (reduced speeds)
+     * @param enabled True for test mode, false for performance mode
+     */
+    public void setTestMode(boolean enabled) {
+        isTestMode = enabled;
+        elevator.setSafetyMode(enabled); // Update subsystem safety mode to match
+    }
+
+    /**
+     * Creates a manual control command with test/performance speed limits
+     * @param speedSupplier Supplier for the speed control input (-1 to 1)
+     * @return The manual control command
+     */
+    public Command createManualCommand(DoubleSupplier speedSupplier) {
+        double maxSpeed = isTestMode ? 
+            ElevatorConstants.MANUAL_MAX_SPEED_TESTING : 
+            ElevatorConstants.MANUAL_MAX_SPEED_PERFORMANCE;
+            
+        return new ManualElevatorCommand(elevator, speedSupplier, maxSpeed);
+    }
+
+    /**
+     * Creates a manual control command with a custom max speed
+     * @param speedSupplier Supplier for the speed control input (-1 to 1)
+     * @param maxSpeed Maximum speed limit (0 to 1)
+     * @return The manual control command
+     */
+    public Command createManualCommand(DoubleSupplier speedSupplier, double maxSpeed) {
+        return new ManualElevatorCommand(elevator, speedSupplier, maxSpeed);
     }
 
      /**
@@ -26,14 +68,16 @@ public class ElevatorCommands {
      */
     private boolean isWristSafe() {
         double wristPos = wrist.getPosition();
-        // Check if wrist is within safe zone around ELEVATOR_SAFE position
-        boolean isSafe = Math.abs(wristPos - WristConstants.Positions.ELEVATOR_SAFE) < WristConstants.WRIST_POSE_TOLERANCE;
+
+        // Wrist is safe if current wrist position is equal or great thean ELEVATOR_SAFE
+        boolean isSafe = Math.abs(wristPos) > WristConstants.Positions.ELEVATOR_SAFE;
+        
         
         if (!isSafe) {
-            // Send warning to driver station
-            DriverStation.reportWarning("UNSAFE ELEVATOR MOVE: Wrist must be in safe position", false);
+            DriverStation.reportWarning("WRIST IS UNSAFE", false);
         }
         return isSafe;
+
     }
 
     /**
@@ -43,18 +87,11 @@ public class ElevatorCommands {
      * @return Command to run
      */
     private Command createMoveToPositionRaw(double targetPosition) {
-        // Does not check wrist safety
         return new FunctionalCommand(
-                // Initialize - Nothing to initialize
-                () -> {
-                },
-                // Execute - Set the target position
+                () -> {},
                 () -> elevator.setPosition(targetPosition),
-                // End - Stop the elevator
-                interrupted -> {}, //elevator.setManualOutput(0),
-                // IsFinished - Check if we've reached the target
+                interrupted -> {},
                 () -> elevator.isAtPosition(targetPosition),
-                // Requires - This subsystem
                 elevator)
                 .withName("MoveElevatorTo" + targetPosition);
     }
@@ -66,49 +103,23 @@ public class ElevatorCommands {
         return createMoveToPositionRaw(ElevatorConstants.BASE_POSE)
                 .withName("MoveElevatorToBase");
     }
-/*
- * 
- */
-    /**
-     * Creates a command to move the elevator to middle position
-     */
+
     public Command moveToL1Raw() {
-        /*
-        * If wrist is in the way, move wrist to safe position
-        */
         return createMoveToPositionRaw(ElevatorConstants.L1_POSE)
                 .withName("MoveElevatorToL1");
     }
 
-    /**
-     * Creates a command to move the elevator to high position
-     */
     public Command moveToL2Raw() {
-        /*
-        * If wrist is in the way, move wrist to safe position
-        */
         return createMoveToPositionRaw(ElevatorConstants.L2_POSE)
                 .withName("MoveElevatorToL2");
     }
 
-    /**
-     * Creates a command to move the elevator to high position
-     */
     public Command moveToL3Raw() {
-        /* 
-        * If wrist is in the way, move wrist to safe position
-        */
         return createMoveToPositionRaw(ElevatorConstants.L3_POSE)
                 .withName("MoveElevatorToL3");
     }
 
-    /**
-     * Creates a command to move the elevator to high position
-     */
     public Command moveToL4Raw() {
-        /*
-        * If wrist is in the way, move wrist to safe position
-        */
         return createMoveToPositionRaw(ElevatorConstants.L4_POSE)
                 .withName("MoveElevatorToL4");
     }
@@ -118,18 +129,12 @@ public class ElevatorCommands {
      * 
      * @param percentSupplier A supplier that returns the percent output (-1 to 1)
      */
-    public Command manualControl(java.util.function.DoubleSupplier percentSupplier) {
+    public Command manualControl(DoubleSupplier percentSupplier) {
         return new FunctionalCommand(
-                // Initialize - Nothing to initialize
-                () -> {
-                },
-                // Execute - Set the manual output
+                () -> {},
                 () -> elevator.setManualOutput(percentSupplier.getAsDouble()),
-                // End - Stop the elevator
                 interrupted -> elevator.setManualOutput(0),
-                // IsFinished - Never finish (run until interrupted)
                 () -> false,
-                // Requires - This subsystem
                 elevator)
                 .withName("ManualElevatorControl");
     }
@@ -139,73 +144,53 @@ public class ElevatorCommands {
      *************************************************************************/
     private Command createMoveToPosition(double targetPosition) {
         return Commands.sequence(
-            // First check if wrist is safe
             Commands.either(
-                // If wrist is safe, proceed with elevator movement
                 createMoveToPositionRaw(targetPosition),
-                
-                // If wrist is unsafe, do nothing but log warning
                 Commands.none(),
-                
-                // The condition to check
                 this::isWristSafe
             )
         ).withName("SafeMoveElevatorTo" + targetPosition);
     }
 
-    /**
-     * Creates a command to safely move the elevator to ground position
-     */
     public Command moveToBase() {
         return createMoveToPosition(ElevatorConstants.BASE_POSE)
                 .withName("SafeMoveElevatorToBase");
     }
 
-    /**
-     * Creates a command to safely move the elevator to L1 position
-     */
     public Command moveToL1() {
         return createMoveToPosition(ElevatorConstants.L1_POSE)
                 .withName("SafeMoveElevatorToL1");
     }
 
-    /**
-     * Creates a command to safely move the elevator to L2 position
-     */
     public Command moveToL2() {
         return createMoveToPosition(ElevatorConstants.L2_POSE)
                 .withName("SafeMoveElevatorToL2");
     }
 
-    /**
-     * Creates a command to safely move the elevator to L3 position
-     */
     public Command moveToL3() {
         return createMoveToPosition(ElevatorConstants.L3_POSE)
                 .withName("SafeMoveElevatorToL3");
     }
 
-    /**
-     * Creates a command to safely move the elevator to L4 position
-     */
     public Command moveToL4() {
         return createMoveToPosition(ElevatorConstants.L4_POSE)
                 .withName("SafeMoveElevatorToL4");
     }
 
-        /**
+    /**
      * Creates a command that moves wrist to safe position then moves elevator
      */
     public Command moveWristMoveElevator(double targetPosition) {
         return Commands.sequence(
-            // First move wrist to safe position
             WristCommands.setElevatorSafe(wrist),
-            
-            // Wait until wrist is in position
             Commands.waitUntil(() -> wrist.atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE)),
-            
-            // Then move elevator
             createMoveToPositionRaw(targetPosition)
         ).withName("MoveElevatorWithWristSafety" + targetPosition);
     }
+
+    public void periodic() {
+        // Log the wrist safety check
+        Logger.recordOutput("Elevator/Commands/IsWristSafe", isWristSafe());
+    }
+
 }
