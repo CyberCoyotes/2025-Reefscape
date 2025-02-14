@@ -45,4 +45,6 @@ public final class ElevatorConstants {
     public static final double DEADBAND = 0.02;
     public static final double POSITION_TOLERANCE = 0.02;
     public static final double POSITION_HOME_TOLERANCE = 0.00;
+    public static final double MANUAL_MAX_SPEED_TESTING = 0.25; // TODO Test and figure out the actual speed
+    public static final double MANUAL_MAX_SPEED_PERFORMANCE = 0.50; // TODO Test and figure out the actual speed
 }

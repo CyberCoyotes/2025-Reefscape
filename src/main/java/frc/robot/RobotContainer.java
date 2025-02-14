@@ -31,6 +31,7 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristMotorSubsystem;
+import frc.robot.commands.ElevatorAdvancedCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
@@ -43,7 +44,8 @@ public class RobotContainer {
     private final WristMotorSubsystem wristMotor = new WristMotorSubsystem();
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands;  // Add this field
+    private final ElevatorCommands elevatorCommands;
+    private final ElevatorAdvancedCommands elevatorAdvancedCommands;
 
 // TODO Slomo
     private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -72,10 +74,12 @@ public class RobotContainer {
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
-        elevatorCommands = new ElevatorCommands(elevator, wrist);  // Initialize the ElevatorCommands object
+        // elevatorCommands = new ElevatorCommands(elevator, wrist);  // Initialize the ElevatorCommands object
         
         // TODO Toggle - True is safety mode, false is performance mode
         elevator.setSafetyMode(true);
+        elevatorCommands.setTestMode(true);  // Remove or set to false for competition
+
     
         configureBindings();
         configureAutoRoutines();
@@ -169,8 +173,8 @@ public class RobotContainer {
         // driverController.povLeft().onTrue(WristCommands.setL2(wrist));
         // driverController.povRight().onTrue(WristCommands.setL4(wrist));
 
-        driverController.povUp().whileTrue(ElevatorCommands.manualUp(elevator));
-        driverController.povDown().whileTrue(ElevatorCommands.manualDown(elevator));
+        // driverController.povUp().whileTrue(ElevatorCommands.manualUp(elevator));
+        // driverController.povDown().whileTrue(ElevatorCommands.manualDown(elevator));
 
         driverController.povRight().whileTrue(WristCommands.manualUp(wristMotor));
         driverController.povLeft().whileTrue(WristCommands.manualDown(wristMotor));
