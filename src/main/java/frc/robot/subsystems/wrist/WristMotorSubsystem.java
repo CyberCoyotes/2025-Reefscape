@@ -20,7 +20,7 @@ public class WristMotorSubsystem extends SubsystemBase {
     private double targetPosition = 0.0;
 
     public WristMotorSubsystem() {
-        wristMotor = new TalonFX(WristMotorConstants.MOTOR_CAN_ID, "rio");
+        wristMotor = new TalonFX(WristConstants.WRIST_ID, WristConstants.CANBUS);
         positionRequest = new PositionVoltage(0).withSlot(0);
         
         configureMotor();
@@ -31,9 +31,9 @@ public class WristMotorSubsystem extends SubsystemBase {
         
         // Current limits
         var currentLimits = motorConfig.CurrentLimits;
-        currentLimits.StatorCurrentLimit = WristMotorConstants.STATOR_CURRENT_LIMIT;
+        currentLimits.StatorCurrentLimit = WristConstants.STATOR_CURRENT_LIMIT;
         currentLimits.StatorCurrentLimitEnable = true;
-        currentLimits.SupplyCurrentLimit = WristMotorConstants.SUPPLY_CURRENT_LIMIT;
+        currentLimits.SupplyCurrentLimit = WristConstants.SUPPLY_CURRENT_LIMIT;
         currentLimits.SupplyCurrentLimitEnable = true;
 
         // Motor output configuration
@@ -43,25 +43,25 @@ public class WristMotorSubsystem extends SubsystemBase {
 
         // Feedback configuration
         var feedback = motorConfig.Feedback;
-        feedback.SensorToMechanismRatio = WristMotorConstants.GEAR_RATIO * WristMotorConstants.ENCODER_TO_MECHANISM_RATIO;
+        feedback.SensorToMechanismRatio = WristConstants.GEAR_RATIO * WristConstants.ENCODER_TO_MECHANISM_RATIO;
         
         // Soft limits
         var softLimits = motorConfig.SoftwareLimitSwitch;
         softLimits.ForwardSoftLimitEnable = true;
-        softLimits.ForwardSoftLimitThreshold = WristMotorConstants.MAX_POSITION;
+        softLimits.ForwardSoftLimitThreshold = WristConstants.MAX_POSITION;
         softLimits.ReverseSoftLimitEnable = true;
-        softLimits.ReverseSoftLimitThreshold = WristMotorConstants.MIN_POSITION;
+        softLimits.ReverseSoftLimitThreshold = WristConstants.MIN_POSITION;
 
         // PID configuration
         var slot0 = motorConfig.Slot0;
         slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        slot0.kP = WristMotorConstants.kP;
-        slot0.kI = WristMotorConstants.kI;
-        slot0.kD = WristMotorConstants.kD;
-        slot0.kG = WristMotorConstants.kG;
-        slot0.kV = WristMotorConstants.kV;
-        slot0.kS = WristMotorConstants.kS;
-        slot0.kA = WristMotorConstants.kA;
+        slot0.kP = WristConstants.Gains.kP;
+        slot0.kI = WristConstants.Gains.kI;
+        slot0.kD = WristConstants.Gains.kD;
+        slot0.kG = WristConstants.Gains.kG;
+        slot0.kV = WristConstants.Gains.kV;
+        slot0.kS = WristConstants.Gains.kS;
+        slot0.kA = WristConstants.Gains.kA;
 
         wristMotor.getConfigurator().apply(motorConfig);
     }
@@ -69,7 +69,7 @@ public class WristMotorSubsystem extends SubsystemBase {
     // Command factory methods
     public Command goToLoadingPosition() {
         return run(() -> {
-            setPosition(WristMotorConstants.LOADING);
+            setPosition(WristConstants.Positions.LOAD_CORAL);
             currentPositionName = "Loading";
         }).until(this::atPosition)
           .withName("Wrist To Loading");
@@ -77,7 +77,7 @@ public class WristMotorSubsystem extends SubsystemBase {
 
     public Command goToScoreL1() {
         return run(() -> {
-            setPosition(WristMotorConstants.SCORE_L1);
+            setPosition(WristConstants.Positions.L1);
             currentPositionName = "Score L1";
         }).until(this::atPosition)
           .withName("Wrist To L1");
@@ -85,7 +85,7 @@ public class WristMotorSubsystem extends SubsystemBase {
 
     public Command goToScoreL2() {
         return run(() -> {
-            setPosition(WristMotorConstants.SCORE_L2);
+            setPosition(WristConstants.Positions.L2);
             currentPositionName = "Score L2";
         }).until(this::atPosition)
           .withName("Wrist To L2");
@@ -93,7 +93,7 @@ public class WristMotorSubsystem extends SubsystemBase {
 
     public Command goToScoreL3() {
         return run(() -> {
-            setPosition(WristMotorConstants.SCORE_L3);
+            setPosition(WristConstants.Positions.L3);
             currentPositionName = "Score L3";
         }).until(this::atPosition)
           .withName("Wrist To L3");
@@ -101,7 +101,7 @@ public class WristMotorSubsystem extends SubsystemBase {
 
     public Command goToScoreL4() {
         return run(() -> {
-            setPosition(WristMotorConstants.SCORE_L4);
+            setPosition(WristConstants.Positions.L4);
             currentPositionName = "Score L4";
         }).until(this::atPosition)
           .withName("Wrist To L4");
@@ -118,7 +118,7 @@ public class WristMotorSubsystem extends SubsystemBase {
     }
 
     public boolean atPosition() {
-        return Math.abs(wristMotor.getClosedLoopError().getValue()) < WristMotorConstants.POSITION_TOLERANCE;
+        return Math.abs(wristMotor.getClosedLoopError().getValue()) < WristConstants.POSE_TOLERANCE;
     }
 
     public void stop() {

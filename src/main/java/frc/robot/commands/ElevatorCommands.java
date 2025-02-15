@@ -5,8 +5,6 @@ import java.util.function.DoubleSupplier;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.revrobotics.spark.SparkLowLevel.PeriodicFrame;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -39,29 +37,49 @@ public class ElevatorCommands {
         elevator.setSafetyMode(enabled); // Update subsystem safety mode to match
     }
 
-    /**
-     * Creates a manual control command with test/performance speed limits
-     * @param speedSupplier Supplier for the speed control input (-1 to 1)
-     * @return The manual control command
+        /**
+     * Creates a command to increment elevator up
      */
-    public Command createManualCommand(DoubleSupplier speedSupplier) {
-        double maxSpeed = isTestMode ? 
-            ElevatorConstants.MANUAL_MAX_SPEED_TESTING : 
-            ElevatorConstants.MANUAL_MAX_SPEED_PERFORMANCE;
-            
-        return new ManualElevatorCommand(elevator, speedSupplier, maxSpeed);
+    public Command incrementUp() {
+        return elevator.runOnce(() -> 
+            elevator.incrementPosition(ElevatorConstants.Incremental.INCREMENT_STEP)
+        ).withName("ElevatorIncrement(up)");
     }
 
     /**
-     * Creates a manual control command with a custom max speed
-     * @param speedSupplier Supplier for the speed control input (-1 to 1)
-     * @param maxSpeed Maximum speed limit (0 to 1)
-     * @return The manual control command
+     * Creates a command to increment elevator down
      */
-    public Command createManualCommand(DoubleSupplier speedSupplier, double maxSpeed) {
-        return new ManualElevatorCommand(elevator, speedSupplier, maxSpeed);
+    public Command incrementDown() {
+        return elevator.runOnce(() -> 
+            elevator.incrementPosition(-ElevatorConstants.Incremental.INCREMENT_STEP)
+        ).withName("ElevatorIncrement(down)");
     }
 
+  /**
+ * Creates a command to increment elevator up
+ */
+public Command incrementUpSafely() {
+    return Commands.either(
+        elevator.runOnce(() -> 
+            elevator.incrementPosition(ElevatorConstants.Incremental.INCREMENT_STEP)
+        ),
+        Commands.none(),
+        this::isWristSafe
+    ).withName("ElevatorIncrement(up)");
+}
+
+/**
+ * Creates a command to increment elevator down
+ */
+public Command incrementDownSafely() {
+    return Commands.either(
+        elevator.runOnce(() -> 
+            elevator.incrementPosition(-ElevatorConstants.Incremental.INCREMENT_STEP)
+        ),
+        Commands.none(), 
+        this::isWristSafe
+    ).withName("ElevatorIncrement(down)");
+}
      /**
      * Checks if the wrist is in a safe position for elevator movement
      * @return true if safe, false if unsafe
@@ -70,13 +88,13 @@ public class ElevatorCommands {
         double wristPos = wrist.getPosition();
 
         // Wrist is safe if current wrist position is equal or great thean ELEVATOR_SAFE
-        boolean isSafe = Math.abs(wristPos) > WristConstants.Positions.ELEVATOR_SAFE;
+        boolean isSafe = Math.abs(wristPos) >= WristConstants.Positions.SAFE;
         
         
         if (!isSafe) {
             DriverStation.reportWarning("WRIST IS UNSAFE", false);
         }
-        return isSafe;
+        return isSafe; // Can test with true/false hardcoded
 
     }
 
@@ -183,7 +201,7 @@ public class ElevatorCommands {
     public Command moveWristMoveElevator(double targetPosition) {
         return Commands.sequence(
             WristCommands.setElevatorSafe(wrist),
-            Commands.waitUntil(() -> wrist.atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE)),
+            Commands.waitUntil(() -> wrist.atTargetPosition(WristConstants.POSE_TOLERANCE)),
             createMoveToPositionRaw(targetPosition)
         ).withName("MoveElevatorWithWristSafety" + targetPosition);
     }

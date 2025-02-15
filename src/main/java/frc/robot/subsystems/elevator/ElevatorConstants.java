@@ -1,8 +1,12 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot2Configs;
+
 public final class ElevatorConstants {
     public static final int ELEVATOR_LEAD_ID = 24; // Change to your CAN ID
     public static final int ELEVATOR_FOLLOW_ID = 23; // Change to your CAN ID
+    public static final String CANBUS = "rio"; //
     public static final double GEAR_RATIO = 9.0; // Gear ratio (9:1)
 
     // Motion Magic
@@ -33,7 +37,32 @@ public final class ElevatorConstants {
     // Soft Limits (in rotations)
     public static final double MAX_HEIGHT = 1;
     public static final double MIN_HEIGHT = 0;
-    
+
+
+    // Gains for position control
+    public static final Slot2Configs positionGains = new Slot2Configs()
+        .withKP(25.0) // Tune this for your elevator
+        .withKI(0.0)
+        .withKD(0.5)
+        .withKS(0.25)  // Voltage to overcome friction
+        .withKG(0.7);  // Voltage to overcome gravity (tune this!)
+
+    public static final class Incremental {
+         // Position change per D-pad press (in rotations)
+         public static final double INCREMENT_STEP = 0.05; // Start conservative, tune based on testing
+        
+         // Speed limits for manual control
+         public static final double MANUAL_UP_SPEED = 0.25;    // 25% speed up
+         public static final double MANUAL_DOWN_SPEED = -0.15;  // 15% speed down
+         
+         // Optional: Different increment sizes for different height ranges
+         public static final double FINE_INCREMENT = 0.025;    // Very small adjustments
+         public static final double COARSE_INCREMENT = 0.10;   // Larger adjustments
+         
+         // Rate limiting (optional, prevents too rapid position changes)
+         public static final double MAX_POSITION_RATE = 0.5;   // Maximum position change per second
+    }
+
     // Preset Positions (in rotations)
     public static final double BASE_POSE =  0.00;
     public static final double L1_POSE =    0.10;

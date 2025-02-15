@@ -20,7 +20,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WristSubsystem extends SubsystemBase {
@@ -45,8 +44,8 @@ public class WristSubsystem extends SubsystemBase {
     private final StatusSignal<Boolean> stickyRemoteSensorInvalid;
 
     public WristSubsystem() {
-        motor = new TalonFX(WristConstants.WRIST_ID, WristConstants.canBus);
-        encoder = new CANcoder(WristConstants.WRIST_ENCODER_ID, WristConstants.canBus);
+        motor = new TalonFX(WristConstants.WRIST_ID, WristConstants.CANBUS);
+        encoder = new CANcoder(WristConstants.WRIST_ENCODER_ID, WristConstants.CANBUS);
 
         // Configure CANcoder
         var encoderConfig = new CANcoderConfiguration();
@@ -121,7 +120,6 @@ public class WristSubsystem extends SubsystemBase {
             if (remoteSensorInvalid.getValue()) {
                 System.out.println("Warning: Remote sensor configuration failed. Check CANcoder ID and bus.");
                 System.out.println("Expected CANcoder ID: " + encoder.getDeviceID());
-                System.out.println("Current bus: " + WristConstants.canBus);
             }
         } catch (InterruptedException e) {
             System.out.println("Configuration validation interrupted");
@@ -159,10 +157,10 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("Wrist/Position", getPosition());
         Logger.recordOutput("Wrist/Velocity", getVelocity());
         Logger.recordOutput("Wrist/Target", motionMagicRequest.Position);
-        Logger.recordOutput("Wrist/AtTarget", atTargetPosition(WristConstants.WRIST_POSE_TOLERANCE));
+        Logger.recordOutput("Wrist/AtTarget", atTargetPosition(WristConstants.POSE_TOLERANCE));
         // SmartDashboard.putBoolean("Wrist/HasFault", anyFault);
         // Log current position and named positions
-        Logger.recordOutput("Wrist/Position/Named/ElevatorSafe", WristConstants.Positions.ELEVATOR_SAFE);
+        Logger.recordOutput("Wrist/Position/Named/ElevatorSafe", WristConstants.Positions.SAFE);
         Logger.recordOutput("Wrist/Position/Named/LoadCoral", WristConstants.Positions.LOAD_CORAL);
         Logger.recordOutput("Wrist/Position/Named/L2", WristConstants.Positions.L2);
         Logger.recordOutput("Wrist/Position/Named/L4", WristConstants.Positions.L4);

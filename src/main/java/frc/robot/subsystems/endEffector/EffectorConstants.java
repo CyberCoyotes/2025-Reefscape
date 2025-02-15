@@ -4,7 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class EffectorConfigs {
+public class EffectorConstants {
 
     // CAN settings
     public static final int EFFECTOR_MOTOR_ID = 21; // Adjust ID as needed

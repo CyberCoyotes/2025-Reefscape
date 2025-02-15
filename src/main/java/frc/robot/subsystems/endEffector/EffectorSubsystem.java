@@ -12,12 +12,12 @@ public class EffectorSubsystem extends SubsystemBase {
     private EffectorState currentState = EffectorState.STOP;
 
     public EffectorSubsystem() {
-        motor = new TalonFX(EffectorConfigs.EFFECTOR_MOTOR_ID, EffectorConfigs.CANBUS_NAME);
+        motor = new TalonFX(EffectorConstants.EFFECTOR_MOTOR_ID, EffectorConstants.CANBUS_NAME);
         configureMotor();
     }
 
     private void configureMotor() {
-        motor.getConfigurator().apply(EffectorConfigs.EFFECTOR_CONFIG);
+        motor.getConfigurator().apply(EffectorConstants.EFFECTOR_CONFIG);
     }
 
     public void setState(EffectorState state) {

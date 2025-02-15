@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristMotorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants.Positions;
 
 /**
@@ -44,7 +45,7 @@ public final class WristCommands {
         }
         
         public static Command setElevatorSafe(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.ELEVATOR_SAFE).withName("WristSafeForElevator");
+            return setPosition(wrist, WristConstants.Positions.SAFE).withName("WristSafeForElevator");
         }
 
         public static Command setL1(WristSubsystem wrist) {
