@@ -153,7 +153,7 @@ public class WristSubsystem extends SubsystemBase {
      */
     public boolean isSafeForElevator() {
         double currentPosition = getPosition();
-        boolean isSafe = currentPosition >= WristConstants.Positions.SAFE;
+        boolean isSafe = true; //currentPosition >= WristConstants.Positions.SAFE; // FIXME
         
         if (!isSafe) {
             DriverStation.reportWarning("Wrist position unsafe for elevator movement", false);

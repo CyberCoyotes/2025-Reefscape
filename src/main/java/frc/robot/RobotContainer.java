@@ -8,6 +8,7 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.revrobotics.spark.SparkLowLevel.PeriodicFrame;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
@@ -74,7 +75,7 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
         elevatorCommands = new ElevatorCommands(elevator, wrist);
-        wristCommands = new WristCommands(wrist);
+        wristCommands = new WristCommands();
 
         configureBindings();
         configureAutoRoutines();
@@ -146,13 +147,15 @@ public class RobotContainer {
         operatorController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
-        // operatorController.a().whileTrue(climber.climbUpCommand());
-        // operatorController.b().whileTrue(climber.climbDownCommand());
-        operatorController.x().whileTrue(climber.climbUpCommand());
-        operatorController.y().whileTrue(climber.climbDownCommand());
+        operatorController.a().whileTrue(climber.climbUpCommand());
+        operatorController.b().whileTrue(climber.climbDownCommand());
+        // operatorController.x().whileTrue(climber.climbUpCommand());
+        // operatorController.y().whileTrue(climber.climbDownCommand());
 
-        operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
+        operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
+        operatorController.povLeft().whileTrue(wristCommands.setSafePose(wrist)); // Testing
+        operatorController.povRight().whileTrue(wristCommands.setSafePose(wrist)); // Testing
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));
  

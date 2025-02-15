@@ -1,15 +1,19 @@
 package frc.robot.subsystems.climb;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Phoenix 6 imports
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 public class ClimbVoltageSubsystem extends SubsystemBase {
-    private static final int CLIMB_ID = 50;
+    private static final int CLIMB_ID = 25;
     private static final CANBus kCANBus = new CANBus("rio");
 
     // Motor & control request object
@@ -17,7 +21,7 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
     private final VoltageOut voltageRequest;
 
     // voltage variable
-    public final double CLIMB_VOLTAGE = 3; // This should be about 1/4 of the max voltage
+    public final double CLIMB_VOLTAGE = 9; // This should be about 1/4 of the max voltage
 
 
     public ClimbVoltageSubsystem() {
@@ -36,14 +40,14 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
      * Run the motor "up" at +6 V, for example.
      */
     public void climbUp() {
-        climbMotor.setControl(voltageRequest.withOutput(CLIMB_VOLTAGE));  // 6 V out of max ~12 V
+        climbMotor.setControl(voltageRequest.withOutput(-CLIMB_VOLTAGE));  // 6 V out of max ~12 V
     }
 
     /**
      * Run the motor "down" at -6 V, for example.
      */
     public void climbDown() {
-        climbMotor.setControl(voltageRequest.withOutput(-CLIMB_VOLTAGE));
+        climbMotor.setControl(voltageRequest.withOutput(CLIMB_VOLTAGE));
     }
 
     /**
@@ -100,6 +104,8 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
     
     @Override
     public void periodic() {
-        // If you need to read signals or log data, do that here.
+        // Send position to Logger
+        Logger.recordOutput("climbMotorPosition", climbMotor.getPosition().getValue());
+
     }
 }
