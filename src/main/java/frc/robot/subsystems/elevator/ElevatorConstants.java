@@ -2,6 +2,7 @@ package frc.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
 
 public final class ElevatorConstants {
@@ -15,6 +16,16 @@ public final class ElevatorConstants {
     public static final double ACCELERATION = 160; // Rotations per second^2
     public static final double JERK = 500; // Rotations per second^3
     
+    // PID Values for competition bot
+    // Mimics what's below. If these work then some infor can be moved here from the subsystem
+    public static final Slot0Configs performanceGains = new Slot0Configs()
+        .withKP(4.0)
+        .withKI(0.01)
+        .withKD(0.10)
+        .withKS(0.50)
+        .withKG(0.12)
+        .withKG(0.50);
+
     // PID Values
     public static final double kP = 4.0;
     public static final double kI = 0.01;
@@ -23,6 +34,15 @@ public final class ElevatorConstants {
     public static final double kV = 0.12;
     public static final double kG = 0.50;
 
+    // Try applying these gains to the Motion Magic Slot 1 with subsystem/command instead of "safety" mode
+    public static final Slot1Configs motionMagicGains = new Slot1Configs()
+        .withKP(1.0)
+        .withKI(0.01)
+        .withKD(0.10)
+        .withKS(0.25)
+        .withKG(0.12)
+        .withKG(0.25);
+    
     // Safety PID Values for Motion Magic Slot 1
     public static final double SAFETY_CRUISE_VELOCITY = 80; // Rotations per second
     public static final double SAFETY_ACCELERATION = 80; // Rotations per second^2
@@ -39,14 +59,15 @@ public final class ElevatorConstants {
     public static final double MAX_HEIGHT = 1;
     public static final double MIN_HEIGHT = 0;
 
-
+    
     // Gains for position control
-    public static final Slot2Configs positionGains = new Slot2Configs()
-        .withKP(25.0) // Tune this for your elevator
-        .withKI(0.0)
-        .withKD(0.5)
-        .withKS(0.25)  // Voltage to overcome friction
-        .withKG(0.7);  // Voltage to overcome gravity (tune this!)
+    public static final Slot2Configs incrementalGains = new Slot2Configs()
+        .withKP(1.0) // 25?
+        .withKI(0.01)
+        .withKD(0.10) // .5?
+        .withKS(0.25)
+        .withKG(0.12) // .7?
+        ;
 
     public static final class Incremental {
          // Position change per D-pad press (in rotations)
