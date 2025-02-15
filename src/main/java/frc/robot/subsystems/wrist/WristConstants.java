@@ -44,8 +44,8 @@ public final class WristConstants {
     public static final class Positions {
         
         public static final double LOAD_CORAL = 0.0;
-        public static final double L1 = 0.10;
-        public static final double L2 = 0.20;
+        public static final double L1 = 0.05;
+        public static final double L2 = 0.10; // 0.20
         public static final double L3 = 0.30;
         public static final double L4 = 0.40;
         public static final double SAFE = 0.26;
@@ -54,7 +54,7 @@ public final class WristConstants {
 
     public static final class EncoderPose {
         public static final double LOAD_CORAL = 0.0;
-        public static final double L1 = 0.10;
+        public static final double L1 = 0.05;
         public static final double L2 = 0.20;
         public static final double L3 = 0.30;
         public static final double L4 = 0.40;

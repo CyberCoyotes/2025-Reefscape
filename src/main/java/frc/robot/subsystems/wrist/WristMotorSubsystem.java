@@ -107,6 +107,15 @@ public class WristMotorSubsystem extends SubsystemBase {
           .withName("Wrist To L4");
     }
 
+    
+    public Command goToSafe() {
+        return run(() -> {
+            setPosition(WristConstants.Positions.L4);
+            currentPositionName = "Score L4";
+        }).until(this::atPosition)
+          .withName("Wrist To L4");
+    }
+
     // Basic control methods
     public void setPosition(double targetPositionRotations) {
         targetPosition = targetPositionRotations;
