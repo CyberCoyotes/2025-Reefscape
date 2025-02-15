@@ -1,12 +1,13 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
 
 public final class ElevatorConstants {
     public static final int ELEVATOR_LEAD_ID = 24; // Change to your CAN ID
     public static final int ELEVATOR_FOLLOW_ID = 23; // Change to your CAN ID
-    public static final String CANBUS = "rio"; //
+    public static final CANBus kCANBus = new CANBus("rio"); //
     public static final double GEAR_RATIO = 9.0; // Gear ratio (9:1)
 
     // Motion Magic

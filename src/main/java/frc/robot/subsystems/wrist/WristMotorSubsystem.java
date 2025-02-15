@@ -20,7 +20,7 @@ public class WristMotorSubsystem extends SubsystemBase {
     private double targetPosition = 0.0;
 
     public WristMotorSubsystem() {
-        wristMotor = new TalonFX(WristConstants.WRIST_ID, WristConstants.CANBUS);
+        wristMotor = new TalonFX(WristConstants.WRIST_ID, WristConstants.kCANBus);
         positionRequest = new PositionVoltage(0).withSlot(0);
         
         configureMotor();

@@ -24,8 +24,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
         // Initialize motors
-        elevatorLeader = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID, ElevatorConstants.CANBUS);
-        elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID, ElevatorConstants.CANBUS);
+        elevatorLeader = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID, ElevatorConstants.kCANBus);
+        elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID, ElevatorConstants.kCANBus);
         configureMotors();
 
         // Initialize control requests

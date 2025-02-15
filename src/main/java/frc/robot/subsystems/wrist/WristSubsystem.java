@@ -44,8 +44,8 @@ public class WristSubsystem extends SubsystemBase {
     private final StatusSignal<Boolean> stickyRemoteSensorInvalid;
 
     public WristSubsystem() {
-        motor = new TalonFX(WristConstants.WRIST_ID, WristConstants.CANBUS);
-        encoder = new CANcoder(WristConstants.WRIST_ENCODER_ID, WristConstants.CANBUS);
+        motor = new TalonFX(WristConstants.WRIST_ID, WristConstants.kCANBus);
+        encoder = new CANcoder(WristConstants.WRIST_ENCODER_ID, WristConstants.kCANBus);
 
         // Configure CANcoder
         var encoderConfig = new CANcoderConfiguration();

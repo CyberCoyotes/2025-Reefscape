@@ -33,7 +33,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ClimbSubsystem extends SubsystemBase {
     // Constants
     public static final int CLIMB_ID = 50;
-    public static final String CANBUS = "rio";
+    public static final CANbus kCANBus = "rio";
     private static final double GEAR_RATIO = 125.0; // 125:1 reduction
     private static final double SPOOL_DIAMETER_METERS = 0.0508; // 2 inch spool diameter
     private static final double METERS_PER_ROTATION = Math.PI * SPOOL_DIAMETER_METERS / GEAR_RATIO;
@@ -54,7 +54,7 @@ public class ClimbSubsystem extends SubsystemBase {
 
     public ClimbSubsystem() {
         // Initialize motor with device ID and CAN bus name
-        climbMotor = new TalonFX(CLIMB_ID, CANBUS); // Adjust ID as needed
+        climbMotor = new TalonFX(CLIMB_ID, kCANBus); // Adjust ID as needed
 
         // Initialize control requests
         positionRequest = new PositionVoltage(0).withSlot(0);

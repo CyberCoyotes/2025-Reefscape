@@ -1,11 +1,13 @@
 // WristConstants.java
 package frc.robot.subsystems.wrist;
 
+import com.ctre.phoenix6.CANBus;
+
 public final class WristConstants {
     // CAN ID and hardware config
     public static final int WRIST_ID = 20;
     public static final int WRIST_ENCODER_ID = 14;
-    public static final String CANBUS = "rio";
+    public static final CANBus kCANBus = new CANBus("rio");
     public static final double GEAR_RATIO = 50.0; // TODO Determine the actual gear ratio; suggested 75.0
     public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; 
     

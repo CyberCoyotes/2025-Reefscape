@@ -5,11 +5,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // Phoenix 6 imports
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 public class ClimbVoltageSubsystem extends SubsystemBase {
     private static final int CLIMB_ID = 50;
-    private static final String CANBUS = "rio";
+    private static final CANBus kCANBus = new CANBus("rio");
 
     // Motor & control request object
     private final TalonFX climbMotor;
@@ -21,7 +22,7 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
 
     public ClimbVoltageSubsystem() {
         // Initialize motor
-        climbMotor = new TalonFX(CLIMB_ID, CANBUS);
+        climbMotor = new TalonFX(CLIMB_ID, kCANBus);
 
         // Create a Voltage control request initially set to 0 V
         voltageRequest = new VoltageOut(0);
