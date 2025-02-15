@@ -33,7 +33,7 @@ public class ElevatorCommands {
     /**
      * Creates a command to increment elevator up with fine control
      */
-    public Command incrementUp() {
+    public Command incrementUpRaw() {
         return elevator.runOnce(() -> elevator.incrementPosition(true))
             .withName("ElevatorIncrement(up)");
     }
@@ -41,7 +41,7 @@ public class ElevatorCommands {
     /**
      * Creates a command to increment elevator down with fine control
      */
-    public Command incrementDown() {
+    public Command incrementDownRaw() {
         return elevator.runOnce(() -> elevator.incrementPosition(false))
             .withName("ElevatorIncrement(down)");
     }
@@ -49,22 +49,22 @@ public class ElevatorCommands {
     /**
      * Creates a command to increment elevator up safely (checks wrist position)
      */
-    public Command incrementUpSafely() {
+    public Command incrementUp() {
         return Commands.either(
-            incrementUp(),
+            incrementUpRaw(),
             Commands.none(),
-            this::isWristSafe
+            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
         ).withName("SafeElevatorIncrement(up)");
     }
 
     /**
      * Creates a command to increment elevator down safely (checks wrist position)
      */
-    public Command incrementDownSafely() {
+    public Command incrementDown() {
         return Commands.either(
-            incrementDown(),
+            incrementDownRaw(),
             Commands.none(),
-            this::isWristSafe
+            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
         ).withName("SafeElevatorIncrement(down)");
     }
 
@@ -88,7 +88,7 @@ public class ElevatorCommands {
         return Commands.either(
             createMoveToPositionRaw(targetPosition),
             Commands.none(),
-            this::isWristSafe
+            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
         ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
     }
 
@@ -153,21 +153,4 @@ public class ElevatorCommands {
         ).withName("MoveElevatorWithWristSafety(" + targetPosition + ")");
     }
 
-    /**
-     * Checks if the wrist is in a safe position for elevator movement
-     */
-    private boolean isWristSafe() {
-        double wristPos = wrist.getPosition();
-        boolean isSafe = wristPos >= WristConstants.Positions.SAFE; // Example safe threshold
-        
-        if (!isSafe) {
-            DriverStation.reportWarning("Wrist position unsafe for elevator movement", false);
-        }
-        
-        return isSafe;
-    }
-
-    public void periodic() {
-        Logger.recordOutput("Elevator/Commands/WristSafetyCheck", isWristSafe());
-    }
 }
