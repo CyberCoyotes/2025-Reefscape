@@ -1,14 +1,10 @@
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
-import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -137,20 +133,6 @@ public class ElevatorCommands {
             () -> false,
             elevator
         ).withName("ManualElevatorControl");
-    }
-
-    /**
-     * Creates a command sequence that ensures wrist safety before moving elevator
-     */
-    public Command moveWithWristSafety(double targetPosition) {
-        return Commands.sequence(
-            // First move wrist to safe position
-            WristCommands.setSafePose(wrist),
-            // Wait for wrist to reach position
-            Commands.waitUntil(() -> wrist.atTargetPosition(0.02)),
-            // Then move elevator
-            createMoveToPositionRaw(targetPosition)
-        ).withName("MoveElevatorWithWristSafety(" + targetPosition + ")");
     }
 
 }

@@ -11,8 +11,9 @@ import frc.robot.subsystems.wrist.WristConstants.Positions;
  * Factory for creating wrist-related commands.
  * This class provides static methods to create commands for controlling the wrist subsystem.
  */
-public final class WristCommands {
-    private WristCommands() {
+public class WristCommands {
+
+    public WristCommands(WristSubsystem wrist) {
         throw new UnsupportedOperationException("This is a utility class!");
     }
 
