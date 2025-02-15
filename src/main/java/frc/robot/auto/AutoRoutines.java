@@ -103,7 +103,7 @@ public class AutoRoutines {
                         ));
         
                 return routine;
-            }
+        }
             public AutoRoutine STJ() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J");
                 final AutoTrajectory STJ = routine.trajectory("ST-J",0);
@@ -114,11 +114,28 @@ public class AutoRoutines {
                                 STJ.resetOdometry(), // Always reset odometry first
                                 STJ.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STJ2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
+                                STJ2.cmd()//,
+                                //m_drivetrain.stop().withTimeout(2.0)
                               
                         ));
         
                 return routine;
-            }
+        }
+        public AutoRoutine STL() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-L");
+                final AutoTrajectory STL = routine.trajectory("ST-L",0);
+                final AutoTrajectory STL2 = routine.trajectory("ST-L,",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STL.resetOdometry(), // Always reset odometry first
+                                STL.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STL2.cmd()//,
+                               // m_drivetrain.stop().withTimeout(2.0)
+                              
+                        ));
+        
+                return routine;
+        }
 }
