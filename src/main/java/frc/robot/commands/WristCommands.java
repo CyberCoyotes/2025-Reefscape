@@ -40,12 +40,15 @@ public final class WristCommands {
     // public static final class Positions {
         // private Positions() {}
 
+        public static Command setSafePose(WristSubsystem wrist) {
+            return setPosition(wrist, WristConstants.Positions.SAFE).withName("WristSafeForElevator");
+        }
         public static Command setLoadCoral(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.LOAD_CORAL).withName("LoadCoral");
         }
-        
-        public static Command setElevatorSafe(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.SAFE).withName("WristSafeForElevator");
+    
+        public static Command setGrabAlgae(WristSubsystem wrist) {
+            return setPosition(wrist, WristConstants.Positions.GRAB_ALGAE).withName("LoadCoral");
         }
 
         public static Command setL1(WristSubsystem wrist) {
@@ -62,21 +65,8 @@ public final class WristCommands {
         public static Command setL4(WristSubsystem wrist) {
             return setPosition(wrist, WristConstants.Positions.L4).withName("WristL4");
         }
-        // Add more preset positions as needed
-    // }
 
-    /**
-     * Complex command sequences combining multiple wrist movements
-     */
-    public static final class Sequences {
-        private Sequences() {}
 
-        public static Command loadToSafe(WristSubsystem wrist) {
-            return setLoadCoral(wrist)
-                    .andThen(setElevatorSafe(wrist))
-                    .withName("Stow To Ground");
-        }
 
-        // Add more sequences as needed
-    }
+    
 }

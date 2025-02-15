@@ -21,7 +21,7 @@ public final class ScoreL2Command {
                                                ElevatorCommands elevatorCommands) {
         return Commands.sequence(
             // Step 1: Wrist to "safe"
-            WristCommands.setElevatorSafe(wrist),
+            WristCommands.setSafePose(wrist),
 
             // Step 2: Elevator to L2
             elevatorCommands.moveToL2(),

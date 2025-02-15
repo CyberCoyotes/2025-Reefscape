@@ -22,6 +22,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
@@ -72,9 +73,6 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
         elevatorCommands = new ElevatorCommands(elevator, wrist);
-        
-        // True is safety mode, false is performance mode
-        elevatorCommands.setTestMode(true);  // Set to FALSE for competition
 
         configureBindings();
         configureAutoRoutines();
@@ -128,6 +126,10 @@ public class RobotContainer {
 
         // Reset the field-centric heading on left bumper press
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        
+        operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
+                    .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
+
 
         // CORAL
         driverController.leftBumper()
@@ -155,15 +157,15 @@ public class RobotContainer {
         // driverController.x().onTrue(elevatorCommands.moveToL1()); // Works
 
         // Wrist safety check is now default behavior with elevator
-        driverController.a().onTrue(elevatorCommands.moveToBase()); // Moves the wrist, then moves elevator
+        driverController.a().onTrue(elevatorCommands.moveToHome()); // Moves the wrist, then moves elevator
         driverController.b().onTrue(elevatorCommands.moveToL1());
         driverController.y().onTrue(elevatorCommands.moveToL2());
         driverController.x().onTrue(elevatorCommands.moveToL3());
 
-        operatorController.povUp().onTrue(elevatorCommands.incrementUp());
-        operatorController.povDown().onTrue(elevatorCommands.incrementDown());
+        operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
+        operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
 
-        operatorController.povLeft().onTrue(WristCommands.setElevatorSafe(wrist));
+        operatorController.povLeft().onTrue(WristCommands.setSafePose(wrist));
         // driverController.povLeft().onTrue(WristCommands.setL2(wrist));
         // driverController.povRight().onTrue(WristCommands.setL4(wrist));
 

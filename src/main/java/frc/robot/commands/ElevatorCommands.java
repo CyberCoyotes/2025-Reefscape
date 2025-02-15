@@ -1,27 +1,21 @@
 package frc.robot.commands;
 
-import java.time.Period;
-import java.util.function.DoubleSupplier;
-
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-/**
- * Factory class for creating elevator commands.
- * This class centralizes all elevator command creation to make it easier to modify and maintain.
- */
+import java.util.function.DoubleSupplier;
+
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
     private final WristSubsystem wrist;
-    private boolean isTestMode = false;
 
     public ElevatorCommands(ElevatorSubsystem elevator, WristSubsystem wrist) {
         this.elevator = elevator;
@@ -29,186 +23,151 @@ public class ElevatorCommands {
     }
 
     /**
-     * Sets whether the elevator should operate in test mode (reduced speeds)
-     * @param enabled True for test mode, false for performance mode
+     * Sets elevator operation mode
      */
-    public void setTestMode(boolean enabled) {
-        isTestMode = enabled;
-        elevator.setSafetyMode(enabled); // Update subsystem safety mode to match
-    }
-
-        /**
-     * Creates a command to increment elevator up
-     */
-    public Command incrementUp() {
-        return elevator.runOnce(() -> 
-            elevator.incrementPosition(ElevatorConstants.Incremental.INCREMENT_STEP)
-        ).withName("ElevatorIncrement(up)");
+    public Command setMode(ElevatorMode mode) {
+        return elevator.runOnce(() -> elevator.setMode(mode))
+            .withName("SetElevatorMode(" + mode + ")");
     }
 
     /**
-     * Creates a command to increment elevator down
+     * Creates a command to increment elevator up with fine control
      */
-    public Command incrementDown() {
-        return elevator.runOnce(() -> 
-            elevator.incrementPosition(-ElevatorConstants.Incremental.INCREMENT_STEP)
-        ).withName("ElevatorIncrement(down)");
+    public Command incrementUp() {
+        return elevator.runOnce(() -> elevator.incrementPosition(true))
+            .withName("ElevatorIncrement(up)");
     }
 
-  /**
- * Creates a command to increment elevator up
- */
-public Command incrementUpSafely() {
-    return Commands.either(
-        elevator.runOnce(() -> 
-            elevator.incrementPosition(ElevatorConstants.Incremental.INCREMENT_STEP)
-        ),
-        Commands.none(),
-        this::isWristSafe
-    ).withName("ElevatorIncrement(up)");
-}
-
-/**
- * Creates a command to increment elevator down
- */
-public Command incrementDownSafely() {
-    return Commands.either(
-        elevator.runOnce(() -> 
-            elevator.incrementPosition(-ElevatorConstants.Incremental.INCREMENT_STEP)
-        ),
-        Commands.none(), 
-        this::isWristSafe
-    ).withName("ElevatorIncrement(down)");
-}
-     /**
-     * Checks if the wrist is in a safe position for elevator movement
-     * @return true if safe, false if unsafe
+    /**
+     * Creates a command to increment elevator down with fine control
      */
-    private boolean isWristSafe() {
-        double wristPos = wrist.getPosition();
+    public Command incrementDown() {
+        return elevator.runOnce(() -> elevator.incrementPosition(false))
+            .withName("ElevatorIncrement(down)");
+    }
 
-        // Wrist is safe if current wrist position is equal or great thean ELEVATOR_SAFE
-        boolean isSafe = Math.abs(wristPos) >= WristConstants.Positions.SAFE;
-        
-        
-        if (!isSafe) {
-            DriverStation.reportWarning("WRIST IS UNSAFE", false);
-        }
-        return isSafe; // Can test with true/false hardcoded
+    /**
+     * Creates a command to increment elevator up safely (checks wrist position)
+     */
+    public Command incrementUpSafely() {
+        return Commands.either(
+            incrementUp(),
+            Commands.none(),
+            this::isWristSafe
+        ).withName("SafeElevatorIncrement(up)");
+    }
 
+    /**
+     * Creates a command to increment elevator down safely (checks wrist position)
+     */
+    public Command incrementDownSafely() {
+        return Commands.either(
+            incrementDown(),
+            Commands.none(),
+            this::isWristSafe
+        ).withName("SafeElevatorIncrement(down)");
     }
 
     /**
      * Creates a command that moves the elevator to a target position
-     * 
-     * @param targetPosition The position to move to in rotations
-     * @return Command to run
      */
     private Command createMoveToPositionRaw(double targetPosition) {
         return new FunctionalCommand(
-                () -> {},
-                () -> elevator.setPosition(targetPosition),
-                interrupted -> {},
-                () -> elevator.isAtPosition(targetPosition),
-                elevator)
-                .withName("MoveElevatorTo" + targetPosition);
+            () -> {},  // No initialization
+            () -> elevator.setPosition(targetPosition),
+            interrupted -> {},  // No end behavior needed
+            () -> elevator.isAtPosition(targetPosition),
+            elevator
+        ).withName("MoveElevatorTo(" + targetPosition + ")");
     }
 
     /**
-     * Creates a command to move the elevator to ground position
+     * Creates a command that safely moves the elevator to a target position
      */
-    public Command moveToBaseRaw() {
-        return createMoveToPositionRaw(ElevatorConstants.BASE_POSE)
-                .withName("MoveElevatorToBase");
+    private Command createMoveToPosition(double targetPosition) {
+        return Commands.either(
+            createMoveToPositionRaw(targetPosition),
+            Commands.none(),
+            this::isWristSafe
+        ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
+    }
+
+    // Preset position commands - raw movement
+    public Command moveToHomeRaw() {
+        return createMoveToPositionRaw(0.0).withName("MoveElevatorToHome");
     }
 
     public Command moveToL1Raw() {
-        return createMoveToPositionRaw(ElevatorConstants.L1_POSE)
-                .withName("MoveElevatorToL1");
+        return createMoveToPositionRaw(0.2).withName("MoveElevatorToL1Pose");
     }
 
     public Command moveToL2Raw() {
-        return createMoveToPositionRaw(ElevatorConstants.L2_POSE)
-                .withName("MoveElevatorToL2");
+        return createMoveToPositionRaw(0.5).withName("MoveElevatorToL2Pose");
     }
 
     public Command moveToL3Raw() {
-        return createMoveToPositionRaw(ElevatorConstants.L3_POSE)
-                .withName("MoveElevatorToL3");
+        return createMoveToPositionRaw(0.9).withName("MoveElevatorToL3Pose");
     }
 
-    public Command moveToL4Raw() {
-        return createMoveToPositionRaw(ElevatorConstants.L4_POSE)
-                .withName("MoveElevatorToL4");
+    // Preset position commands - safe movement
+    public Command moveToHome() {
+        return createMoveToPosition(0.0).withName("SafeMoveElevatorToHome");
+    }
+
+    public Command moveToL1() {
+        return createMoveToPosition(0.2).withName("SafeMoveElevatorToL1Pose");
+    }
+
+    public Command moveToL2() {
+        return createMoveToPosition(0.5).withName("SafeMoveElevatorToL2Pose");
+    }
+
+    public Command moveToL3() {
+        return createMoveToPosition(0.9).withName("SafeMoveElevatorToL3Pose");
     }
 
     /**
      * Creates a command for manual elevator control
-     * 
-     * @param percentSupplier A supplier that returns the percent output (-1 to 1)
      */
     public Command manualControl(DoubleSupplier percentSupplier) {
         return new FunctionalCommand(
-                () -> {},
-                () -> elevator.setManualOutput(percentSupplier.getAsDouble()),
-                interrupted -> elevator.setManualOutput(0),
-                () -> false,
-                elevator)
-                .withName("ManualElevatorControl");
-    }
-
-    /***********************************************************************
-     * Creates a command that safely moves the elevator to a target position
-     *************************************************************************/
-    private Command createMoveToPosition(double targetPosition) {
-        return Commands.sequence(
-            Commands.either(
-                createMoveToPositionRaw(targetPosition),
-                Commands.none(),
-                this::isWristSafe
-            )
-        ).withName("SafeMoveElevatorTo" + targetPosition);
-    }
-
-    public Command moveToBase() {
-        return createMoveToPosition(ElevatorConstants.BASE_POSE)
-                .withName("SafeMoveElevatorToBase");
-    }
-
-    public Command moveToL1() {
-        return createMoveToPosition(ElevatorConstants.L1_POSE)
-                .withName("SafeMoveElevatorToL1");
-    }
-
-    public Command moveToL2() {
-        return createMoveToPosition(ElevatorConstants.L2_POSE)
-                .withName("SafeMoveElevatorToL2");
-    }
-
-    public Command moveToL3() {
-        return createMoveToPosition(ElevatorConstants.L3_POSE)
-                .withName("SafeMoveElevatorToL3");
-    }
-
-    public Command moveToL4() {
-        return createMoveToPosition(ElevatorConstants.L4_POSE)
-                .withName("SafeMoveElevatorToL4");
+            () -> {},
+            () -> elevator.setManualOutput(percentSupplier.getAsDouble()),
+            interrupted -> elevator.setManualOutput(0),
+            () -> false,
+            elevator
+        ).withName("ManualElevatorControl");
     }
 
     /**
-     * Creates a command that moves wrist to safe position then moves elevator
+     * Creates a command sequence that ensures wrist safety before moving elevator
      */
-    public Command moveWristMoveElevator(double targetPosition) {
+    public Command moveWithWristSafety(double targetPosition) {
         return Commands.sequence(
-            WristCommands.setElevatorSafe(wrist),
-            Commands.waitUntil(() -> wrist.atTargetPosition(WristConstants.POSE_TOLERANCE)),
+            // First move wrist to safe position
+            WristCommands.setSafePose(wrist),
+            // Wait for wrist to reach position
+            Commands.waitUntil(() -> wrist.atTargetPosition(0.02)),
+            // Then move elevator
             createMoveToPositionRaw(targetPosition)
-        ).withName("MoveElevatorWithWristSafety" + targetPosition);
+        ).withName("MoveElevatorWithWristSafety(" + targetPosition + ")");
+    }
+
+    /**
+     * Checks if the wrist is in a safe position for elevator movement
+     */
+    private boolean isWristSafe() {
+        double wristPos = wrist.getPosition();
+        boolean isSafe = wristPos >= WristConstants.Positions.SAFE; // Example safe threshold
+        
+        if (!isSafe) {
+            DriverStation.reportWarning("Wrist position unsafe for elevator movement", false);
+        }
+        
+        return isSafe;
     }
 
     public void periodic() {
-        // Log the wrist safety check
-        Logger.recordOutput("Elevator/Commands/IsWristSafe", isWristSafe());
+        Logger.recordOutput("Elevator/Commands/WristSafetyCheck", isWristSafe());
     }
-
 }

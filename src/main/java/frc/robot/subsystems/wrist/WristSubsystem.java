@@ -20,6 +20,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class WristSubsystem extends SubsystemBase {
@@ -145,6 +146,22 @@ public class WristSubsystem extends SubsystemBase {
     public boolean atTargetPosition(double toleranceRotations) {
         return Math.abs(getPosition() - motionMagicRequest.Position) < toleranceRotations;
     }
+    
+    /**
+     * Checks if wrist is in a safe position for elevator movement
+     * @return true if safe for elevator movement
+     */
+    public boolean isSafeForElevator() {
+        double currentPosition = getPosition();
+        boolean isSafe = currentPosition >= WristConstants.Positions.SAFE;
+        
+        if (!isSafe) {
+            DriverStation.reportWarning("Wrist position unsafe for elevator movement", false);
+        }
+        
+        Logger.recordOutput("Wrist/SafetyCheck/ElevatorSafe", isSafe);
+        return isSafe;
+    }
 
     public void clearStickyFaults() {
         motor.clearStickyFaults();
@@ -164,6 +181,7 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("Wrist/Position/Named/LoadCoral", WristConstants.Positions.LOAD_CORAL);
         Logger.recordOutput("Wrist/Position/Named/L2", WristConstants.Positions.L2);
         Logger.recordOutput("Wrist/Position/Named/L4", WristConstants.Positions.L4);
+
         
         // Other wrist telemetry can go here
     }
