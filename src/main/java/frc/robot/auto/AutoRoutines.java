@@ -17,6 +17,7 @@ public class AutoRoutines {
         // m_elevator = new ElevatorSubsystem(); 
         // m_intake = new IntakeSubsystem(); 
         // m_score = new ScoreSubsystem(); 
+       // private final double scoreDelay = 1.0;
         }
         public AutoRoutine TwoMeters() {
                 final AutoRoutine routine = m_factory.newRoutine("TwoMeters");
@@ -33,12 +34,16 @@ public class AutoRoutines {
         }
         public AutoRoutine TwoMetersBack() {
                 final AutoRoutine routine = m_factory.newRoutine("TwoMetersBack");
-                final AutoTrajectory TwoMetersBack = routine.trajectory("TwoMetersBack");
+                final AutoTrajectory TwoMetersT = routine.trajectory("TwoMetersBack,0");
+                final AutoTrajectory Back = routine.trajectory("TwoMetersBack,1");
         
                 routine.active().onTrue(
                         Commands.sequence(
-                                TwoMetersBack.resetOdometry(), // Always reset odometry first
-                                TwoMetersBack.cmd() // Follow the path
+                                TwoMetersT.resetOdometry(), // Always reset odometry first
+                                TwoMetersT.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0),
+                                Back.cmd()
+                                //If this doesnt work m_drivetrain.stop().withTimeout(scoreDelay)
                                 //TwoMetersBack.done() // TODO add a Done command
                         ));
         
@@ -46,15 +51,71 @@ public class AutoRoutines {
         }
         public AutoRoutine STA() {
             final AutoRoutine routine = m_factory.newRoutine("ST-A");
-            final AutoTrajectory STA = routine.trajectory("ST-A");
+            final AutoTrajectory STA = routine.trajectory("ST-A,0");
+            final AutoTrajectory STA2 = routine.trajectory("ST-A,1");
     
             routine.active().onTrue(
                     Commands.sequence(
                             STA.resetOdometry(), // Always reset odometry first
-                            STA.cmd() // Follow the path
+                            STA.cmd(), // Follow the path
+                            m_drivetrain.stop().withTimeout(2.0), 
+                            STA2.cmd()
                             // STA.done() // TODO add a Done command
                     ));
     
             return routine;
         }
+        public AutoRoutine STA3() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-A");
+                final AutoTrajectory STA = routine.trajectory("ST-A,0");
+                final AutoTrajectory STA2 = routine.trajectory("ST-A,1");
+                final AutoTrajectory STL = routine.trajectory("CS1-L");
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STA.resetOdometry(), // Always reset odometry first
+                                STA.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STA2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STL.cmd()
+                                // STA.done() // TODO add a Done command
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine STI() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-I");
+                final AutoTrajectory STI = routine.trajectory("ST-I,0");
+                final AutoTrajectory STI2 = routine.trajectory("ST-I,1");
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STI.resetOdometry(), // Always reset odometry first
+                                STI.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STI2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0)
+                              
+                        ));
+        
+                return routine;
+            }
+            public AutoRoutine STJ() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J");
+                final AutoTrajectory STJ = routine.trajectory("ST-J,0");
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J,1");
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STJ.resetOdometry(), // Always reset odometry first
+                                STJ.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STJ2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0)
+                              
+                        ));
+        
+                return routine;
+            }
 }
