@@ -34,8 +34,8 @@ public class AutoRoutines {
         }
         public AutoRoutine TwoMetersBack() {
                 final AutoRoutine routine = m_factory.newRoutine("TwoMetersBack");
-                final AutoTrajectory TwoMetersT = routine.trajectory("TwoMetersBack,0");
-                final AutoTrajectory Back = routine.trajectory("TwoMetersBack,1");
+                final AutoTrajectory TwoMetersT = routine.trajectory("TwoMetersBack",0);
+                final AutoTrajectory Back = routine.trajectory("TwoMetersBack",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -51,8 +51,8 @@ public class AutoRoutines {
         }
         public AutoRoutine STA() {
             final AutoRoutine routine = m_factory.newRoutine("ST-A");
-            final AutoTrajectory STA = routine.trajectory("ST-A,0");
-            final AutoTrajectory STA2 = routine.trajectory("ST-A,1");
+            final AutoTrajectory STA = routine.trajectory("ST-A",0);
+            final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
     
             routine.active().onTrue(
                     Commands.sequence(
@@ -67,9 +67,10 @@ public class AutoRoutines {
         }
         public AutoRoutine STA3() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-A");
-                final AutoTrajectory STA = routine.trajectory("ST-A,0");
-                final AutoTrajectory STA2 = routine.trajectory("ST-A,1");
-                final AutoTrajectory STL = routine.trajectory("CS1-L");
+                final AutoTrajectory STA = routine.trajectory("ST-A",0);
+                final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
+                final AutoTrajectory STL = routine.trajectory("CS1-L",0);
+                final AutoTrajectory STL2 = routine.trajectory("CS1-L",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -78,7 +79,9 @@ public class AutoRoutines {
                                 m_drivetrain.stop().withTimeout(2.0), 
                                 STA2.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STL.cmd()
+                                STL.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                STL2.cmd()
                                 // STA.done() // TODO add a Done command
                         ));
         
@@ -86,8 +89,8 @@ public class AutoRoutines {
         }
         public AutoRoutine STI() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-I");
-                final AutoTrajectory STI = routine.trajectory("ST-I,0");
-                final AutoTrajectory STI2 = routine.trajectory("ST-I,1");
+                final AutoTrajectory STI = routine.trajectory("ST-I",0);
+                final AutoTrajectory STI2 = routine.trajectory("ST-I,1",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -103,8 +106,8 @@ public class AutoRoutines {
             }
             public AutoRoutine STJ() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J");
-                final AutoTrajectory STJ = routine.trajectory("ST-J,0");
-                final AutoTrajectory STJ2 = routine.trajectory("ST-J,1");
+                final AutoTrajectory STJ = routine.trajectory("ST-J",0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
