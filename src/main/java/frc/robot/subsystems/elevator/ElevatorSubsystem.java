@@ -9,6 +9,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,9 +29,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID);
         elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID);
 
-        // Configure the motors
-        configureMotors();
-
         // Initialize control requests
         motionMagicRequest = new MotionMagicVoltage(0)
                 .withSlot(0)
@@ -41,49 +39,113 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Initialize and reset the elevator position
         initializeOnStartup();
+        // configureMotors();
+        configureSafetyMotors();
     }
 
     private void configureMotors() {
         // Create configurations for both motors
-        TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
+        TalonFXConfiguration leadConfig = new TalonFXConfiguration();
+        
+        // TODO is this needed?
+        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+
+        leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
+        // Configure leader motor
+        leadConfig.Slot0.kP = ElevatorConstants.kP;
+        leadConfig.Slot0.kI = ElevatorConstants.kI;
+        leadConfig.Slot0.kD = ElevatorConstants.kD;
+        leadConfig.Slot0.kV = ElevatorConstants.kV;
+        leadConfig.Slot0.kS = ElevatorConstants.kS;
+        leadConfig.Slot0.kG = ElevatorConstants.kG;
+
+        // Configure motion magic
+        // leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
+        // leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.ACCELERATION;
+        // leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
+
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK;
+        
+        // Configure soft limits
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
+
+        // Configure feedback and motor direction
+        leadConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leadConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+
+        // Configure gravity compensation for vertical mechanism
+        leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+
+        // Inside configureMotors() method, add to both leadConfig and followerConfig:
+        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on your motor/load
+        // leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+        // followerConfig.CurrentLimits.StatorCurrentLimit = 40;
+        // followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+        // Apply configurations
+        elevatorLeader.getConfigurator().apply(leadConfig);
+
+        // Configure follower motor to oppose the leader
+        followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        // elevatorFollower.getConfigurator().apply(followerConfig);
+
+        // Set up follower to follow leader with opposite direction
+        elevatorFollower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
+    }
+
+    private void configureSafetyMotors() {
+        // Create configurations for both motors
+        TalonFXConfiguration leadConfig = new TalonFXConfiguration();
         TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
         // Configure leader motor
-        leaderConfig.Slot0.kP = ElevatorConstants.kP;
-        leaderConfig.Slot0.kI = ElevatorConstants.kI;
-        leaderConfig.Slot0.kD = ElevatorConstants.kD;
-        leaderConfig.Slot0.kV = ElevatorConstants.kV;
-        leaderConfig.Slot0.kS = ElevatorConstants.kS;
-        leaderConfig.Slot0.kG = ElevatorConstants.kG;
+        leadConfig.Slot1.kP = ElevatorConstants.TestMode.kP;
+        leadConfig.Slot1.kI = ElevatorConstants.TestMode.kI;
+        leadConfig.Slot1.kD = ElevatorConstants.TestMode.kD;
+        leadConfig.Slot1.kV = ElevatorConstants.TestMode.kV;
+        leadConfig.Slot1.kS = ElevatorConstants.TestMode.kS;
+        leadConfig.Slot1.kG = ElevatorConstants.TestMode.kG;
+        // Configure gravity compensation for vertical mechanism
+        leadConfig.Slot1.GravityType = GravityTypeValue.Elevator_Static;
 
         // Configure motion magic
-        leaderConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
-        leaderConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.ACCELERATION;
-        leaderConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
-
-        // Configure soft limits
-        leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
-        leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
-
-        // Configure feedback and motor direction
-        leaderConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        leaderConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK;
 
         // Configure gravity compensation for vertical mechanism
-        // leaderConfig.Voltage. GravityCompensation = GravityTypeValue.Elevator_Static;
+        leadConfig.Slot1.GravityType = GravityTypeValue.Elevator_Static;
 
-        // Inside configureMotors() method, add to both leaderConfig and followerConfig:
-        leaderConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on your motor/load
-        leaderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        
+        // Configure soft limits
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
 
-        followerConfig.CurrentLimits.StatorCurrentLimit = 40;
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        // Configure feedback and motor direction
+        leadConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leadConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+
+
+        // Inside configureMotors() method, add to both leadConfig and followerConfig:
+        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on your motor/load
+        // leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        // followerConfig.CurrentLimits.StatorCurrentLimit = 40;
+        // followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
         // Apply configurations
-        elevatorLeader.getConfigurator().apply(leaderConfig);
+        elevatorLeader.getConfigurator().apply(leadConfig);
 
         // Configure follower motor to oppose the leader
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
