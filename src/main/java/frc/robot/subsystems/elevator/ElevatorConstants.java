@@ -19,15 +19,15 @@ public final class ElevatorConstants {
 
     
     // Soft Limits (in rotations)
-    public static final double MAX_HEIGHT = 1;
+    public static final double MAX_HEIGHT = 0.53;
     public static final double MIN_HEIGHT = 0;
     
     // Preset Positions (in rotations)
     public static final double BASE_POSE =  0.00;
-    public static final double L1_POSE =    0.10;
-    public static final double L2_POSE =    0.15;
+    public static final double L1_POSE =    0.00;
+    public static final double L2_POSE =    0.09;
     public static final double L3_POSE =    0.27;
-    public static final double L4_POSE =    0.27;
+    public static final double L4_POSE =    0.45;
     
     //
         // Motion Magic

@@ -40,8 +40,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Initialize and reset the elevator position
         initializeOnStartup();
-        // configureMotors();
-        configureSafetyMotors();
+        configureMotors();
+        // configureSafetyMotors();
     }
 
     private void configureMotors() {

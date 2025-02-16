@@ -3,7 +3,7 @@ package frc.robot.subsystems.endEffector;
 // EffectorState.java
 public enum EffectorState {
     INTAKE_coral(-0.4),   // (-) Power to intake coral
-    SCORE_coral(-0.4),    // (-) Power to score coral, may consider changing power magnitude
+    SCORE_coral(0.4),    // TODO switch for a temp intake (-) Power to score coral, may consider changing power magnitude
 
     INTAKE_ALGAE(0.4), // Opposite power of INTAKE
     SCORE_ALGAE(0.4),   // 40% power for scoring

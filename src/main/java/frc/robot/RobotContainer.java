@@ -121,9 +121,9 @@ public class RobotContainer {
         // driverController.a().whileTrue(elevator.moveDown());
     
         // One-time position commands
-        driverController.x().onTrue(elevatorCommands.moveToL1());
-        driverController.y().onTrue(elevatorCommands.moveToL2());
-        driverController.b().onTrue(elevatorCommands.moveToL3());
+        driverController.x().onTrue(elevatorCommands.moveToL2());
+        driverController.y().onTrue(elevatorCommands.moveToL3()); 
+        driverController.b().onTrue(elevatorCommands.moveToL4());
         driverController.a().onTrue(elevatorCommands.moveToBase());
 
         driverController.povUp()
