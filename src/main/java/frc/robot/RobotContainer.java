@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.TOFSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.endEffector.EffectorState;
@@ -43,6 +44,9 @@ public class RobotContainer {
 
     private final ClimberVoltageSubsystem climber = new ClimberVoltageSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
+
+    private final TOFSubsystem m_tof = new TOFSubsystem();
+
 
 // TODO Slomo
     private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
