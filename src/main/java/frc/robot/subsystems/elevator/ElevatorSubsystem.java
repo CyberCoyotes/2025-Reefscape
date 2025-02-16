@@ -11,6 +11,7 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -46,7 +47,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private void configureMotors() {
         // Create configurations for both motors
         TalonFXConfiguration leadConfig = new TalonFXConfiguration();
-        
+
         // TODO is this needed?
         TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
@@ -61,19 +62,23 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.kG = ElevatorConstants.kG;
 
         // Configure motion magic
-        // leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
-        // leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.ACCELERATION;
+        // leadConfig.MotionMagic.MotionMagicCruiseVelocity =
+        // ElevatorConstants.CRUISE_VELOCITY;
+        // leadConfig.MotionMagic.MotionMagicAcceleration =
+        // ElevatorConstants.ACCELERATION;
         // leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
 
         leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY;
         leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
         leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK;
-        
+
         // Configure soft limits
         // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        // ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
         // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        // ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
 
         // Configure feedback and motor direction
         leadConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -84,7 +89,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
-        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on your motor/load
+        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
+        // your motor/load
         // leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
         // followerConfig.CurrentLimits.StatorCurrentLimit = 40;
@@ -125,21 +131,22 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure gravity compensation for vertical mechanism
         leadConfig.Slot1.GravityType = GravityTypeValue.Elevator_Static;
 
-        
         // Configure soft limits
         // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        // ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
         // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        // ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
 
         // Configure feedback and motor direction
         leadConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         leadConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
-        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on your motor/load
+        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
+        // your motor/load
         // leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         // followerConfig.CurrentLimits.StatorCurrentLimit = 40;
         // followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -185,6 +192,48 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         elevatorLeader.setControl(motionMagicRequest.withPosition(positionRotations * GEAR_RATIO));
     }
+
+    // TODO **NEW** Incremental test 2-16-25
+    /**************************************************************************** */
+    /*
+     * Incrementally adjusts the elevator position by the given amount
+     * 
+     * @param increment The amount to adjust (positive for up, negative for down)
+     */
+    public void incrementPosition(double increment) {
+        double currentPos = getPosition();
+        double newPos = currentPos + increment;
+
+        // Optional: Add bounds checking if needed
+        // newPos = Math.min(Math.max(newPos, ElevatorConstants.MIN_HEIGHT),
+        // ElevatorConstants.MAX_HEIGHT);
+
+        setPosition(newPos);
+    }
+
+    /**
+     * Creates a command that incrementally moves the elevator up while the D-pad up
+     * is held
+     * 
+     * @return A command that runs while D-pad up is held
+     */
+    public Command incrementUpCommand() {
+        return run(() -> incrementPosition(0.02))
+                .withName("IncrementElevatorUp");
+    }
+
+    /**
+     * Creates a command that incrementally moves the elevator down while the D-pad
+     * down is held
+     * 
+     * @return A command that runs while D-pad down is held
+     */
+    public Command decrementDownCommand() {
+        return run(() -> incrementPosition(-0.02))
+                .withName("IncrementElevatorDown");
+    }
+
+    /******************************************************************************* */
 
     /**
      * Sets manual control voltage
@@ -241,7 +290,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         Logger.recordOutput("Elevator/MotorCurrent", elevatorLeader.getSupplyCurrent().getValueAsDouble());
 
         Logger.recordOutput("Elevator/StatorCurrent", elevatorLeader.getStatorCurrent().getValueAsDouble());
-
 
         // Log the target position for debugging
         // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
