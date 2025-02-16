@@ -11,7 +11,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
-import com.ctre.phoenix6.StatusSignal.SignalMeasurement;
+import com.ctre.phoenix6.signals.Angle;
+import com.ctre.phoenix6.signals.Position;
+import com.ctre.phoenix6.signals.*;
 
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,14 +27,14 @@ public class WristSubsystem extends SubsystemBase {
     private final MotionMagicVoltage motionMagicRequest;
 
     // This typed StatusSignal represents the angle read from the CANCoder.
-    private final StatusSignal wristAngle;
+    private final StatusSignal<Angle> canCoderAngle;
 
     // State tracking
     private double targetPosition = WristConstants.LOAD_CORAL;
     private boolean isTestMode = false;
-    
-    // Enumerated positions with their rotational values
-    public enum Position {
+
+
+    public enum AnglePosition {
         LOAD_CORAL(0.00),
         VERTICAL(0.16),
         HORIZONTAL(0.26),
@@ -42,21 +44,17 @@ public class WristSubsystem extends SubsystemBase {
         SCORE_L3(0.30),
         SCORE_L4(0.40);
 
-        public final double rotations;
+        public final Angle angle;
 
-        Position(double rotations) {
-            this.rotations = rotations;
+        Position(Angle angle) {
+            this.angle = angle;
         }
     }
-
 
     public WristSubsystem() {
         motor = new TalonFX(WristConstants.WRIST_ID, WristConstants.kCANBUS);
         encoder = new CANcoder(WristConstants.WRIST_CANCODER_ID, WristConstants.kCANBUS);
         motionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
-
-        // Initialize the StatusSignal for the CANCoder angle
-        wristAngle = encoder.getPosition();
 
         configureHardware();
         setDefaultCommand(createMaintainPositionCommand());
@@ -139,8 +137,8 @@ public class WristSubsystem extends SubsystemBase {
     /**
      * Gets the current position in rotations.
      */
-    public StatusSignal getRawCANCoderValue() {
-        return encoder.getPosition();
+    public Angle getRawCANCoderValue() {
+        return encoder.getPosition().getValue();
     }
 
     /**
@@ -148,7 +146,7 @@ public class WristSubsystem extends SubsystemBase {
      */
     public double getPosition() {
 
-        return encoder.getAbsolutePosition().getValue();
+        return getRawCANCoderValue().getValueAsDouble();
     }
 
     /**
@@ -176,6 +174,14 @@ public class WristSubsystem extends SubsystemBase {
      @Override
     public void periodic() {
         // Refresh the velocity signal in the subsystem's periodic method to ensure it's up to date.
-        wristAngle.refresh().getValue();
+        angleSignal.refresh();
+
+        // Example usage: read the typed AngularVelocity
+        AngularVelocity typedVel = velocitySignal.getValue();
+        // Or retrieve a double in canonical units (often rotations-per-second or degrees-per-second):
+        double velAsDouble = velocitySignal.getValueAsDouble();
+
+        // Do something with that data, e.g. logging, feed it into a custom control loop, etc.
+        // ...
     }
 }
