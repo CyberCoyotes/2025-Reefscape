@@ -1,14 +1,15 @@
 package frc.robot.subsystems.endEffector;
 
+import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-public class EffectorConfigs {
+public class EffectorConstants {
 
     // CAN settings
     public static final int EFFECTOR_MOTOR_ID = 21; // Adjust ID as needed
-    public static final String CANBUS_NAME = "rio"; // or "canivore" if using CANivore
+    public static final CANBus kCANBus = new CANBus("rio");
 
 
     public static final TalonFXConfiguration EFFECTOR_CONFIG = new TalonFXConfiguration();
