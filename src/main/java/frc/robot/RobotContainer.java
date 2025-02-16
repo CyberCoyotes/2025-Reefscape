@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.revrobotics.spark.SparkLowLevel.PeriodicFrame;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
@@ -21,18 +20,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
+import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
-import frc.robot.commands.WristIncrementalCommands;
 
 public class RobotContainer {
 
@@ -45,6 +42,7 @@ public class RobotContainer {
     private final ElevatorCommands elevatorCommands;
 
     private final ClimberVoltageSubsystem climber = new ClimberVoltageSubsystem();
+    private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
 // TODO Slomo
     private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -145,28 +143,16 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         operatorController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
-
-        operatorController.a().whileTrue(climber.climbUpCommand());
-        operatorController.b().whileTrue(climber.climbDownCommand());
-        // operatorController.x().whileTrue(climber.climbUpCommand());
-        // operatorController.y().whileTrue(climber.climbDownCommand());
+        operatorController.a().whileTrue(climberCommands.climbUpCommand());
+        operatorController.b().whileTrue(climberCommands.climbDownCommand());
+        // operatorController.x().whileTrue(_());
+        // operatorController.y().whileTrue(_());
 
         operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
-        operatorController.povLeft().whileTrue(WristIncrementalCommands.createIncrementalCommand(wrist, driverController, 1));
-        operatorController.povRight().whileTrue(WristIncrementalCommands.createIncrementalCommand(wrist, driverController, 1));; // Testing
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));
- 
-Command incrementalCommand = WristIncrementalCommands.createIncrementalCommand(
-            wrist,
-            operatorController,
-            XboxController.Button.kRightBumper.value
-        );
-        
-        // The command will run while right bumper is held
-        operatorController.rightBumper().whileTrue(incrementalCommand);
-        drivetrain.registerTelemetry(logger::telemeterize);
+
     }
 
     public Command getAutonomousCommand() {
