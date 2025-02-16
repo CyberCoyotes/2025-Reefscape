@@ -27,7 +27,6 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
-import frc.robot.subsystems.wrist.WristMotorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.climb.ClimbVoltageSubsystem;
 import frc.robot.commands.ElevatorCommands;
@@ -40,7 +39,6 @@ public class RobotContainer {
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
-    private final WristMotorSubsystem wristMotor = new WristMotorSubsystem();
     private final WristCommands wristCommands;
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();

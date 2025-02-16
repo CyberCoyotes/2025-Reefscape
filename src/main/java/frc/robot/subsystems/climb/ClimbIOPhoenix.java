@@ -1,5 +1,5 @@
 package frc.robot.subsystems.climb;
 
-public class CliimbIOPhoenix {
+public class ClimbIOPhoenix {
     
 }

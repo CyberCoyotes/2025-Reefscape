@@ -21,7 +21,7 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
     private final VoltageOut voltageRequest;
 
     // voltage variable
-    public final double CLIMB_VOLTAGE = 9; // This should be about 1/4 of the max voltage
+    public final double CLIMB_VOLTAGE = 9; // With a max of 12, This should be about 3/4 of the max voltage
 
 
     public ClimbVoltageSubsystem() {
@@ -30,10 +30,6 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
 
         // Create a Voltage control request initially set to 0 V
         voltageRequest = new VoltageOut(0);
-
-       
-        // If you want to configure the motor hardware (inversions, ramp, etc.), do it here:
-        // e.g. climbMotor.getConfigurator().apply(...someMotorConfigs...);
     }
 
     /**
@@ -64,9 +60,7 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
     /***********************
      * 
      ****************************/
- /**
-     * Returns a Command that drives the motor at +6 V until canceled or interrupted.
-     */
+ 
     public Command climbUpCommand() {
         return run(
             () -> climbUp())
