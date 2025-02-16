@@ -14,7 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
-
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -33,6 +33,7 @@ import frc.robot.subsystems.climb.ClimbVoltageSubsystem;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
+import frc.robot.commands.WristIncrementalCommands;
 
 public class RobotContainer {
 
@@ -154,11 +155,19 @@ public class RobotContainer {
 
         operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
-        operatorController.povLeft().whileTrue(wristCommands.setSafePose(wrist)); // Testing
-        operatorController.povRight().whileTrue(wristCommands.setSafePose(wrist)); // Testing
+        operatorController.povLeft().whileTrue(WristIncrementalCommands.createIncrementalCommand(wrist, driverController, 1));
+        operatorController.povRight().whileTrue(WristIncrementalCommands.createIncrementalCommand(wrist, driverController, 1));; // Testing
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));
  
+Command incrementalCommand = WristIncrementalCommands.createIncrementalCommand(
+            wrist,
+            operatorController,
+            XboxController.Button.kRightBumper.value
+        );
+        
+        // The command will run while right bumper is held
+        operatorController.rightBumper().whileTrue(incrementalCommand);
         drivetrain.registerTelemetry(logger::telemeterize);
     }
 

@@ -31,7 +31,7 @@ public class WristMotorSubsystem extends SubsystemBase {
     private double targetPositionMotor = 0.0;
 
     public WristMotorSubsystem() {
-        wristMotor = new TalonFX(WristConstants.WRIST_ID, WristConstants.kCANBus);
+        wristMotor = new TalonFX(50, WristConstants.kCANBus);
         
         positionRequest = new PositionVoltage(0).withSlot(0);
         
@@ -156,21 +156,21 @@ public class WristMotorSubsystem extends SubsystemBase {
 
     public void setWristZero() {
         wristMotor.setPosition(0);
-        System.out.println("Wrist encoder zeroed");
-        SmartDashboard.putBoolean("Wrist/WasZeroed", true);
+        // System.out.println("Wrist encoder zeroed");
+        SmartDashboard.putBoolean("WM/WasZeroed", true);
     }
 
     @Override
     public void periodic() {
         // Basic position telemetry
-        SmartDashboard.putString("Wrist/CurrentPosition", currentPositionNameMotor);
-        SmartDashboard.putNumber("Wrist/CurrentRotations", getPositionMotor());
-        SmartDashboard.putNumber("Wrist/TargetRotations", targetPositionMotor);
-        SmartDashboard.putBoolean("Wrist/AtPosition", atPositionMotor());
+        SmartDashboard.putString("WM/CurrentPosition", currentPositionNameMotor);
+        SmartDashboard.putNumber("WM/CurrentRotations", getPositionMotor());
+        SmartDashboard.putNumber("WM/TargetRotations", targetPositionMotor);
+        SmartDashboard.putBoolean("WM/AtPosition", atPositionMotor());
         
         // Diagnostic data
         // SmartDashboard.putNumber("Wrist/StatorCurrent", wristMotor.getStatorCurrent().getValue());
         // SmartDashboard.putNumber("Wrist/SupplyCurrent", wristMotor.getSupplyCurrent().getValue());
-        SmartDashboard.putNumber("Wrist/ClosedLoopError", wristMotor.getClosedLoopError().getValue());
+        SmartDashboard.putNumber("WM/ClosedLoopError", wristMotor.getClosedLoopError().getValue());
     }
 }

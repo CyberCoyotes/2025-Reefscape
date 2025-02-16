@@ -6,7 +6,7 @@ public enum EffectorState {
     SCORE_CORAL(-0.4),    // (-) Power to score coral, may consider changing power magnitude
 
     INTAKE_ALGAE(0.4), // Opposite power of INTAKE
-    SCORE_ALGAE(0.4),   // 40% power for scoring
+    SCORE_ALGAE(-1.0),   // 40% power for scoring
     
     HOLD(-0.05),    // Low power hold
     STOP(0.0);    // Fully stopped
