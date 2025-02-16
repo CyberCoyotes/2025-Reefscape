@@ -7,8 +7,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TOFSubsystem extends SubsystemBase {
     // Constants for LaserCAN IDs
-    private static final int CORAL_LASER_ID = 61;
-    private static final int ELEVATOR_LASER_ID = 62;
+    private static final int CORAL_LASER_ID = 51;
+    private static final int ELEVATOR_LASER_ID = 52;
     
     // LaserCAN devices
     private final LaserCan coralLaser;
