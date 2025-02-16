@@ -1,5 +1,5 @@
 package frc.robot.subsystems.wrist;
-/* FIXME These values could change as the wrist starts using the encoder instead */
+
 public enum WristMotorStates {
     // Define the states of the wrist
     LOADING(0.0), // "Up" position for loading, facing towards the back of the robot

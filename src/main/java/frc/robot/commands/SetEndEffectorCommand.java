@@ -16,13 +16,13 @@ public class SetEndEffectorCommand extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("Setting Effector to: " + targetState);
+        // System.out.println("Setting Effector to: " + targetState);
         effector.setState(targetState);
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("Effector command stopped. Setting to STOP.");
+        // System.out.println("Effector command stopped. Setting to STOP.");
         effector.setState(EffectorState.STOP);
     }
 
