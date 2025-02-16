@@ -28,7 +28,7 @@ import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.climb.ClimbVoltageSubsystem;
+import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
@@ -44,7 +44,7 @@ public class RobotContainer {
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands;
 
-    private final ClimbVoltageSubsystem climber = new ClimbVoltageSubsystem();
+    private final ClimberVoltageSubsystem climber = new ClimberVoltageSubsystem();
 
 // TODO Slomo
     private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
