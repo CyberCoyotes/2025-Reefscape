@@ -68,8 +68,8 @@ public class AutoRoutines {
                 final AutoRoutine routine = m_factory.newRoutine("ST-A");
                 final AutoTrajectory STA = routine.trajectory("ST-A",0);
                 final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
-                final AutoTrajectory STL = routine.trajectory("CS1-L",0);
-                final AutoTrajectory STL2 = routine.trajectory("CS1-L",1);
+                final AutoTrajectory CSL = routine.trajectory("CS1-L",0);
+                final AutoTrajectory CSL2 = routine.trajectory("CS1-L",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -78,9 +78,9 @@ public class AutoRoutines {
                                 m_drivetrain.stop().withTimeout(2.0), 
                                 STA2.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STL.cmd(),
+                                CSL.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0),
-                                STL2.cmd()
+                                CSL2.cmd()
                                 // STA.done() // TODO add a Done command
                         ));
         
@@ -89,7 +89,7 @@ public class AutoRoutines {
         public AutoRoutine STI() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-I");
                 final AutoTrajectory STI = routine.trajectory("ST-I",0);
-                final AutoTrajectory STI2 = routine.trajectory("ST-I,1",1);
+                final AutoTrajectory STI2 = routine.trajectory("ST-I",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -133,6 +133,44 @@ public class AutoRoutines {
                                 STL2.cmd()//,
                                // m_drivetrain.stop().withTimeout(2.0)
                               
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine SBB() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-B");
+                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
+                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(), // Always reset odometry first
+                                SBB.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                SBB2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0)
+                              
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine SBBetter() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-B");
+                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
+                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
+                final AutoTrajectory CSC = routine.trajectory("CS2-C",0);
+                final AutoTrajectory CSC2 = routine.trajectory("CS2-C",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(), // Always reset odometry first
+                                SBB.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                SBB2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSC.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSC2.cmd()
                         ));
         
                 return routine;
