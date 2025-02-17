@@ -88,12 +88,14 @@ public class RobotContainer {
         
        // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
        // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
-       autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
-       autoChooser.addRoutine("TwoMetersBack", autoRoutines::TwoMetersBack); 
+       //autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
+       //autoChooser.addRoutine("TwoMetersBack", autoRoutines::TwoMetersBack); 
        autoChooser.addRoutine("STA", autoRoutines::STA);
        autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
        autoChooser.addRoutine("STI", autoRoutines::STI);
        autoChooser.addRoutine("STJ", autoRoutines::STJ);
+       autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
+       autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
 
        SmartDashboard.putData("Autonomous", autoChooser);
        
