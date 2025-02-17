@@ -125,16 +125,17 @@ public class RobotContainer {
         driverController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
         
-         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
+        // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
-        // driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        driverController.a().onTrue(elevatorCommands.moveToHome());
-        driverController.b().onTrue(elevatorCommands.moveToL1());
-        driverController.y().onTrue(elevatorCommands.moveToL2());
-        driverController.x().onTrue(elevatorCommands.moveToL3());
-        
-        driverController.povUp().onTrue(wristCommands.setLoadCoral(wrist));
-        driverController.povDown().whileTrue(wristCommands.setL4(wrist));
+        driverController.x().onTrue(elevatorCommands.moveToL2());
+        driverController.y().onTrue(elevatorCommands.moveToL3()); 
+        driverController.b().onTrue(elevatorCommands.moveToL4());
+        driverController.a().onTrue(elevatorCommands.moveToBase());
+
+        driverController.povUp()
+            .whileTrue(elevator.incrementUpCommand());
+        driverController.povDown()
+            .whileTrue(elevator.decrementDownCommand());
         driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
         driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
@@ -147,15 +148,18 @@ public class RobotContainer {
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         operatorController.rightBumper()
             .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
-        operatorController.a().whileTrue(climberCommands.climbUpCommand());
+        
+      operatorController.a().whileTrue(climberCommands.climbUpCommand());
         operatorController.b().whileTrue(climberCommands.climbDownCommand());
         // operatorController.x().whileTrue(_());
         // operatorController.y().whileTrue(_());
-
+  
         operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));
+
+        drivetrain.registerTelemetry(logger::telemeterize);
 
     }
 
