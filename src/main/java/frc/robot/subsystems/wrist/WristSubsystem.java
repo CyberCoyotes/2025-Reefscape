@@ -24,6 +24,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class WristSubsystem extends SubsystemBase {
     // Hardware
@@ -47,8 +48,8 @@ public class WristSubsystem extends SubsystemBase {
     private final StatusSignal<Boolean> stickyRemoteSensorInvalid;
 
     public WristSubsystem() {
-        motor = new TalonFX(WristConstants.WRIST_ID, WristConstants.kCANBus);
-        encoder = new CANcoder(WristConstants.WRIST_ENCODER_ID, WristConstants.kCANBus);
+        motor = new TalonFX(Constants.WRIST_MOTOR_ID, Constants.kCANBus);
+        encoder = new CANcoder(Constants.WRIST_ENCODER_ID, Constants.kCANBus);
 
         // Configure CANcoder
         var encoderConfig = new CANcoderConfiguration();
@@ -138,8 +139,8 @@ public class WristSubsystem extends SubsystemBase {
 
     public void setPosition(double targetRotations) {
         targetRotations = MathUtil.clamp(targetRotations,
-                WristConstants.MIN_ROTATION,
-                WristConstants.MAX_ROTATION);
+                WristConstants.REVERSE_LIMIT,
+                WristConstants.FORWARD_LIMIT);
         motor.setControl(motionMagicRequest.withPosition(targetRotations)
                 .withFeedForward(WristConstants.VOLTAGE_FEEDFORWARD));
     }

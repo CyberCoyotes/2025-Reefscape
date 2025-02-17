@@ -1,13 +1,9 @@
 // WristConstants.java
 package frc.robot.subsystems.wrist;
 
-import com.ctre.phoenix6.CANBus;
-
 public final class WristConstants {
     // CAN ID and hardware config
-    public static final int WRIST_ID = 20;
-    public static final int WRIST_ENCODER_ID = 14;
-    public static final CANBus kCANBus = new CANBus("rio");
+
     public static final double GEAR_RATIO = 50.0; // TODO Determine the actual gear ratio; suggested 75.0
     public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; 
     
@@ -26,8 +22,8 @@ public final class WristConstants {
     public static final double MOTION_MAGIC_JERK = 100.0; // rotations per second^3
     public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
     
-    public static final double MIN_ROTATION = 0.00;
-    public static final double MAX_ROTATION = 0.50;  // 90 degrees
+    public static final double REVERSE_LIMIT = 0.00;
+    public static final double FORWARD_LIMIT = 0.50;  // 90 degrees
         
     // PID and FF Gains
     public static final class Gains {

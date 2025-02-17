@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import pabeles.concurrency.ConcurrencyOps.Reset;
 
 public class ElevatorSubsystem extends SubsystemBase {
@@ -93,8 +94,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
         // Initialize motors
-        elevatorLeader = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID);
-        elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID);
+        elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID);
+        elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID);
 
         // Initialize control requests
         motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
@@ -157,7 +158,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorFollower.getConfigurator().apply(followerConfig);
 
         // Set up follower to follow leader with opposite direction
-        elevatorFollower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
+        elevatorFollower.setControl(new Follower(Constants.ELEVATOR_LEAD_ID, true));
     }
 
     private void configureSafetyMotors() {
@@ -213,7 +214,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         
         elevatorFollower.getConfigurator().apply(followerConfig);
-        elevatorFollower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
+        elevatorFollower.setControl(new Follower(Constants.ELEVATOR_LEAD_ID, true));
     }
 
     // FIXME: This is a temporary solution to reset the elevator position
@@ -255,12 +256,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Use slot 2 for incremental movement
         motionMagicRequest = motionMagicRequest.withSlot(2);
         
-        double newTarget = MathUtil.clamp(
-            currentPos + increment,
-            MIN_HEIGHT,
-            MAX_HEIGHT
-        );
-        
+        // TODO Make sure limits are respected in motor configs
+        double newTarget = (currentPos + increment);
+    
         setPosition(newTarget);
         
         // Reset back to current mode's slot for next movement

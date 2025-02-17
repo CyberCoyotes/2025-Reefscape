@@ -3,6 +3,7 @@ package frc.robot.subsystems.climber;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 // Phoenix 6 imports
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -13,8 +14,6 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 public class ClimberVoltageSubsystem extends SubsystemBase {
-    private static final int CLIMB_ID = 25;
-    private static final CANBus kCANBus = new CANBus("rio");
 
     // Motor & control request object
     private final TalonFX climbMotor;
@@ -26,7 +25,7 @@ public class ClimberVoltageSubsystem extends SubsystemBase {
 
     public ClimberVoltageSubsystem() {
         // Initialize motor
-        climbMotor = new TalonFX(CLIMB_ID, kCANBus);
+        climbMotor = new TalonFX(Constants.CLIMBER_ID, Constants.kCANBus);
 
         // Create a Voltage control request initially set to 0 V
         voltageRequest = new VoltageOut(0);
