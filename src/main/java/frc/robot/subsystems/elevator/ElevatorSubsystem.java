@@ -16,6 +16,7 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import pabeles.concurrency.ConcurrencyOps.Reset;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Subsystem Modes
@@ -30,7 +31,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Control Requests
     private MotionMagicVoltage motionMagicRequest;
-    private final VoltageOut manualVoltageRequest;
 
     // Mode Tracking
     private ElevatorMode currentMode = ElevatorMode.SAFETY; // Default to safety mode
@@ -57,9 +57,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private static final double SAFETY_JERK = 200;
 
     // Increment Settings
-    private static final double FINE_INCREMENT = 0.025; // Small adjustments
-    private static final double COARSE_INCREMENT = 0.10; // Large adjustments
-
+    private static final double FINE_INCREMENT = 0.02; // Small adjustments
+    
     // Tolerance/Deadband Settings
     private static final double POSITION_TOLERANCE = 0.02;
     private static final double DEADBAND = 0.02;
@@ -97,19 +96,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
         // Initialize motors
-
         elevatorLeader = new TalonFX(ElevatorConstants.ELEVATOR_LEAD_ID);
         elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID);
 
         // Initialize control requests
         motionMagicRequest = new MotionMagicVoltage(0).withSlot(1).withEnableFOC(true);
-        manualVoltageRequest = new VoltageOut(0).withEnableFOC(true);
 
-        manualVoltageRequest = new VoltageOut(0)
-                .withEnableFOC(true);
+        // Reset the elevator position
+        resetElevator();
 
-        // Initialize and reset the elevator position
-        initializeOnStartup();
+        // Configure motors
         configureMotors();
         // configureSafetyMotors();
     }
@@ -117,8 +113,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private void configureMotors() {
         // Create configurations for both motors
         TalonFXConfiguration leadConfig = new TalonFXConfiguration();
-
-        // TODO is this needed?
         TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
         leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
@@ -132,12 +126,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.kG = ElevatorConstants.kG;
 
         // Configure motion magic
-        // leadConfig.MotionMagic.MotionMagicCruiseVelocity =
-        // ElevatorConstants.CRUISE_VELOCITY;
-        // leadConfig.MotionMagic.MotionMagicAcceleration =
-        // ElevatorConstants.ACCELERATION;
-        // leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
-
         leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY;
         leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
         leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK;
@@ -155,9 +143,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         leadConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        // Configure gravity compensation for vertical mechanism
-        leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
         // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
         // your motor/load
@@ -172,7 +157,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure follower motor to oppose the leader
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        // elevatorFollower.getConfigurator().apply(followerConfig);
+        elevatorFollower.getConfigurator().apply(followerConfig);
 
         // Set up follower to follow leader with opposite direction
         elevatorFollower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
@@ -225,7 +210,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader.getConfigurator().apply(leadConfig);
 
         // Configure follower
-        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
@@ -233,6 +217,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         
         elevatorFollower.getConfigurator().apply(followerConfig);
         elevatorFollower.setControl(new Follower(ELEVATOR_LEAD_ID, true));
+    }
+
+    // FIXME: This is a temporary solution to reset the elevator position
+    public void resetElevator() {
+        // Reset encoder position to zero
+        elevatorLeader.setPosition(0);
+        Logger.recordOutput("Elevator/Reset", "Encoder reset to 0");
     }
 
     public void setMode(ElevatorMode mode) {
@@ -290,13 +281,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader.setControl(motionMagicRequest.withPosition(positionRotations * GEAR_RATIO));
     }
 
-    // TODO **NEW** Incremental test 2-16-25
-    /**************************************************************************** */
-    /*
-     * Incrementally adjusts the elevator position by the given amount
-     * 
-     * @param increment The amount to adjust (positive for up, negative for down)
-     */
+    public Command setPositionCommand(double position) {
+        return run(() -> setPosition(position))
+                .withName("SetElevatorPosition");
+    }
+
     public void incrementPosition(double increment) {
         double currentPos = getPosition();
         double newPos = currentPos + increment;
@@ -308,12 +297,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         setPosition(newPos);
     }
 
-    /**
-     * Creates a command that incrementally moves the elevator up while the D-pad up
-     * is held
-     * 
-     * @return A command that runs while D-pad up is held
-     */
     public Command incrementUpCommand() {
         return run(() -> incrementPosition(0.02))
                 .withName("IncrementElevatorUp");
@@ -342,15 +325,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE;
     }
 
-    public void setManualOutput(double percentOutput) {
-        // Apply deadband and clamp output
-        if (Math.abs(percentOutput) < DEADBAND) {
-            percentOutput = 0;
-        }
-        
-        double voltage = MathUtil.clamp(percentOutput * 12.0, -12.0, 12.0);
-        elevatorLeader.setControl(manualVoltageRequest.withOutput(voltage));
-    }
 
     @Override
     public void periodic() {

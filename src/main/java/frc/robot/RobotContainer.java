@@ -130,7 +130,7 @@ public class RobotContainer {
         driverController.x().onTrue(elevatorCommands.moveToL2());
         driverController.y().onTrue(elevatorCommands.moveToL3()); 
         driverController.b().onTrue(elevatorCommands.moveToL4());
-        driverController.a().onTrue(elevatorCommands.moveToBase());
+        driverController.a().onTrue(elevatorCommands.moveToHome());
 
         driverController.povUp()
             .whileTrue(elevator.incrementUpCommand());
