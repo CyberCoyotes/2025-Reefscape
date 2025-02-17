@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -18,7 +19,8 @@ public final class ScoreL2Command {
      */
     public static Command createScoreL2Command(WristSubsystem wrist,
                                                ElevatorSubsystem elevator,
-                                               ElevatorCommands elevatorCommands) {
+                                               ElevatorCommands elevatorCommands,
+                                               EffectorSubsystem endEffector) {
         return Commands.sequence(
             // Step 1: Wrist to "safe"
             WristCommands.setSafePose(wrist),
@@ -28,6 +30,11 @@ public final class ScoreL2Command {
 
             // Step 3: Wrist to L2
             WristCommands.setL2(wrist)
+
+            // Step 4: Effector to score
+            // new SetEndEffectorCommand(EffectorState.SCORE_CORAL, endEffector)
+
         ).withName("ScoreL2Sequence");
+
     }
 }
