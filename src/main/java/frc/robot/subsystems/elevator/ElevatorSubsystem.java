@@ -37,9 +37,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double targetPosition = 0.0;
 
     // Key Hardware Constants
-    private static final int ELEVATOR_LEAD_ID = 24;
-    private static final int ELEVATOR_FOLLOW_ID = 23;
-    private static final String CAN_BUS_NAME = "rio";
     private static final double GEAR_RATIO = 9.0;
 
     // Soft Limits (in rotations)
@@ -100,7 +97,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorFollower = new TalonFX(ElevatorConstants.ELEVATOR_FOLLOW_ID);
 
         // Initialize control requests
-        motionMagicRequest = new MotionMagicVoltage(0).withSlot(1).withEnableFOC(true);
+        motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
         // Reset the elevator position
         resetElevator();
@@ -216,7 +213,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         
         elevatorFollower.getConfigurator().apply(followerConfig);
-        elevatorFollower.setControl(new Follower(ELEVATOR_LEAD_ID, true));
+        elevatorFollower.setControl(new Follower(ElevatorConstants.ELEVATOR_LEAD_ID, true));
     }
 
     // FIXME: This is a temporary solution to reset the elevator position
