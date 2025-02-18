@@ -30,9 +30,9 @@ public class WristSubsystem extends SubsystemBase {
     private static final double INCREMENT_STEP = 0.05; // Small adjustment step
 
     private static final double HOME_POSITION = 0.0;
-    private static final double L1_POSITION = 30.0;  // Degrees
-    private static final double L2_POSITION = 60.0;  // Degrees
-    private static final double L4_POSITION = 120.0; // Degrees
+    private static final double L1_POSITION = 5.0;  // Degrees
+    private static final double L2_POSITION = 15.0;  // Degrees
+    private static final double L4_POSITION = 30.0; // Degrees
 
     private static final double POSITION_CONVERSION_FACTOR = 1.0 / 360.0; // Converts degrees to rotations
     private double targetPosition = HOME_POSITION;
@@ -44,9 +44,9 @@ public class WristSubsystem extends SubsystemBase {
         configureMotor();
         configureCANCoder();
         resetWristMotor(); // Reset motor position on startup
-
     }
 
+    /** Configures the TalonFX wrist motor to use Motion Magic and CANCoder feedback. */
     private void configureMotor() {
         TalonFXConfiguration motorConfig = new TalonFXConfiguration();
 
@@ -70,15 +70,7 @@ public class WristSubsystem extends SubsystemBase {
         wristMotor.getConfigurator().apply(motorConfig);
     }
 
-    public void resetWristMotor() {
-        double absolutePosition = getAbsoluteEncoderAngle() / 360.0; // Convert degrees to rotations
-    
-        // Reset TalonFX encoder to match the absolute CANCoder position
-        wristMotor.setPosition(absolutePosition);
-        
-        System.out.println("Wrist motor reset to: " + absolutePosition + " rotations");
-    }
-    
+    /** Configures the CANCoder absolute encoder with magnet offset. */
     private void configureCANCoder() {
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -86,24 +78,40 @@ public class WristSubsystem extends SubsystemBase {
         wristEncoder.getConfigurator().apply(encoderConfig);
     }
 
+    /** Resets the TalonFX encoder to match the absolute CANCoder position. */
+    public void resetWristMotor() {
+        double absolutePosition = getAbsoluteEncoderAngle() / 360.0; // Convert degrees to rotations
+        wristMotor.setPosition(absolutePosition); // Reset motor encoder
+        System.out.println("Wrist motor reset to: " + absolutePosition + " rotations");
+    }
+
+    /** Returns the TalonFX integrated encoder position (motor rotations → degrees). */
     public double getWristMotorAngle() {
         return wristMotor.getPosition().getValueAsDouble() * 360.0; // Convert rotations to degrees
     }
 
+    /** Returns the CANCoder absolute angle (ignoring motor sensor). */
+    public double getAbsoluteEncoderAngle() {
+        return wristEncoder.getAbsolutePosition().getValueAsDouble() * 360.0; // Convert from rotations to degrees
+    }
+
+    /** Returns the CANCoder fused sensor reading (which includes offset). */
+    public double getWristCANCoderAngle() {
+        return wristEncoder.getPosition().getValueAsDouble() * 360.0; // Convert rotations to degrees
+    }
+
+    /** Sets the wrist motor target position using Motion Magic. */
     public void setWristMotorTargetPosition(double positionDegrees) {
         targetPosition = positionDegrees * POSITION_CONVERSION_FACTOR; // Convert to rotations
         wristMotor.setControl(positionRequest.withPosition(targetPosition));
     }
 
+    /** Checks if the wrist motor is at the target position. */
     public boolean isAtWristMotorTarget() {
         return Math.abs(getWristMotorAngle() - targetPosition * 360.0) < POSITION_TOLERANCE;
     }
-       
-    public double getAbsoluteEncoderAngle() {
-        return wristEncoder.getAbsolutePosition().getValueAsDouble() * 360.0; // Convert from rotations to degrees
-    }
 
-    // Factory Methods for Commands
+    /** Factory Methods for Commands */
     public Command moveToHome() {
         return Commands.runOnce(() -> setWristMotorTargetPosition(HOME_POSITION), this);
     }
@@ -112,7 +120,7 @@ public class WristSubsystem extends SubsystemBase {
         return Commands.runOnce(() -> setWristMotorTargetPosition(L1_POSITION), this);
     }
 
-    public Command moveToToL2() {
+    public Command moveToL2() {
         return Commands.runOnce(() -> setWristMotorTargetPosition(L2_POSITION), this);
     }
 
@@ -137,8 +145,27 @@ public class WristSubsystem extends SubsystemBase {
     public Command resetWristCommand() {
         return Commands.runOnce(this::resetWristMotor, this);
     }
-    
 
+    @Override
+    public void periodic() {
+        // Update SmartDashboard with telemetry
+        SmartDashboard.putNumber("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
+        SmartDashboard.putNumber("Wrist/Motor/Position (deg)", getWristMotorAngle());
+        SmartDashboard.putNumber("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
+        SmartDashboard.putNumber("Wrist/CANCoder/Fused Angle (deg)", getWristCANCoderAngle());
+        SmartDashboard.putNumber("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Wrist/Motor/Current (A)", wristMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putBoolean("Wrist/Motor/At Target", isAtWristMotorTarget());
+
+        // Update AdvantageKit logging
+        Logger.recordOutput("Wrist/Motor/Position (deg)", getWristMotorAngle());
+        Logger.recordOutput("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
+        Logger.recordOutput("Wrist/CANCoder/Fused Angle (deg)", getWristCANCoderAngle());
+        Logger.recordOutput("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
+    }
+
+
+/* 
     @Override
     public void periodic() {
         // Update SmartDashboard with telemetry
@@ -162,6 +189,6 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
         
  
-        } // end periodic
+        } // end periodic*/
 
 } // end subsystem class
