@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -135,8 +136,12 @@ public class RobotContainer {
                 .whileTrue(elevator.incrementUpCommand());
         driverController.povDown()
                 .whileTrue(elevator.decrementDownCommand());
-        driverController.povLeft().onTrue(wrist.moveToHome());
-        driverController.povRight().onTrue(wrist.moveToL2());
+        // driverController.povLeft().whileTrue(wrist.incrementWristDown());
+        // driverController.povRight().whileTrue(wrist.incrementWristUp());
+
+        driverController.povUp().whileTrue(Commands.run(() -> wrist.incrementWristPosition(true), wrist));
+driverController.povDown().whileTrue(Commands.run(() -> wrist.incrementWristPosition(false), wrist));
+
 
         /***** Operator Controls *****/
         operatorController.leftBumper()
