@@ -1,201 +1,129 @@
-//         encoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
-// encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 package frc.robot.subsystems.wrist;
 
-import static edu.wpi.first.units.Units.Rotations;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
-import org.littletonrobotics.junction.Logger;
-
-import com.ctre.phoenix6.BaseStatusSignal;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Timer;
+
+import java.util.function.DoubleSupplier;
+import java.util.function.BooleanSupplier;
+
 import frc.robot.Constants;
 
 public class WristSubsystem extends SubsystemBase {
-    // Hardware
-    private final TalonFX motor;
-    private final CANcoder encoder;
+    
+    private final TalonFX wristMotor;
+    private final CANcoder wristEncoder;
+    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0)
+                                                            .withSlot(0)
+                                                            .withEnableFOC(true);
 
-    // Motion Magic Control Request
-    private final MotionMagicVoltage motionMagicRequest;
+    private static final double POSITION_TOLERANCE = 0.5; // Acceptable error in degrees
+    private static final double INCREMENT_STEP = 0.05; // Small adjustment step
 
-    // Status Signals
-    private final StatusSignal<Angle> motorPosition;
-    private final StatusSignal<AngularVelocity> motorVelocity;
-    private final StatusSignal<Angle> encoderPosition;
-    private final StatusSignal<AngularVelocity> encoderVelocity;
-    private final StatusSignal<Angle> motorRotorPosition;
+    private static final double HOME_POSITION = 0.0;
+    private static final double L1_POSITION = 0.09; // 30
+    private static final double L2_POSITION = 0.15; // 60
+    private static final double L4_POSITION = 0.25;    // 120
 
-    // Fault Signals
-    private final StatusSignal<Boolean> fusedSensorOutOfSync;
-    private final StatusSignal<Boolean> stickyFusedSensorOutOfSync;
-    private final StatusSignal<Boolean> remoteSensorInvalid;
-    private final StatusSignal<Boolean> stickyRemoteSensorInvalid;
+    private double targetPosition = HOME_POSITION;
 
-    public WristSubsystem() {
-        motor = new TalonFX(Constants.WRIST_MOTOR_ID, Constants.kCANBus);
-        encoder = new CANcoder(Constants.WRIST_ENCODER_ID, Constants.kCANBus);
+    public WristSubsystem(TalonFX wristMotor, CANcoder wristEncoder) {
+        this.wristMotor = wristMotor;
+        this.wristEncoder = wristEncoder;
 
-        // Configure CANcoder
-        var encoderConfig = new CANcoderConfiguration();
-        encoderConfig.MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(0.5));
-        // encoderConfig.MagnetSensor.AbsoluteSensorRange =
-        // AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        configureMotor();
+        configureCANCoder();
+    }
+
+    private void configureMotor() {
+        TalonFXConfiguration motorConfig = new TalonFXConfiguration();
+
+    motorConfig.Slot0.kP = 0.2;  // Proportional gain
+    motorConfig.Slot0.kI = 0.0;  // Integral gain
+    motorConfig.Slot0.kD = 0.1;  // Derivative gain
+    motorConfig.Slot0.kV = 0.12; // Velocity feedforward
+    motorConfig.Slot0.kS = 0.2;  // Static feedforward (to overcome friction)
+    motorConfig.Slot0.kG = 0.3;  // Gravity feedforward (if needed for arms)
+
+    // Motion Magic settings
+    motorConfig.MotionMagic.MotionMagicCruiseVelocity = 30.0; // Max speed (adjust as needed)
+    motorConfig.MotionMagic.MotionMagicAcceleration = 20.0;   // Acceleration rate (tune this)
+    motorConfig.MotionMagic.MotionMagicJerk = 100.0;          // Jerk control (smoothing)
+
+    motorConfig.Feedback.SensorToMechanismRatio = 1.0; // Adjust as needed
+    motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake; // Prevent free movement
+
+    wristMotor.getConfigurator().apply(motorConfig);
+        // motorConfig.Feedback.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        wristMotor.getConfigurator().apply(motorConfig);
+    }
+
+    private void configureCANCoder() {
+        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        encoderConfig.MagnetSensor.MagnetOffset = 0.160400390625; // Configured offset
+        wristEncoder.getConfigurator().apply(encoderConfig);
+    }
 
-        // Apply encoder config and wait for completion
-        var encoderResult = encoder.getConfigurator().apply(encoderConfig, 0.050);
-        if (!encoderResult.isOK()) {
-            System.out.println("[Wrist] Failed to configure CANcoder: " + encoderResult.toString());
-        }
-        // Configure TalonFX
-        var motorConfig = new TalonFXConfiguration();
+    public double getArmAngle() {
+        return wristEncoder.getAbsolutePosition().getValueAsDouble();
+    }
 
-        // Clear any existing rotor offset
-        motorConfig.Feedback.FeedbackRotorOffset = 0;
+    public void setTargetPosition(double position) {
+        targetPosition = position;
+        wristMotor.setControl(positionRequest.withPosition(targetPosition));
+    }
 
-        // Feedback Configuration
-        motorConfig.Feedback.FeedbackRemoteSensorID = encoder.getDeviceID();
-        motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        motorConfig.Feedback.RotorToSensorRatio = 75.0; // Your gear ratio
-        motorConfig.Feedback.SensorToMechanismRatio = 1.0;
-        motorConfig.Feedback.FeedbackRotorOffset = 0.0; // Ensure no rotor offset
+    public boolean isAtTarget() {
+        return Math.abs(getArmAngle() - targetPosition) < POSITION_TOLERANCE;
+    }
 
-        // Motion Magic Configuration
-        motorConfig.MotionMagic.MotionMagicCruiseVelocity = 30; // Reduced from 40
-        motorConfig.MotionMagic.MotionMagicAcceleration = 60; // Reduced from 80
-        motorConfig.MotionMagic.MotionMagicJerk = 600; // Reduced from 800
+    // Factory Methods for Commands
 
-        // Slot 0 Configuration for Motion Magic
-        motorConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        motorConfig.Slot0.kS = 0.25; // Static friction compensation
-        motorConfig.Slot0.kV = 0.12; // Velocity feedforward
-        motorConfig.Slot0.kA = 0.01; // Acceleration feedforward
-        motorConfig.Slot0.kP = 1.50; // Reduced from 2.00
-        motorConfig.Slot0.kI = 0.00; // No integral gain needed
-        motorConfig.Slot0.kD = 0.08; // Increased from 0.05 for more damping
-        motorConfig.Slot0.kG = 0.70; // Gravity compensation
+    public Command moveToHome() {
+        return Commands.runOnce(() -> setTargetPosition(HOME_POSITION), this);
+    }
 
-        // Current Limits - Enabling with higher limits
-        motorConfig.CurrentLimits.SupplyCurrentLimit = 80;
-        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-        motorConfig.CurrentLimits.StatorCurrentLimit = 100;
-        motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+    public Command moveToL1() {
+        return Commands.runOnce(() -> setTargetPosition(L1_POSITION), this);
+    }
 
-        // Apply configuration and wait for completion
-        var motorResult = motor.getConfigurator().apply(motorConfig, 0.050);
-        if (!motorResult.isOK()) {
-            System.out.println("[Wrist] Failed to configure TalonFX: " + motorResult.toString());
-        }
+    public Command moveToL2() {
+        return Commands.runOnce(() -> setTargetPosition(L2_POSITION), this);
+    }
 
-        // Set brake mode
-        motor.setNeutralMode(NeutralModeValue.Brake);
+    public Command moveToL4() {
+        return Commands.runOnce(() -> setTargetPosition(L4_POSITION), this);
+    }
 
-        // Initialize Motion Magic request
-        motionMagicRequest = new MotionMagicVoltage(0).withSlot(0);
+    public Command adjustPosition(double delta) {
+        return Commands.runOnce(() -> setTargetPosition(getArmAngle() + delta), this);
+    }
 
-        // Initialize all status signals
-        motorPosition = motor.getPosition();
-        motorVelocity = motor.getVelocity();
-        encoderPosition = encoder.getPosition();
-        encoderVelocity = encoder.getVelocity();
-        motorRotorPosition = motor.getRotorPosition();
-
-        // Initialize fault signals
-        fusedSensorOutOfSync = motor.getFault_FusedSensorOutOfSync();
-        stickyFusedSensorOutOfSync = motor.getStickyFault_FusedSensorOutOfSync();
-        remoteSensorInvalid = motor.getFault_RemoteSensorDataInvalid();
-        stickyRemoteSensorInvalid = motor.getStickyFault_RemoteSensorDataInvalid();
-
-        // Validate remote sensor configuration
-        try {
-            Thread.sleep(200); // Give devices time to configure
-            BaseStatusSignal.refreshAll(encoderPosition, remoteSensorInvalid);
-            if (remoteSensorInvalid.getValue()) {
-                DriverStation.reportWarning(
-                        "Wrist CANcoder configuration failed. Check ID: " + encoder.getDeviceID(),
-                        false);
+    public Command bindPOVIncrementalControl(XboxController controller) {
+        return Commands.run(() -> {
+            if (controller.getPOV() == 0) {
+                setTargetPosition(getArmAngle() + INCREMENT_STEP);
+            } else if (controller.getPOV() == 180) {
+                setTargetPosition(getArmAngle() - INCREMENT_STEP);
             }
-        } catch (InterruptedException e) {
-            System.out.println("[Wrist] Configuration validation interrupted");
-        }
-    }
-
-    public void setPosition(double targetRotations) {
-        targetRotations = MathUtil.clamp(targetRotations,
-                WristConstants.REVERSE_LIMIT,
-                WristConstants.FORWARD_LIMIT);
-        motor.setControl(motionMagicRequest.withPosition(targetRotations)
-                .withFeedForward(WristConstants.VOLTAGE_FEEDFORWARD));
-    }
-
-    public double getPosition() {
-        return encoderPosition.refresh().getValue().in(Rotations);
-    }
-
-    public double getVelocity() {
-        return motorVelocity.refresh().getValue().in(RotationsPerSecond);
-    }
-
-    public boolean atTargetPosition(double toleranceRotations) {
-        return Math.abs(getPosition() - motionMagicRequest.Position) < toleranceRotations;
-    }
-
-    public boolean isSafeForElevator() {
-        double currentPosition = getPosition();
-        boolean isSafe = currentPosition >= WristConstants.Positions.SAFE;
-
-        if (!isSafe) {
-            DriverStation.reportWarning("Wrist position unsafe for elevator movement", false);
-        }
-
-        Logger.recordOutput("Wrist/SafetyCheck/ElevatorSafe", isSafe);
-        return isSafe;
-    }
-
-    public void clearStickyFaults() {
-        motor.clearStickyFaults();
-        encoder.clearStickyFaults();
+        }, this);
     }
 
     @Override
     public void periodic() {
-        // Log essential data
-        Logger.recordOutput("Wrist/Position", getPosition());
-        Logger.recordOutput("Wrist/Velocity", getVelocity());
-        Logger.recordOutput("Wrist/Target", motionMagicRequest.Position);
-        Logger.recordOutput("Wrist/AtTarget", atTargetPosition(WristConstants.POSE_TOLERANCE));
-        Logger.recordOutput("Wrist/PositionError", motionMagicRequest.Position - getPosition());
-        Logger.recordOutput("Wrist/ControlOutput", motor.getMotorVoltage().getValue());
-
-        // Log named positions for telemetry
-        Logger.recordOutput("Wrist/Position/Named/ElevatorSafe", WristConstants.Positions.SAFE);
-        Logger.recordOutput("Wrist/Position/Named/LoadCoral", WristConstants.Positions.LOAD_CORAL);
-        Logger.recordOutput("Wrist/Position/Named/L2", WristConstants.Positions.L2);
-        Logger.recordOutput("Wrist/Position/Named/L4", WristConstants.Positions.L4);
-
-        // Log diagnostic data
-        Logger.recordOutput("Wrist/Diagnostics/FusedSensorOutOfSync", fusedSensorOutOfSync.refresh().getValue());
-        Logger.recordOutput("Wrist/Diagnostics/RemoteSensorInvalid", remoteSensorInvalid.refresh().getValue());
-        Logger.recordOutput("Wrist/Diagnostics/RawEncoderPosition",
-                encoder.getPosition().refresh().getValue().in(Rotations));
-        Logger.recordOutput("Wrist/Diagnostics/MotorRotorPosition",
-                motorRotorPosition.refresh().getValue().in(Rotations));
+        // Update motor control with position tracking
+        wristMotor.setControl(positionRequest.withPosition(targetPosition));
     }
 }
