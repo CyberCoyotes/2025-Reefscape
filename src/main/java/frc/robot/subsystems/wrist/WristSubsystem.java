@@ -1,19 +1,20 @@
 package frc.robot.subsystems.wrist;
 
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class WristSubsystem extends SubsystemBase {
 
@@ -40,6 +41,8 @@ public class WristSubsystem extends SubsystemBase {
 
         configureMotor();
         configureCANCoder();
+        resetWristMotor(); // Reset motor position on startup
+
     }
 
     private void configureMotor() {
@@ -65,9 +68,19 @@ public class WristSubsystem extends SubsystemBase {
         wristMotor.getConfigurator().apply(motorConfig);
     }
 
+    public void resetWristMotor() {
+        double absolutePosition = getAbsoluteEncoderAngle() / 360.0; // Convert degrees to rotations
+    
+        // Reset TalonFX encoder to match the absolute CANCoder position
+        wristMotor.setPosition(absolutePosition);
+        
+        System.out.println("Wrist motor reset to: " + absolutePosition + " rotations");
+    }
+    
     private void configureCANCoder() {
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        encoderConfig.MagnetSensor.MagnetOffset = WristConstants.MAGNET_ENCODER_OFFSET; // Apply offset
         wristEncoder.getConfigurator().apply(encoderConfig);
     }
 
@@ -82,6 +95,10 @@ public class WristSubsystem extends SubsystemBase {
 
     public boolean isAtTarget() {
         return Math.abs(getWristAngle() - targetPosition * 360.0) < POSITION_TOLERANCE;
+    }
+       
+    public double getAbsoluteEncoderAngle() {
+        return wristEncoder.getAbsolutePosition().getValueAsDouble() * 360.0; // Convert from rotations to degrees
     }
 
     // Factory Methods for Commands
@@ -114,4 +131,23 @@ public class WristSubsystem extends SubsystemBase {
             }
         }, this);
     }
-}
+
+    public Command resetWristCommand() {
+        return Commands.runOnce(this::resetWristMotor, this);
+    }
+    
+
+    @Override
+    public void periodic() {
+        // Update SmartDashboard with telemetry
+        SmartDashboard.putNumber("Wrist/Motor/Reset Position (rotations)", wristMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
+        SmartDashboard.putNumber("Wrist/Motor/Position (deg)", getWristAngle());
+        SmartDashboard.putNumber("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
+        SmartDashboard.putNumber("Wrist/Motor/Current (A)", wristMotor.getStatorCurrent().getValueAsDouble());
+        SmartDashboard.putBoolean("Wrist/Motor/At Target", isAtTarget());
+        SmartDashboard.putNumber("Wrist/Motor/At Target", getWristAngle());
+        SmartDashboard.putNumber("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
+        } // end periodic
+
+} // end subsystem class

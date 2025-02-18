@@ -1,8 +1,18 @@
 // WristConstants.java
 package frc.robot.subsystems.wrist;
 
+/*
+The Magnet Encoder Offset represents the rotational offset of the absolute encoder in rotations (not degrees).
+What does 0.16 mean?
+The offset is given in rotations (where 1.0 = one full revolution = 360 degrees).
+Your value of 0.16 means the encoder is offset by: 0.16 × 360 = 57.6
+
+This means that when the encoder reads "0", the actual position of the mechanism is 57.6 degrees ahead.
+ */
 public final class WristConstants {
     // CAN ID and hardware config
+
+    public static final double MAGNET_ENCODER_OFFSET = 0.16; // From Phoenix Tuner X
 
     public static final double GEAR_RATIO = 50.0; // TODO Determine the actual gear ratio; suggested 75.0
     public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; 
