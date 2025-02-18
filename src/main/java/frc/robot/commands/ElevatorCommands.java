@@ -19,14 +19,6 @@ public class ElevatorCommands {
     }
 
     /**
-     * Sets elevator operation mode
-     */
-    public Command setMode(ElevatorMode mode) {
-        return elevator.runOnce(() -> elevator.setMode(mode))
-            .withName("SetElevatorMode(" + mode + ")");
-    }
-
-    /**
      * Creates a command to increment elevator up with fine control
      */
     public Command incrementUpRaw() {
