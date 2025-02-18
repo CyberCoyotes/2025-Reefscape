@@ -7,8 +7,6 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TOFSubsystem extends SubsystemBase {
-    // Constants for LaserCAN IDs
-
     
     // LaserCAN devices
     private final LaserCan coralLaser;
