@@ -30,17 +30,17 @@ import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.EndEffectorCommands;
-import frc.robot.commands.WristCommands;
+
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
-    private final WristCommands wristCommands;
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands;
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
+
 
     private final ClimberVoltageSubsystem climber = new ClimberVoltageSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
@@ -76,8 +76,6 @@ public class RobotContainer {
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
-        elevatorCommands = new ElevatorCommands(elevator, wrist);
-        wristCommands = new WristCommands();
 
         configureBindings();
         configureAutoRoutines();
@@ -127,26 +125,18 @@ public class RobotContainer {
          */
 
         /***** Driver Controls *****/
-        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driverController.leftBumper()
-                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_CORAL));
-        driverController.rightBumper()
-                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_CORAL));
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
-        driverController.x().onTrue(elevatorCommands.moveToL2());
-        driverController.y().onTrue(elevatorCommands.moveToL3());
-        driverController.b().onTrue(elevatorCommands.moveToL4());
-        driverController.a().onTrue(elevatorCommands.moveToHome());
+
 
         driverController.povUp()
                 .whileTrue(elevator.incrementUpCommand());
         driverController.povDown()
                 .whileTrue(elevator.decrementDownCommand());
-        driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
-        driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
+        driverController.povLeft().onTrue(wrist.moveToHome());
+        driverController.povRight().onTrue(wrist.moveToL2());
 
         /***** Operator Controls *****/
         operatorController.leftBumper()
@@ -159,7 +149,7 @@ public class RobotContainer {
         // operatorController.x().whileTrue(_());
         // operatorController.y().whileTrue(_());
 
-        operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
+                operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));

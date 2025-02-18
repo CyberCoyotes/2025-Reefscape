@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 public final class ScoreL2Command {
@@ -27,7 +26,7 @@ public final class ScoreL2Command {
                                                EffectorSubsystem endEffector) {
         return Commands.sequence(
             // Step 1: Wrist to "safe"
-            WristCommands.setSafePose(wrist),
+            // WristCommands.setSafePose(wrist),
 
             // Step 2: Elevator to L2
             elevatorCommands.moveToL2(),

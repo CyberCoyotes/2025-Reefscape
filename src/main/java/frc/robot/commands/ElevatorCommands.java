@@ -41,7 +41,7 @@ public class ElevatorCommands {
         return Commands.either(
             incrementUpRaw(),
             Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
+            () -> true  // TODO Replace with actual condition if needed
         ).withName("SafeElevatorIncrement(up)");
     }
 
@@ -52,7 +52,7 @@ public class ElevatorCommands {
         return Commands.either(
             incrementDownRaw(),
             Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
+            () -> true  // TODO Use wrist subsystem's method
         ).withName("SafeElevatorIncrement(down)");
     }
 
@@ -76,7 +76,7 @@ public class ElevatorCommands {
         return Commands.either(
             createMoveToPositionRaw(targetPosition),
             Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
+            () -> true  // TODO Use wrist subsystem's method
         ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
     }
 
