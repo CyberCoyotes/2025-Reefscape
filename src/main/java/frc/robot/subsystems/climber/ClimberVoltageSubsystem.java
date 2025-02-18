@@ -1,8 +1,9 @@
-package frc.robot.subsystems.climb;
+package frc.robot.subsystems.climber;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 // Phoenix 6 imports
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -12,47 +13,35 @@ import org.littletonrobotics.junction.Logger;
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.VoltageOut;
 
-public class ClimbVoltageSubsystem extends SubsystemBase {
-    private static final int CLIMB_ID = 25;
-    private static final CANBus kCANBus = new CANBus("rio");
+public class ClimberVoltageSubsystem extends SubsystemBase {
 
     // Motor & control request object
     private final TalonFX climbMotor;
     private final VoltageOut voltageRequest;
 
     // voltage variable
-    public final double CLIMB_VOLTAGE = 9; // This should be about 1/4 of the max voltage
+    public final double CLIMB_VOLTAGE = 9; // With a max of 12, This should be about 3/4 of the max voltage
 
 
-    public ClimbVoltageSubsystem() {
+    public ClimberVoltageSubsystem() {
         // Initialize motor
-        climbMotor = new TalonFX(CLIMB_ID, kCANBus);
+        climbMotor = new TalonFX(Constants.CLIMBER_ID, Constants.kCANBus);
 
         // Create a Voltage control request initially set to 0 V
         voltageRequest = new VoltageOut(0);
-
-       
-        // If you want to configure the motor hardware (inversions, ramp, etc.), do it here:
-        // e.g. climbMotor.getConfigurator().apply(...someMotorConfigs...);
     }
 
-    /**
-     * Run the motor "up" at +6 V, for example.
-     */
+
+    // Output to lift the robot up
     public void climbUp() {
         climbMotor.setControl(voltageRequest.withOutput(-CLIMB_VOLTAGE));  // 6 V out of max ~12 V
     }
 
-    /**
-     * Run the motor "down" at -6 V, for example.
-     */
+    // Output to lower the robot down
     public void climbDown() {
         climbMotor.setControl(voltageRequest.withOutput(CLIMB_VOLTAGE));
     }
 
-    /**
-     * Stop the motor by sending 0 V.
-     */
     public void stopClimb() {
         climbMotor.setControl(voltageRequest.withOutput(0.0));
     }
@@ -64,9 +53,7 @@ public class ClimbVoltageSubsystem extends SubsystemBase {
     /***********************
      * 
      ****************************/
- /**
-     * Returns a Command that drives the motor at +6 V until canceled or interrupted.
-     */
+ 
     public Command climbUpCommand() {
         return run(
             () -> climbUp())

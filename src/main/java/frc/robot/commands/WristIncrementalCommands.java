@@ -54,8 +54,8 @@ public class WristIncrementalCommands {
                     // Clamp the position within valid range
                     newPosition = MathUtil.clamp(
                         newPosition,
-                        WristConstants.MIN_ROTATION,
-                        WristConstants.MAX_ROTATION
+                        WristConstants.REVERSE_LIMIT,
+                        WristConstants.FORWARD_LIMIT
                     );
                     
                     // Update position if it changed

@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
-import com.revrobotics.spark.SparkLowLevel.PeriodicFrame;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
@@ -21,38 +20,40 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorConstants;
+import frc.robot.subsystems.TOFSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristConstants;
-import frc.robot.subsystems.wrist.WristMotorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.climb.ClimbVoltageSubsystem;
+import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
+import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
-import frc.robot.commands.WristIncrementalCommands;
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
-    private final WristMotorSubsystem wristMotor = new WristMotorSubsystem();
     private final WristCommands wristCommands;
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands;
 
-    private final ClimbVoltageSubsystem climber = new ClimbVoltageSubsystem();
+    private final ClimberVoltageSubsystem climber = new ClimberVoltageSubsystem();
+    private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
-// TODO Slomo
-    private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-    
-     private final AutoFactory autoFactory;
+    private final TOFSubsystem m_tof = new TOFSubsystem();
+
+    // TODO Slomo
+    private double MaxSpeed = 4; // TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts
+                                 // desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
+
+    private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
 
@@ -69,9 +70,9 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    
+
     public RobotContainer() {
-        
+
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain);
 
@@ -84,6 +85,7 @@ public class RobotContainer {
         // wrist.setWristZero(); // Verify encoder reading resets
 
     }
+
     private void configureAutoRoutines() {
         
        // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
@@ -98,79 +100,75 @@ public class RobotContainer {
        autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
 
        SmartDashboard.putData("Autonomous", autoChooser);
-       
+
     }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
-        );
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive
+                                                                                                           // forward
+                                                                                                           // with
+                                                                                                           // negative Y
+                                                                                                           // (forward)
+                        .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise
+                                                                                            // with negative X (left)
+                ));
 
-        /* FIXME Comment out for Testing of other commands 
-        driverController.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-driverController.getLeftY(), -driverController.getLeftX()))
-        ));
+        /*
+         * FIXME Comment out for Testing of other commands
+         * driverController.b().whileTrue(drivetrain.applyRequest(() ->
+         * point.withModuleDirection(new Rotation2d(-driverController.getLeftY(),
+         * -driverController.getLeftX()))
+         * ));
          */
 
         /***** Driver Controls *****/
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        
-        driverController.leftBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CORAL));
-        driverController.rightBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
-        
-         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
-        // driverController.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        driverController.leftBumper()
+                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CORAL));
+        driverController.rightBumper()
+                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
+
+        // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
+
+        driverController.x().onTrue(elevatorCommands.moveToL2());
+        driverController.y().onTrue(elevatorCommands.moveToL3());
+        driverController.b().onTrue(elevatorCommands.moveToL4());
         driverController.a().onTrue(elevatorCommands.moveToHome());
-        driverController.b().onTrue(elevatorCommands.moveToL1());
-        driverController.y().onTrue(elevatorCommands.moveToL2());
-        driverController.x().onTrue(elevatorCommands.moveToL3());
-        
-        driverController.povUp().onTrue(wristCommands.setLoadCoral(wrist));
-        driverController.povDown().whileTrue(wristCommands.setL4(wrist));
+
+        driverController.povUp()
+                .whileTrue(elevator.incrementUpCommand());
+        driverController.povDown()
+                .whileTrue(elevator.decrementDownCommand());
         driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
         driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
         /***** Operator Controls *****/
-        operatorController.start().
-            onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
-            .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
+        operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
+                .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
 
         operatorController.leftBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
+                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         operatorController.rightBumper()
-            .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
-        operatorController.a().whileTrue(climber.climbUpCommand());
-        operatorController.b().whileTrue(climber.climbDownCommand());
-        // operatorController.x().whileTrue(climber.climbUpCommand());
-        // operatorController.y().whileTrue(climber.climbDownCommand());
+        operatorController.a().whileTrue(climberCommands.climbUpCommand());
+        operatorController.b().whileTrue(climberCommands.climbDownCommand());
+        // operatorController.x().whileTrue(_());
+        // operatorController.y().whileTrue(_());
 
         operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
-        operatorController.povLeft().whileTrue(WristIncrementalCommands.createIncrementalCommand(wrist, driverController, 1));
-        operatorController.povRight().whileTrue(WristIncrementalCommands.createIncrementalCommand(wrist, driverController, 1));; // Testing
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));
- 
-Command incrementalCommand = WristIncrementalCommands.createIncrementalCommand(
-            wrist,
-            operatorController,
-            XboxController.Button.kRightBumper.value
-        );
-        
-        // The command will run while right bumper is held
-        operatorController.rightBumper().whileTrue(incrementalCommand);
+
         drivetrain.registerTelemetry(logger::telemeterize);
+
     }
 
     public Command getAutonomousCommand() {

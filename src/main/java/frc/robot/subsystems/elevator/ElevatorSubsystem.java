@@ -12,9 +12,12 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import pabeles.concurrency.ConcurrencyOps.Reset;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Subsystem Modes
@@ -29,16 +32,12 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Control Requests
     private MotionMagicVoltage motionMagicRequest;
-    private final VoltageOut manualVoltageRequest;
 
     // Mode Tracking
     private ElevatorMode currentMode = ElevatorMode.SAFETY; // Default to safety mode
     private double targetPosition = 0.0;
 
     // Key Hardware Constants
-    private static final int ELEVATOR_LEAD_ID = 24;
-    private static final int ELEVATOR_FOLLOW_ID = 23;
-    private static final String CAN_BUS_NAME = "rio";
     private static final double GEAR_RATIO = 9.0;
 
     // Soft Limits (in rotations)
@@ -56,9 +55,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     private static final double SAFETY_JERK = 200;
 
     // Increment Settings
-    private static final double FINE_INCREMENT = 0.025; // Small adjustments
-    private static final double COARSE_INCREMENT = 0.10; // Large adjustments
-
+    private static final double FINE_INCREMENT = 0.02; // Small adjustments
+    
     // Tolerance/Deadband Settings
     private static final double POSITION_TOLERANCE = 0.02;
     private static final double DEADBAND = 0.02;
@@ -96,55 +94,134 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
         // Initialize motors
-        elevatorLeader = new TalonFX(ELEVATOR_LEAD_ID, CAN_BUS_NAME);
-        elevatorFollower = new TalonFX(ELEVATOR_FOLLOW_ID, CAN_BUS_NAME);
+        elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID);
+        elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID);
 
         // Initialize control requests
-        motionMagicRequest = new MotionMagicVoltage(0).withSlot(1).withEnableFOC(true);
-        manualVoltageRequest = new VoltageOut(0).withEnableFOC(true);
+        motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
 
+        // Reset the elevator position
+        resetElevator();
+
+        // Configure motors
         configureMotors();
-        setMode(ElevatorMode.SAFETY); // Start in safety mode
+        // configureSafetyMotors();
     }
 
     private void configureMotors() {
-        // Create and configure leader settings
-        TalonFXConfiguration leaderConfig = new TalonFXConfiguration();
+        // Create configurations for both motors
+        TalonFXConfiguration leadConfig = new TalonFXConfiguration();
+        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
 
-        // Configure motor output
-        leaderConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        leaderConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
-        // Configure feedback
-        leaderConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+        // Configure leader motor
+        leadConfig.Slot0.kP = ElevatorConstants.kP;
+        leadConfig.Slot0.kI = ElevatorConstants.kI;
+        leadConfig.Slot0.kD = ElevatorConstants.kD;
+        leadConfig.Slot0.kV = ElevatorConstants.kV;
+        leadConfig.Slot0.kS = ElevatorConstants.kS;
+        leadConfig.Slot0.kG = ElevatorConstants.kG;
+
+        // Configure motion magic
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK;
 
         // Configure soft limits
-        leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        leaderConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAX_HEIGHT * GEAR_RATIO;
-        leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        leaderConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MIN_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        // ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        // ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
 
-        // Configure current limits
-        leaderConfig.CurrentLimits.StatorCurrentLimit = 40;
-        leaderConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        // Configure feedback and motor direction
+        leadConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leadConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        // Apply gains to slots
-        elevatorLeader.getConfigurator().apply(performanceGains); // Slot 0
-        elevatorLeader.getConfigurator().apply(safetyGains);     // Slot 1
-        elevatorLeader.getConfigurator().apply(incrementalGains); // Slot 2
+        // Inside configureMotors() method, add to both leadConfig and followerConfig:
+        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
+        // your motor/load
+        // leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        // Apply leader config
-        elevatorLeader.getConfigurator().apply(leaderConfig);
+        // followerConfig.CurrentLimits.StatorCurrentLimit = 40;
+        // followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+        // Apply configurations
+        elevatorLeader.getConfigurator().apply(leadConfig);
+
+        // Configure follower motor to oppose the leader
+        followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        elevatorFollower.getConfigurator().apply(followerConfig);
+
+        // Set up follower to follow leader with opposite direction
+        elevatorFollower.setControl(new Follower(Constants.ELEVATOR_LEAD_ID, true));
+    }
+
+    private void configureSafetyMotors() {
+        // Create configurations for both motors
+        TalonFXConfiguration leadConfig = new TalonFXConfiguration();
+        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
+
+        // Configure leader motor
+        leadConfig.Slot1.kP = ElevatorConstants.TestMode.kP;
+        leadConfig.Slot1.kI = ElevatorConstants.TestMode.kI;
+        leadConfig.Slot1.kD = ElevatorConstants.TestMode.kD;
+        leadConfig.Slot1.kV = ElevatorConstants.TestMode.kV;
+        leadConfig.Slot1.kS = ElevatorConstants.TestMode.kS;
+        leadConfig.Slot1.kG = ElevatorConstants.TestMode.kG;
+        // Configure gravity compensation for vertical mechanism
+        leadConfig.Slot1.GravityType = GravityTypeValue.Elevator_Static;
+
+        // Configure motion magic
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK;
+
+        // Configure gravity compensation for vertical mechanism
+        leadConfig.Slot1.GravityType = GravityTypeValue.Elevator_Static;
+
+        // Configure soft limits
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =
+        // ElevatorConstants.MAX_HEIGHT * GEAR_RATIO;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        // leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold =
+        // ElevatorConstants.MIN_HEIGHT * GEAR_RATIO;
+
+        // Configure feedback and motor direction
+        leadConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        leadConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        leadConfig.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+
+        // Inside configureMotors() method, add to both leadConfig and followerConfig:
+        // leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
+        // your motor/load
+        // leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        // followerConfig.CurrentLimits.StatorCurrentLimit = 40;
+        // followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+        // Apply configurations
+        elevatorLeader.getConfigurator().apply(leadConfig);
 
         // Configure follower
-        TalonFXConfiguration followerConfig = new TalonFXConfiguration();
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
         followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         
         elevatorFollower.getConfigurator().apply(followerConfig);
-        elevatorFollower.setControl(new Follower(ELEVATOR_LEAD_ID, true));
+        elevatorFollower.setControl(new Follower(Constants.ELEVATOR_LEAD_ID, true));
+    }
+
+    // FIXME: This is a temporary solution to reset the elevator position
+    public void resetElevator() {
+        // Reset encoder position to zero
+        elevatorLeader.setPosition(0);
+        Logger.recordOutput("Elevator/Reset", "Encoder reset to 0");
     }
 
     public void setMode(ElevatorMode mode) {
@@ -179,12 +256,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Use slot 2 for incremental movement
         motionMagicRequest = motionMagicRequest.withSlot(2);
         
-        double newTarget = MathUtil.clamp(
-            currentPos + increment,
-            MIN_HEIGHT,
-            MAX_HEIGHT
-        );
-        
+        // TODO Make sure limits are respected in motor configs
+        double newTarget = (currentPos + increment);
+    
         setPosition(newTarget);
         
         // Reset back to current mode's slot for next movement
@@ -198,6 +272,40 @@ public class ElevatorSubsystem extends SubsystemBase {
         if (Math.abs(targetPosition - getPosition()) > DEADBAND) {
             elevatorLeader.setControl(motionMagicRequest.withPosition(targetPosition * GEAR_RATIO));
         }
+
+        elevatorLeader.setControl(motionMagicRequest.withPosition(positionRotations * GEAR_RATIO));
+    }
+
+    public Command setPositionCommand(double position) {
+        return run(() -> setPosition(position))
+                .withName("SetElevatorPosition");
+    }
+
+    public void incrementPosition(double increment) {
+        double currentPos = getPosition();
+        double newPos = currentPos + increment;
+
+        // Optional: Add bounds checking if needed
+        // newPos = Math.min(Math.max(newPos, ElevatorConstants.MIN_HEIGHT),
+        // ElevatorConstants.MAX_HEIGHT);
+
+        setPosition(newPos);
+    }
+
+    public Command incrementUpCommand() {
+        return run(() -> incrementPosition(0.02))
+                .withName("IncrementElevatorUp");
+    }
+
+    /**
+     * Creates a command that incrementally moves the elevator down while the D-pad
+     * down is held
+     * 
+     * @return A command that runs while D-pad down is held
+     */
+    public Command decrementDownCommand() {
+        return run(() -> incrementPosition(-0.02))
+                .withName("IncrementElevatorDown");
     }
 
     public double getPosition() {
@@ -212,15 +320,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE;
     }
 
-    public void setManualOutput(double percentOutput) {
-        // Apply deadband and clamp output
-        if (Math.abs(percentOutput) < DEADBAND) {
-            percentOutput = 0;
-        }
-        
-        double voltage = MathUtil.clamp(percentOutput * 12.0, -12.0, 12.0);
-        elevatorLeader.setControl(manualVoltageRequest.withOutput(voltage));
-    }
 
     @Override
     public void periodic() {
@@ -234,5 +333,16 @@ public class ElevatorSubsystem extends SubsystemBase {
         Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());
         Logger.recordOutput("Elevator/Velocity", elevatorLeader.getVelocity().getValueAsDouble() / GEAR_RATIO);
+
+        // Log the applied motor voltage
+        Logger.recordOutput("Elevator/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
+
+        // Log the motor current draw
+        Logger.recordOutput("Elevator/MotorCurrent", elevatorLeader.getSupplyCurrent().getValueAsDouble());
+
+        Logger.recordOutput("Elevator/StatorCurrent", elevatorLeader.getStatorCurrent().getValueAsDouble());
+
+        // Log the target position for debugging
+        // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
     }
 }

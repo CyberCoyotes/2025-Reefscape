@@ -122,17 +122,7 @@ public class ElevatorCommands {
         return createMoveToPosition(0.9).withName("SafeMoveElevatorToL3Pose");
     }
 
-    /**
-     * Creates a command for manual elevator control
-     */
-    public Command manualControl(DoubleSupplier percentSupplier) {
-        return new FunctionalCommand(
-            () -> {},
-            () -> elevator.setManualOutput(percentSupplier.getAsDouble()),
-            interrupted -> elevator.setManualOutput(0),
-            () -> false,
-            elevator
-        ).withName("ManualElevatorControl");
+    public Command moveToL4() {
+        return createMoveToPosition(0.9).withName("SafeMoveElevatorToL4Pose");
     }
-
 }
