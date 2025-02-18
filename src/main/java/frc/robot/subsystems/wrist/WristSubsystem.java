@@ -1,5 +1,7 @@
 package frc.robot.subsystems.wrist;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -84,17 +86,17 @@ public class WristSubsystem extends SubsystemBase {
         wristEncoder.getConfigurator().apply(encoderConfig);
     }
 
-    public double getWristAngle() {
+    public double getWristMotorAngle() {
         return wristMotor.getPosition().getValueAsDouble() * 360.0; // Convert rotations to degrees
     }
 
-    public void setTargetPosition(double positionDegrees) {
+    public void setWristMotorTargetPosition(double positionDegrees) {
         targetPosition = positionDegrees * POSITION_CONVERSION_FACTOR; // Convert to rotations
         wristMotor.setControl(positionRequest.withPosition(targetPosition));
     }
 
-    public boolean isAtTarget() {
-        return Math.abs(getWristAngle() - targetPosition * 360.0) < POSITION_TOLERANCE;
+    public boolean isAtWristMotorTarget() {
+        return Math.abs(getWristMotorAngle() - targetPosition * 360.0) < POSITION_TOLERANCE;
     }
        
     public double getAbsoluteEncoderAngle() {
@@ -103,31 +105,31 @@ public class WristSubsystem extends SubsystemBase {
 
     // Factory Methods for Commands
     public Command moveToHome() {
-        return Commands.runOnce(() -> setTargetPosition(HOME_POSITION), this);
+        return Commands.runOnce(() -> setWristMotorTargetPosition(HOME_POSITION), this);
     }
 
     public Command moveToL1() {
-        return Commands.runOnce(() -> setTargetPosition(L1_POSITION), this);
+        return Commands.runOnce(() -> setWristMotorTargetPosition(L1_POSITION), this);
     }
 
-    public Command moveToL2() {
-        return Commands.runOnce(() -> setTargetPosition(L2_POSITION), this);
+    public Command moveToToL2() {
+        return Commands.runOnce(() -> setWristMotorTargetPosition(L2_POSITION), this);
     }
 
     public Command moveToL4() {
-        return Commands.runOnce(() -> setTargetPosition(L4_POSITION), this);
+        return Commands.runOnce(() -> setWristMotorTargetPosition(L4_POSITION), this);
     }
 
     public Command adjustPosition(double delta) {
-        return Commands.runOnce(() -> setTargetPosition(getWristAngle() + delta), this);
+        return Commands.runOnce(() -> setWristMotorTargetPosition(getWristMotorAngle() + delta), this);
     }
 
     public Command bindPOVIncrementalControl(XboxController controller) {
         return Commands.run(() -> {
             if (controller.getPOV() == 0) {
-                setTargetPosition(getWristAngle() + INCREMENT_STEP);
+                setWristMotorTargetPosition(getWristMotorAngle() + INCREMENT_STEP);
             } else if (controller.getPOV() == 180) {
-                setTargetPosition(getWristAngle() - INCREMENT_STEP);
+                setWristMotorTargetPosition(getWristMotorAngle() - INCREMENT_STEP);
             }
         }, this);
     }
@@ -142,12 +144,24 @@ public class WristSubsystem extends SubsystemBase {
         // Update SmartDashboard with telemetry
         SmartDashboard.putNumber("Wrist/Motor/Reset Position (rotations)", wristMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
-        SmartDashboard.putNumber("Wrist/Motor/Position (deg)", getWristAngle());
+        SmartDashboard.putNumber("Wrist/Motor/Position (deg)", getWristMotorAngle());
         SmartDashboard.putNumber("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Wrist/Motor/Current (A)", wristMotor.getStatorCurrent().getValueAsDouble());
-        SmartDashboard.putBoolean("Wrist/Motor/At Target", isAtTarget());
-        SmartDashboard.putNumber("Wrist/Motor/At Target", getWristAngle());
+        SmartDashboard.putBoolean("Wrist/Motor/At Target", isAtWristMotorTarget());
+        SmartDashboard.putNumber("Wrist/Motor/At Target", getWristMotorAngle());
         SmartDashboard.putNumber("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
+
+        // Update AdvantageKit with telem
+        Logger.recordOutput("Wrist/Motor/Reset Position (rotations)", wristMotor.getPosition().getValueAsDouble());
+        Logger.recordOutput("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
+        Logger.recordOutput("Wrist/Motor/Position (deg)", getWristMotorAngle());
+        Logger.recordOutput("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
+        Logger.recordOutput("Wrist/Motor/Current (A)", wristMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Wrist/Motor/At Target", isAtWristMotorTarget());
+        Logger.recordOutput("Wrist/Motor/At Target", getWristMotorAngle());
+        Logger.recordOutput("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
+        
+ 
         } // end periodic
 
 } // end subsystem class
