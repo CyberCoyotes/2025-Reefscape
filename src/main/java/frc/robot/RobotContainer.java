@@ -131,17 +131,17 @@ public class RobotContainer {
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
 
+        driverController.a().onTrue(Commands.runOnce(() -> wrist.testManualPower()));
 
         driverController.povUp()
                 .whileTrue(elevator.incrementUpCommand());
         driverController.povDown()
                 .whileTrue(elevator.decrementDownCommand());
-        // driverController.povLeft().whileTrue(wrist.incrementWristDown());
-        // driverController.povRight().whileTrue(wrist.incrementWristUp());
 
-        driverController.povUp().whileTrue(Commands.run(() -> wrist.incrementWristPosition(true), wrist));
-driverController.povDown().whileTrue(Commands.run(() -> wrist.incrementWristPosition(false), wrist));
-
+        driverController.povLeft().whileTrue(
+                Commands.run(() -> wrist.incrementWristPosition(true), wrist));
+        driverController.povRight().whileTrue(
+                Commands.run(() -> wrist.incrementWristPosition(false), wrist));
 
         /***** Operator Controls *****/
         operatorController.leftBumper()
@@ -154,7 +154,7 @@ driverController.povDown().whileTrue(Commands.run(() -> wrist.incrementWristPosi
         // operatorController.x().whileTrue(_());
         // operatorController.y().whileTrue(_());
 
-                operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
+        operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
         // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
         // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));

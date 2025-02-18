@@ -62,6 +62,7 @@ public class WristSubsystem extends SubsystemBase {
         motorConfig.Feedback.RotorToSensorRatio = 1.0;
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
+        // Apply the configuration to the motor when the method is called
         wristMotor.getConfigurator().apply(motorConfig);
     }
 
@@ -69,6 +70,8 @@ public class WristSubsystem extends SubsystemBase {
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         encoderConfig.MagnetSensor.MagnetOffset = WristConstants.MAGNET_ENCODER_OFFSET;
+
+        // Apply the configuration to the CANCoder when the method is called
         wristEncoder.getConfigurator().apply(encoderConfig);
     }
 
@@ -111,24 +114,56 @@ public class WristSubsystem extends SubsystemBase {
             .withName("WristIncrementDown");
     }
 
+    // FIXME for debugging
+    public void testManualPower() {
+        wristMotor.set(0.2);
+        System.out.println("Wrist motor test, apply 20% power");
+    }
+
     @Override
     public void periodic() {
-                wristMotor.setControl(wristMotionRequest.withPosition(targetPosition));
+        wristMotor.setControl(wristMotionRequest.withPosition(targetPosition));
 
-        // Update SmartDashboard with telemetry
-        SmartDashboard.putNumber("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
+        /*** Debugging ***/
+        double fusedAngle = wristEncoder.getPosition().getValueAsDouble() * 360.0;
+        double absoluteAngle = wristEncoder.getAbsolutePosition().getValueAsDouble() * 360.0;
+        double motorAngle = wristMotor.getPosition().getValueAsDouble() * 360.0;
+
+    
+        SmartDashboard.putNumber("Wrist/Fused CANCoder Angle", fusedAngle);
+        SmartDashboard.putNumber("Wrist/Absolute CANCoder Angle", absoluteAngle);
+        SmartDashboard.putNumber("Wrist/Motor Encoder Angle", motorAngle);
+        SmartDashboard.putNumber("Wrist/Motor Voltage", wristMotor.getMotorVoltage().getValueAsDouble());
+    
+        System.out.println("Wrist Encoder Readings:");
+        System.out.println("  - Fused CANCoder Angle: " + fusedAngle);
+        System.out.println("  - Absolute CANCoder Angle: " + absoluteAngle);
+        System.out.println("  - Motor Encoder Angle: " + motorAngle);
+        // end of debugging
+
+
+        
+        /*** SMART DASHBOARD TELEMETRY***/
+        // Motor
+        // SmartDashboard.putNumber("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
         SmartDashboard.putNumber("Wrist/Motor/Position (deg)", getWristMotorAngle());
-        // SmartDashboard.putNumber("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
-        SmartDashboard.putNumber("Wrist/CANCoder/Fused Angle (deg)", getWristCANCoderAngle());
         SmartDashboard.putNumber("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
         SmartDashboard.putNumber("Wrist/Motor/Current (A)", wristMotor.getStatorCurrent().getValueAsDouble());
-        // SmartDashboard.putBoolean("Wrist/Motor/At Target", isAtWristMotorTarget());
 
-        // Update AdvantageKit logging
+        // CANCoder
+        SmartDashboard.putNumber("Wrist/CANCoder/Fused Angle (deg)", getWristCANCoderAngle());
+        
+        /*** ADVANTAGEKIT ***/
+        // Motor telemetry
         Logger.recordOutput("Wrist/Motor/Position (deg)", getWristMotorAngle());
-        // Logger.recordOutput("Wrist/CANCoder/Absolute Encoder (deg)", getAbsoluteEncoderAngle());
+        Logger.recordOutput("Wrist/Motor/Target Position (deg)", targetPosition * 360.0);
+        Logger.recordOutput("Wrist/Motor/Current (A)", wristMotor.getStatorCurrent().getValueAsDouble());
+        Logger.recordOutput("Wrist/Motor/Output (V)", wristMotor.getMotorVoltage().getValueAsDouble());
+
+        // CANCoder telemetry
+        Logger.recordOutput("Wrist/CANCoder/Absolute Encoder (deg)", getWristCANCoderAngle());
         Logger.recordOutput("Wrist/CANCoder/Fused Angle (deg)", getWristCANCoderAngle());
-        Logger.recordOutput("Wrist/Motor/Voltage (V)", wristMotor.getMotorVoltage().getValueAsDouble());
+
     }
 
 } // end subsystem class
