@@ -12,9 +12,9 @@ This means that when the encoder reads "0", the actual position of the mechanism
 public final class WristConstants {
     // CAN ID and hardware config
 
-    public static final double MAGNET_ENCODER_OFFSET = 0.16; // From Phoenix Tuner X
+    public static final double MAGNET_ENCODER_OFFSET = 0.159912109375; // From Phoenix Tuner X
 
-    public static final double GEAR_RATIO = 50.0; // TODO Determine the actual gear ratio; suggested 75.0
+    public static final double GEAR_RATIO = 5.0; // TODO Determine the actual gear ratio; suggested 75.0 // 50
     public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; 
     
     // Current limits
