@@ -1,6 +1,8 @@
 package frc.robot.subsystems.endEffector;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import au.grapplerobotics.LaserCan;
@@ -66,6 +68,28 @@ public class EffectorSubsystem extends SubsystemBase {
             isStoppedDueToLaser = false;
         }
     }
+
+     // Factory command to run the effector at intake power
+    public Command runEffector() {
+        return run(() -> motor.setControl(new DutyCycleOut(EffectorConstants.INTAKE_CORAL)));
+    }
+
+    // Factory command to stop the effector when object is detected
+    public Command runEffectorWithSensor() {
+        return run(() -> {
+            if (getCoralDistanceMillimeters() < 30) {
+                motor.setControl(new DutyCycleOut(EffectorConstants.STOP));
+            }
+        }).until(() -> getCoralDistanceMillimeters() >= 30);
+    }
+
+    // Factory command to resume the motor at scoring power
+    public Command resumeEffector() {
+        return run(() -> motor.setControl(new DutyCycleOut(EffectorConstants.SCORE_CORAL)));
+    }
+
+
+
 
     @Override
     public void periodic() {

@@ -23,13 +23,11 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.TOFSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
-import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
-import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
@@ -130,9 +128,10 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driverController.leftBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CORAL));
-        driverController.rightBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
+                .whileTrue(endEffector.runEffectorWithSensor());
+
+        driverController.rightBumper();
+                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
@@ -152,10 +151,10 @@ public class RobotContainer {
         operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
                 .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
 
-        operatorController.leftBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
-        operatorController.rightBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+        operatorController.leftBumper();
+                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
+        operatorController.rightBumper();
+                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
 
         operatorController.a().whileTrue(climberCommands.climbUpCommand());
         operatorController.b().whileTrue(climberCommands.climbDownCommand());
