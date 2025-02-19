@@ -160,7 +160,7 @@ public class AutoRoutines {
         
                 return routine;
         }
-            public AutoRoutine STJ() {
+        public AutoRoutine STJ() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J");
                 final AutoTrajectory STJ = routine.trajectory("ST-J",0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J",1);
@@ -228,6 +228,23 @@ public class AutoRoutines {
                                 CSC.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0),
                                 CSC2.cmd()
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine SBT() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-I");
+                final AutoTrajectory STI = routine.trajectory("ST-I",0);
+                final AutoTrajectory STI2 = routine.trajectory("ST-I",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STI.resetOdometry(), // Always reset odometry first
+                                STI.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STI2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0)
+                              
                         ));
         
                 return routine;
