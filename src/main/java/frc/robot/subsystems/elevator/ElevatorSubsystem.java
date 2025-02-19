@@ -18,15 +18,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
+
+    // Hardware
+    private final TalonFX elevatorLeader;
+    private final TalonFX elevatorFollower;
+    
+    
+    
     // Subsystem Modes
     public enum ElevatorMode {
         PERFORMANCE, // High-speed, competition mode
         SAFETY // Reduced speed, testing/practice mode
     }
-
-    // Hardware
-    private final TalonFX elevatorLeader;
-    private final TalonFX elevatorFollower;
 
     // Control Requests
     private MotionMagicVoltage motionMagicRequest;

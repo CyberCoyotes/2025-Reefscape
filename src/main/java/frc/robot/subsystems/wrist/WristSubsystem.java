@@ -3,6 +3,7 @@ package frc.robot.subsystems.wrist;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -23,13 +24,10 @@ public class WristSubsystem extends SubsystemBase {
     private final CANcoder wristEncoder;
     private final MotionMagicVoltage wristMotionRequest;
 
-    private static final double POSITION_TOLERANCE = 0.5;
     private static final double INCREMENT_STEP = 2.0; // Adjusted for better visibility
 
     private static final double HOME_POSITION = 0.0;
-    private static final double L1_POSITION = 5.0;
-    private static final double L2_POSITION = 15.0;
-    private static final double L4_POSITION = 30.0;
+    
 
     private double targetPosition = HOME_POSITION;
 
@@ -46,35 +44,67 @@ public class WristSubsystem extends SubsystemBase {
 
     private void configureMotor() {
         TalonFXConfiguration motorConfig = new TalonFXConfiguration();
-
-        motorConfig.Slot0.kP = 1.0;
-        motorConfig.Slot0.kI = 0.0;
-        motorConfig.Slot0.kD = 0.05;
-        motorConfig.Slot0.kV = 0.12;
-        motorConfig.Slot0.kS = 0.2;
-        motorConfig.Slot0.kG = 0.3;
-
-        motorConfig.MotionMagic.MotionMagicCruiseVelocity = 50.0;
-        motorConfig.MotionMagic.MotionMagicAcceleration = 30.0;
-        motorConfig.MotionMagic.MotionMagicJerk = 200.0;
-
+    
+        // PID and FF gains from your constants
+        motorConfig.Slot0.kP = WristConstants.Gains.kP;
+        motorConfig.Slot0.kI = WristConstants.Gains.kI;
+        motorConfig.Slot0.kD = WristConstants.Gains.kD;
+        motorConfig.Slot0.kV = WristConstants.Gains.kV;
+        motorConfig.Slot0.kS = WristConstants.Gains.kS;
+        motorConfig.Slot0.kG = WristConstants.Gains.kG;
+        motorConfig.Slot0.kA = WristConstants.Gains.kA;
+    
+        // Motion Magic settings from constants
+        motorConfig.MotionMagic.MotionMagicCruiseVelocity = WristConstants.MOTION_MAGIC_VELOCITY;
+        motorConfig.MotionMagic.MotionMagicAcceleration = WristConstants.MOTION_MAGIC_ACCELERATION;
+        motorConfig.MotionMagic.MotionMagicJerk = WristConstants.MOTION_MAGIC_JERK;
+    
+        // Critical: Configure feedback for FusedCANcoder
         motorConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-        motorConfig.Feedback.RotorToSensorRatio = 1.0;
+        motorConfig.Feedback.FeedbackRemoteSensorID = wristEncoder.getDeviceID(); // TODO This was added
+        motorConfig.Feedback.RotorToSensorRatio = WristConstants.GEAR_RATIO;
+        motorConfig.Feedback.SensorToMechanismRatio = WristConstants.ENCODER_TO_MECHANISM_RATIO;
+    
+        // TODO This was added
+        // Current limits
+        motorConfig.CurrentLimits.StatorCurrentLimit = WristConstants.STATOR_CURRENT_LIMIT;
+        motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        motorConfig.CurrentLimits.SupplyCurrentLimit = WristConstants.SUPPLY_CURRENT_LIMIT;
+        motorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    
+        // This was added
+        // Soft limits
+        motorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        motorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = WristConstants.FORWARD_LIMIT;
+        motorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        motorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = WristConstants.REVERSE_LIMIT;
+    
         motorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
-        // Apply the configuration to the motor when the method is called
-        wristMotor.getConfigurator().apply(motorConfig);
+    
+        var result = wristMotor.getConfigurator().apply(motorConfig);
+        if (!result.isOK()) {
+            System.out.println("Failed to apply motor configuration: " + result.toString());
+        }
     }
 
     private void configureCANCoder() {
         CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+        
         encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         encoderConfig.MagnetSensor.MagnetOffset = WristConstants.MAGNET_ENCODER_OFFSET;
+        
+        // Important: Configure absolute sensor range
+        // encoderConfig.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+        
+        // New way to configure absolute sensor discontinuity
+        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.0;
 
-        // Apply the configuration to the CANCoder when the method is called
-        wristEncoder.getConfigurator().apply(encoderConfig);
+        var result = wristEncoder.getConfigurator().apply(encoderConfig);
+
+        if (!result.isOK()) {
+            System.out.println("Failed to apply encoder configuration: " + result.toString());
+        }
     }
-
     public void resetWristMotor() {
         double absolutePosition = getWristCANCoderAngle() / 360.0;
         wristMotor.setPosition(absolutePosition);
