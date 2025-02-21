@@ -26,7 +26,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 TwoMeters.resetOdometry(), // Always reset odometry first
                                 TwoMeters.cmd() // Follow the path
-                                // TwoMeters.done() // TODO add a Done command
+                                
                         ));
         
                 return routine;
@@ -42,8 +42,65 @@ public class AutoRoutines {
                                 TwoMetersT.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0),
                                 Back.cmd()
-                                //If this doesnt work m_drivetrain.stop().withTimeout(scoreDelay)
-                                //TwoMetersBack.done() // TODO add a Done command
+                                
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine ReefSMASH() {
+                final AutoRoutine routine = m_factory.newRoutine("IDReefPoses");
+                final AutoTrajectory A = routine.trajectory("IDReefPoses",0);
+                final AutoTrajectory C = routine.trajectory("IDReefPoses",1);
+                final AutoTrajectory E = routine.trajectory("IDReefPoses",2);
+                final AutoTrajectory G = routine.trajectory("IDReefPoses",3);
+                final AutoTrajectory I = routine.trajectory("IDReefPoses",4);
+                final AutoTrajectory K = routine.trajectory("IDReefPoses",5);
+               
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                A.resetOdometry(), // Always reset odometry first
+                                A.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                C.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                E.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                G.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                I.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                K.cmd()
+                                
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine ReefSMASH2() {
+                final AutoRoutine routine = m_factory.newRoutine("IDReefPoses (2)");
+                final AutoTrajectory B = routine.trajectory("IDReefPoses (2)",0);
+                final AutoTrajectory D = routine.trajectory("IDReefPoses (2)",1);
+                final AutoTrajectory F = routine.trajectory("IDReefPoses (2)",2);
+                final AutoTrajectory H = routine.trajectory("IDReefPoses (2)",3);
+                final AutoTrajectory J = routine.trajectory("IDReefPoses (2)",4);
+                final AutoTrajectory L = routine.trajectory("IDReefPoses (2)",5);
+               
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                B.resetOdometry(), // Always reset odometry first
+                                B.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                D.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                F.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                H.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                J.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                L.cmd()
+                                
                         ));
         
                 return routine;
@@ -59,7 +116,7 @@ public class AutoRoutines {
                             STA.cmd(), // Follow the path
                             m_drivetrain.stop().withTimeout(2.0), 
                             STA2.cmd()
-                            // STA.done() // TODO add a Done command
+                            
                     ));
     
             return routine;
@@ -68,8 +125,8 @@ public class AutoRoutines {
                 final AutoRoutine routine = m_factory.newRoutine("ST-A");
                 final AutoTrajectory STA = routine.trajectory("ST-A",0);
                 final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
-                final AutoTrajectory STL = routine.trajectory("CS1-L",0);
-                final AutoTrajectory STL2 = routine.trajectory("CS1-L",1);
+                final AutoTrajectory CSL = routine.trajectory("CS1-L",0);
+                final AutoTrajectory CSL2 = routine.trajectory("CS1-L",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -78,10 +135,10 @@ public class AutoRoutines {
                                 m_drivetrain.stop().withTimeout(2.0), 
                                 STA2.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STL.cmd(),
+                                CSL.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0),
-                                STL2.cmd()
-                                // STA.done() // TODO add a Done command
+                                CSL2.cmd()
+                                
                         ));
         
                 return routine;
@@ -89,7 +146,7 @@ public class AutoRoutines {
         public AutoRoutine STI() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-I");
                 final AutoTrajectory STI = routine.trajectory("ST-I",0);
-                final AutoTrajectory STI2 = routine.trajectory("ST-I,1",1);
+                final AutoTrajectory STI2 = routine.trajectory("ST-I",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
@@ -133,6 +190,44 @@ public class AutoRoutines {
                                 STL2.cmd()//,
                                // m_drivetrain.stop().withTimeout(2.0)
                               
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine SBB() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-B");
+                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
+                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(), // Always reset odometry first
+                                SBB.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                SBB2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0)
+                              
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine SBBetter() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-B");
+                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
+                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
+                final AutoTrajectory CSC = routine.trajectory("CS2-C",0);
+                final AutoTrajectory CSC2 = routine.trajectory("CS2-C",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(), // Always reset odometry first
+                                SBB.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                SBB2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSC.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSC2.cmd()
                         ));
         
                 return routine;

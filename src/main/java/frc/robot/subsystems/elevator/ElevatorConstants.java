@@ -1,8 +1,6 @@
 package frc.robot.subsystems.elevator;
 
 public final class ElevatorConstants {
-    public static final int ELEVATOR_LEAD_ID = 24; // Change to your CAN ID
-    public static final int ELEVATOR_FOLLOW_ID = 23; // Change to your CAN ID
     
     // Motion Magic
     public static final double CRUISE_VELOCITY = 160; // Rotations per second
@@ -23,11 +21,11 @@ public final class ElevatorConstants {
     public static final double REVERSE_LIMIT = 0;
     
     // Preset Positions (in rotations)
-    public static final double BASE_POSE =  0.00;
-    public static final double L1_POSE =    0.10;
-    public static final double L2_POSE =    0.15;
+    public static final double HOME_POSE =  0.00;
+    public static final double L1_POSE =    0.00;
+    public static final double L2_POSE =    0.09;
     public static final double L3_POSE =    0.27;
-    public static final double L4_POSE =    0.27;
+    public static final double L4_POSE =    0.45; // TODO: Check this value, likely about 50
     
     //
         // Motion Magic

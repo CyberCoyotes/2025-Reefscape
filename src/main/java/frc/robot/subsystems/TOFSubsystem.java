@@ -3,12 +3,12 @@ package frc.robot.subsystems;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.ConfigurationFailedException;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TOFSubsystem extends SubsystemBase {
     // Constants for LaserCAN IDs
-    private static final int CORAL_LASER_ID = 51;
-    private static final int ELEVATOR_LASER_ID = 52;
+
     
     // LaserCAN devices
     private final LaserCan coralLaser;
@@ -20,8 +20,8 @@ public class TOFSubsystem extends SubsystemBase {
 
     public TOFSubsystem() {
         // Initialize both LaserCAN sensors
-        coralLaser = new LaserCan(CORAL_LASER_ID);
-        elevatorLaser = new LaserCan(ELEVATOR_LASER_ID);
+        coralLaser = new LaserCan(Constants.CORAL_LASER_ID);
+        elevatorLaser = new LaserCan(Constants.ELEVATOR_LASER_ID);
 
         // Configure both sensors
         configureLaser(coralLaser, "Coral");
@@ -32,7 +32,7 @@ public class TOFSubsystem extends SubsystemBase {
         try {
             laser.setRangingMode(LaserCan.RangingMode.SHORT);
             laser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
-            laser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_33MS);
+            laser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
         } catch (ConfigurationFailedException e) {
             System.out.println(name + " Laser configuration failed! " + e);
         }
