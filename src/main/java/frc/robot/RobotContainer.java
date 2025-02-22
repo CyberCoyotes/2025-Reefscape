@@ -12,24 +12,20 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-import frc.robot.auto.AutoRoutines;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.auto.AutoRoutines;
+import frc.robot.commands.ClimberCommands;
+import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.WristCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.TOFSubsystem;
+import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
-import frc.robot.commands.ClimberCommands;
-import frc.robot.commands.ElevatorCommands;
-import frc.robot.commands.EndEffectorCommands;
-import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
 
@@ -132,10 +128,7 @@ public class RobotContainer {
                 .whileTrue(endEffector.runEffectorWithSensor());
 
         driverController.rightBumper()
-                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
-                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_CORAL));
-        driverController.rightBumper()
-                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_CORAL));
+                .whileTrue(endEffector.runEffectorWithSensor());
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
@@ -152,8 +145,8 @@ public class RobotContainer {
         // driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
         /***** Operator Controls *****/
-        operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
-                .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
+        // operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
+                // .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
 
         operatorController.leftBumper();
                 // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));

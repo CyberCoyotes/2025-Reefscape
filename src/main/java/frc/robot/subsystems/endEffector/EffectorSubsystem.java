@@ -16,6 +16,8 @@ public class EffectorSubsystem extends SubsystemBase {
     private boolean isStoppedDueToLaser = false;
     private double stopTimestamp = 0;
     private static final double RESUME_DELAY_SECONDS = 1.0; // 1-second delay before resuming
+    
+    public double lastCoralDistance = 0.0;
 
     public EffectorSubsystem() {
         motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
@@ -44,13 +46,32 @@ public class EffectorSubsystem extends SubsystemBase {
         motor.setControl(new DutyCycleOut(output));
     }
 
-
-    public double getCoralDistanceMillimeters() {
+    // Methods to check if measurements are valid
+    public boolean isCoralRangeValid() {
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
-        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            return measurement.distance_mm;
+        return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
+    }
+    
+    // Getter methods for distances (in meters)
+        public double getCoralDistanceMeters() {
+            return lastCoralDistance / 1000.0;
+        }
+
+    /* 
+        public double getCoralDistanceMillimeters() {
+        LaserCan.Measurement measurement = coralLaser.getMeasurement();
+        if (measurement != null 
+        // && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT
+        ) {
+            // return measurement.distance_mm;
         }
         return Double.MAX_VALUE; // Return a large value if the sensor is not working
+     }
+    */
+
+    // Getter methods for distances (in millimeters)
+    public double getCoralDistanceMillimeters() {
+        return lastCoralDistance;
     }
 
     public void stopIfObjectDetected() {
@@ -68,6 +89,11 @@ public class EffectorSubsystem extends SubsystemBase {
             isStoppedDueToLaser = false;
         }
     }
+
+    /******************************
+     * Command Factories
+     * @return
+    *******************************/
 
      // Factory command to run the effector at intake power
     public Command runEffector() {
@@ -87,8 +113,6 @@ public class EffectorSubsystem extends SubsystemBase {
     public Command resumeEffector() {
         return run(() -> motor.setControl(new DutyCycleOut(EffectorConstants.SCORE_CORAL)));
     }
-
-
 
 
     @Override
