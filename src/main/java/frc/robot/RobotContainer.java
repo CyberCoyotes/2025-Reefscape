@@ -136,17 +136,17 @@ public class RobotContainer {
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
-        driverController.x().onTrue(elevatorCommands.moveToL2());
-        driverController.y().onTrue(elevatorCommands.moveToL3());
-        driverController.b().onTrue(elevatorCommands.moveToL4());
-        driverController.a().onTrue(elevatorCommands.moveToHome());
+        // driverController.x().onTrue(elevatorCommands.moveToL2());
+        // driverController.y().onTrue(elevatorCommands.moveToL3());
+        // driverController.b().onTrue(elevatorCommands.moveToL4());
+        // driverController.a().onTrue(elevatorCommands.moveToHome());
 
         driverController.povUp()
                 .whileTrue(elevator.incrementUpCommand());
         driverController.povDown()
                 .whileTrue(elevator.decrementDownCommand());
-        driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
-        driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
+        // driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
+        // driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
         /***** Operator Controls *****/
         operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
