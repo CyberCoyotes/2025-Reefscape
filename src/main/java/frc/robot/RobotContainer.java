@@ -128,8 +128,8 @@ public class RobotContainer {
                 driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
                 // For simple duty cycle control: Check the mode in the Subsystem
-                driverController.leftBumper().whileTrue(endEffector.runEffectorDutyCycle());
-                driverController.rightBumper().whileTrue(endEffector.scoreEffectorDutyCycle());
+                driverController.leftBumper().whileTrue(endEffector.intakeCoral());
+                driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
                 // For torque control: Check the mode in the Subsystem
                 // driverController.leftBumper().whileTrue(endEffector.runEffectorTorque());

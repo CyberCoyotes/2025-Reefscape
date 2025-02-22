@@ -2,11 +2,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+// import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-import java.util.function.DoubleSupplier;
+// import java.util.function.DoubleSupplier;
 
 public class ClimberCommands {
     private final ClimberVoltageSubsystem climber;

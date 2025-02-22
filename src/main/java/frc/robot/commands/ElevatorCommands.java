@@ -4,10 +4,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
+// import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-import java.util.function.DoubleSupplier;
+// import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;

@@ -3,10 +3,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.commands.ElevatorCommands;
+// import frc.robot.commands.ElevatorCommands;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.commands.WristCommands;
+// import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 public final class ScoreL2Command {
