@@ -28,6 +28,7 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
@@ -106,14 +107,14 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive
-                                                                                                           // forward
-                                                                                                           // with
-                                                                                                           // negative Y
-                                                                                                           // (forward)
-                        .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise
-                                                                                            // with negative X (left)
+                
+                // Drive forward with negative Y (forward)
+                drivetrain.applyRequest(() -> drive.withVelocityX(-driverController.getLeftY() * MaxSpeed)
+                        // Drive left with negative X (left)
+                         .withVelocityY(-driverController.getLeftX() * MaxSpeed) 
+                        // Drive counterclockwise with negative X (left)
+                         .withRotationalRate(-driverController.getRightX() * MaxAngularRate) 
+                        
                 ));
 
         /*
@@ -132,20 +133,23 @@ public class RobotContainer {
 
         driverController.rightBumper();
                 // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
+                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_CORAL));
+        driverController.rightBumper()
+                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_CORAL));
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
-        driverController.x().onTrue(elevatorCommands.moveToL2());
-        driverController.y().onTrue(elevatorCommands.moveToL3());
-        driverController.b().onTrue(elevatorCommands.moveToL4());
-        driverController.a().onTrue(elevatorCommands.moveToHome());
+        // driverController.x().onTrue(elevatorCommands.moveToL2());
+        // driverController.y().onTrue(elevatorCommands.moveToL3());
+        // driverController.b().onTrue(elevatorCommands.moveToL4());
+        // driverController.a().onTrue(elevatorCommands.moveToHome());
 
         driverController.povUp()
                 .whileTrue(elevator.incrementUpCommand());
         driverController.povDown()
                 .whileTrue(elevator.decrementDownCommand());
-        driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
-        driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
+        // driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
+        // driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
         /***** Operator Controls *****/
         operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
@@ -155,7 +159,6 @@ public class RobotContainer {
                 // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
         operatorController.rightBumper();
                 // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
-
         operatorController.a().whileTrue(climberCommands.climbUpCommand());
         operatorController.b().whileTrue(climberCommands.climbDownCommand());
         // operatorController.x().whileTrue(_());
