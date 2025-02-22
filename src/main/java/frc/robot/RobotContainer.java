@@ -131,7 +131,7 @@ public class RobotContainer {
         driverController.leftBumper()
                 .whileTrue(endEffector.runEffectorWithSensor());
 
-        driverController.rightBumper();
+        driverController.rightBumper()
                 // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
                 .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_CORAL));
         driverController.rightBumper()
