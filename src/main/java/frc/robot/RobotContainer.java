@@ -23,7 +23,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.TOFSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
-import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
@@ -130,6 +129,10 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driverController.leftBumper()
+                .whileTrue(endEffector.runEffectorWithSensor());
+
+        driverController.rightBumper();
+                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
                 .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_CORAL));
         driverController.rightBumper()
                 .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_CORAL));
@@ -149,11 +152,13 @@ public class RobotContainer {
         // driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
         /***** Operator Controls *****/
-        operatorController.leftBumper()
-                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_ALGAE));
-        operatorController.rightBumper()
-                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_ALGAE));
+        operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
+                .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
 
+        operatorController.leftBumper();
+                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
+        operatorController.rightBumper();
+                // .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
         operatorController.a().whileTrue(climberCommands.climbUpCommand());
         operatorController.b().whileTrue(climberCommands.climbDownCommand());
         // operatorController.x().whileTrue(_());
