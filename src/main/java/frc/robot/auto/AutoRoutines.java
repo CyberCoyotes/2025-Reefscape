@@ -3,19 +3,28 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.ScoreL2Command;
+import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorState;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
 public class AutoRoutines {
     private final AutoFactory m_factory;
     private CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
+   // private ScoreL2Command m_score = new ScoreL2Command();
+  // ScoreL2Command m_score;
+  EffectorSubsystem m_score;
 
-    public AutoRoutines(AutoFactory factory, CommandSwerveDrivetrain drivetrain) {
+    public AutoRoutines(AutoFactory factory, CommandSwerveDrivetrain drivetrain,EffectorSubsystem score) {
         m_factory = factory;
         m_drivetrain = drivetrain;
+        m_score = new EffectorSubsystem();
         // m_elevator = new ElevatorSubsystem(); 
         // m_intake = new IntakeSubsystem(); 
-        // m_score = new ScoreSubsystem(); 
+         
        // private final double scoreDelay = 1.0;
         }
        
@@ -250,6 +259,23 @@ public class AutoRoutines {
         
                 return routine;
         }
+        public AutoRoutine ScoreTwoMetersBack() {
+                final AutoRoutine routine = m_factory.newRoutine("TwoMetersBack");
+                final AutoTrajectory TwoMetersT = routine.trajectory("TwoMetersBack",0);
+                final AutoTrajectory Back = routine.trajectory("TwoMetersBack",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                TwoMetersT.resetOdometry(), // Always reset odometry first
+                                TwoMetersT.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0),
+                                Back.cmd()
+                                
+                        ));
+
+                TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
+                return routine;
+        }
         public AutoRoutine ReefSMASH() {
                 final AutoRoutine routine = m_factory.newRoutine("IDReefPoses");
                 final AutoTrajectory A = routine.trajectory("IDReefPoses",0);
@@ -319,7 +345,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STA.resetOdometry(), // Always reset odometry first
                                 STA.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0), 
+                                m_drivetrain.stop().withTimeout(2.0),
                                 STA2.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0), 
                                 CSL.cmd(),
@@ -381,6 +407,22 @@ public class AutoRoutines {
                                 //SBB2.cmd(),
                                // m_drivetrain.stop().withTimeout(2.0)
                               
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine STAL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-A-L1");
+                final AutoTrajectory STA = routine.trajectory("ST-A-L1",0);
+                final AutoTrajectory STA2 = routine.trajectory("ST-A-L1",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STA.resetOdometry(), // Always reset odometry first
+                                STA.cmd()//, // Follow the path
+                                //m_drivetrain.stop().withTimeout(2.0), 
+                                //STA2.cmd()
+                                
                         ));
         
                 return routine;

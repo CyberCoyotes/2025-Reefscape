@@ -74,7 +74,7 @@ public class RobotContainer {
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
-        autoRoutines = new AutoRoutines(autoFactory, drivetrain);
+        autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
 
         elevatorCommands = new ElevatorCommands(elevator, wrist);
         wristCommands = new WristCommands();
@@ -91,11 +91,10 @@ public class RobotContainer {
        // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
        // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
        //autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
-       //autoChooser.addRoutine("TwoMetersBack", autoRoutines::TwoMetersBack); 
-       autoChooser.addRoutine("STA", autoRoutines::STA);
+       autoChooser.addRoutine("ScoreTwoMetersBack", autoRoutines::ScoreTwoMetersBack); 
+       autoChooser.addRoutine("SetupA", autoRoutines::SetupA);
        autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-       autoChooser.addRoutine("STI", autoRoutines::STI);
-       autoChooser.addRoutine("STJ", autoRoutines::STJ);
+       autoChooser.addRoutine("STA-L1?", autoRoutines::STAL1);
        autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
        autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
 
