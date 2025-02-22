@@ -29,7 +29,7 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
-import frc.robot.commands.SetEndEffectorCommand;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
@@ -108,14 +108,14 @@ public class RobotContainer {
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
                 // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(() -> drive.withVelocityX(-driverController.getLeftY() * MaxSpeed) // Drive
-                                                                                                           // forward
-                                                                                                           // with
-                                                                                                           // negative Y
-                                                                                                           // (forward)
-                        .withVelocityY(-driverController.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-driverController.getRightX() * MaxAngularRate) // Drive counterclockwise
-                                                                                            // with negative X (left)
+                
+                // Drive forward with negative Y (forward)
+                drivetrain.applyRequest(() -> drive.withVelocityX(-driverController.getLeftY() * MaxSpeed)
+                        // Drive left with negative X (left)
+                         .withVelocityY(-driverController.getLeftX() * MaxSpeed) 
+                        // Drive counterclockwise with negative X (left)
+                         .withRotationalRate(-driverController.getRightX() * MaxAngularRate) 
+                        
                 ));
 
         /*
@@ -130,9 +130,9 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driverController.leftBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_CORAL));
+                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_CORAL));
         driverController.rightBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_CORAL));
+                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_CORAL));
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
@@ -149,13 +149,10 @@ public class RobotContainer {
         driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
 
         /***** Operator Controls *****/
-        operatorController.start().onTrue(elevatorCommands.setMode(ElevatorMode.PERFORMANCE))
-                .onFalse(elevatorCommands.setMode(ElevatorMode.SAFETY));
-
         operatorController.leftBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.INTAKE_ALGAE));
+                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.INTAKE_ALGAE));
         operatorController.rightBumper()
-                .whileTrue(new SetEndEffectorCommand(endEffector, EffectorState.SCORE_ALGAE));
+                .whileTrue(new EndEffectorCommands(endEffector, EffectorState.SCORE_ALGAE));
 
         operatorController.a().whileTrue(climberCommands.climbUpCommand());
         operatorController.b().whileTrue(climberCommands.climbDownCommand());

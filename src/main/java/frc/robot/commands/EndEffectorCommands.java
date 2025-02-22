@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorState;
 
-public class SetEndEffectorCommand extends Command {
+public class EndEffectorCommands extends Command {
     private final EffectorSubsystem effector;
     private final EffectorState targetState;
 
-    public SetEndEffectorCommand(EffectorSubsystem effector, EffectorState targetState) {
+    public EndEffectorCommands(EffectorSubsystem effector, EffectorState targetState) {
         this.effector = effector;
         this.targetState = targetState;
         addRequirements(effector);
