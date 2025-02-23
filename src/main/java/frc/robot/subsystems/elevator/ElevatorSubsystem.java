@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Subsystem Modes
@@ -34,6 +35,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Mode Tracking
     private ElevatorMode currentMode = ElevatorMode.SAFETY; // Default to safety mode
     private double targetPosition = 0.0;
+    // public WristSubsystem wristSub;
 
     
     // Increment Settings
@@ -72,6 +74,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Initialize motors
         elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID);
         elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID);
+        // this.wristSub = wristSub;
 
         // Initialize control requests
         motionMagicRequest = new MotionMagicVoltage(0).withSlot(0).withEnableFOC(true);
@@ -245,7 +248,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Logger.recordOutput("Elevator/Position/Current", getPosition());
         Logger.recordOutput("Elevator/Position/Target", targetPosition);
         Logger.recordOutput("Elevator/AtTarget", isAtPosition(targetPosition));
-        
+        // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wristCommmand.isSafeForElevator());
         // Motor Telemetry
         Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());

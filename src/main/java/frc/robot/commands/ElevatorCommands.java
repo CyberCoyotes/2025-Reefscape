@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -88,39 +89,43 @@ public class ElevatorCommands {
 
     // Preset position commands - raw movement
     public Command moveToHomeRaw() {
-        return createMoveToPositionRaw(0.0).withName("MoveElevatorToHome");
+        return createMoveToPositionRaw(ElevatorConstants.HOME_POSE).withName("MoveElevatorToHome");
     }
 
     public Command moveToL1Raw() {
-        return createMoveToPositionRaw(0.2).withName("MoveElevatorToL1Pose");
+        return createMoveToPositionRaw(ElevatorConstants.L1_POSE).withName("MoveElevatorToL1Pose");
     }
 
     public Command moveToL2Raw() {
-        return createMoveToPositionRaw(0.5).withName("MoveElevatorToL2Pose");
+        return createMoveToPositionRaw(ElevatorConstants.L2_POSE).withName("MoveElevatorToL2Pose");
     }
 
     public Command moveToL3Raw() {
-        return createMoveToPositionRaw(0.9).withName("MoveElevatorToL3Pose");
+        return createMoveToPositionRaw(ElevatorConstants.L3_POSE).withName("MoveElevatorToL3Pose");
+    }
+
+    public Command moveToL4Raw() {
+        return createMoveToPositionRaw(ElevatorConstants.L4_POSE).withName("MoveElevatorToL3Pose");
     }
 
     // Preset position commands - safe movement
     public Command moveToHome() {
-        return createMoveToPosition(0.0).withName("SafeMoveElevatorToHome");
+        return createMoveToPosition(ElevatorConstants.HOME_POSE).withName("SafeMoveElevatorToHome");
     }
 
     public Command moveToL1() {
-        return createMoveToPosition(0.2).withName("SafeMoveElevatorToL1Pose");
+        return createMoveToPosition(ElevatorConstants.L1_POSE).withName("SafeMoveElevatorToL1Pose");
     }
 
     public Command moveToL2() {
-        return createMoveToPosition(0.5).withName("SafeMoveElevatorToL2Pose");
+        return createMoveToPosition(ElevatorConstants.L2_POSE).withName("SafeMoveElevatorToL2Pose");
     }
 
     public Command moveToL3() {
-        return createMoveToPosition(0.9).withName("SafeMoveElevatorToL3Pose");
+        return createMoveToPosition(ElevatorConstants.L3_POSE).withName("SafeMoveElevatorToL3Pose");
     }
 
     public Command moveToL4() {
-        return createMoveToPosition(0.9).withName("SafeMoveElevatorToL4Pose");
+        return createMoveToPosition(ElevatorConstants.L4_POSE).withName("SafeMoveElevatorToL4Pose");
     }
 }
