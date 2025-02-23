@@ -9,17 +9,18 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
+
 public class AutoRoutines {
     private final AutoFactory m_factory;
     private CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
    // private ScoreL2Command m_score = new ScoreL2Command();
   // ScoreL2Command m_score;
-  EffectorSubsystem m_score;
+private EffectorSubsystem m_endEffector;
 
     public AutoRoutines(AutoFactory factory, CommandSwerveDrivetrain drivetrain,EffectorSubsystem score) {
         m_factory = factory;
         m_drivetrain = drivetrain;
-        m_score = new EffectorSubsystem();
+        m_endEffector = new EffectorSubsystem();
         // m_elevator = new ElevatorSubsystem(); 
         // m_intake = new IntakeSubsystem(); 
          
@@ -272,7 +273,8 @@ public class AutoRoutines {
                         ));
 
                 // TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
-                TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
+                // Score 
+                TwoMetersT.atTime("scoreL1").onTrue(m_endEffector.scoreCoral());
                 return routine;
         }
         public AutoRoutine ReefSMASH() {
