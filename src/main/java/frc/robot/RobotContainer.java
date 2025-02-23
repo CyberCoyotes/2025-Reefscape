@@ -83,22 +83,21 @@ public class RobotContainer {
 
         }
 
-        private void configureAutoRoutines() {
+    private void configureAutoRoutines() {
+        
+       // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
+       // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
+       //autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
+       autoChooser.addRoutine("ScoreTwoMetersBack", autoRoutines::ScoreTwoMetersBack); 
+       autoChooser.addRoutine("SetupA", autoRoutines::SetupA);
+       autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
+       autoChooser.addRoutine("STA-L1?", autoRoutines::STAL1);
+       autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
+       autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
 
-                // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
-                // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
-                // autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
-                // autoChooser.addRoutine("TwoMetersBack", autoRoutines::TwoMetersBack);
-                autoChooser.addRoutine("STA", autoRoutines::STA);
-                autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-                autoChooser.addRoutine("STI", autoRoutines::STI);
-                autoChooser.addRoutine("STJ", autoRoutines::STJ);
-                autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
-                autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
+       SmartDashboard.putData("Autonomous", autoChooser);
 
-                SmartDashboard.putData("Autonomous", autoChooser);
-
-        }
+    }
 
         private void configureBindings() {
                 // Note that X is defined as forward according to WPILib convention,
