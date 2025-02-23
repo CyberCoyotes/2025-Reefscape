@@ -11,22 +11,23 @@ public class TOFSubsystem extends SubsystemBase {
 
     
     // LaserCAN devices
-    private final LaserCan coralLaser;
+    // private final LaserCan coralLaser;
     private final LaserCan elevatorLaser;
 
     // Last valid measurements
-    private double lastCoralDistance = 0.0;
+    // private double lastCoralDistance = 0.0;
     private double lastElevatorDistance = 0.0;
 
     public TOFSubsystem() {
         // Initialize both LaserCAN sensors
-        coralLaser = new LaserCan(Constants.CORAL_LASER_ID);
+        // coralLaser = new LaserCan(Constants.CORAL_LASER_ID);
         elevatorLaser = new LaserCan(Constants.ELEVATOR_LASER_ID);
 
         // Configure both sensors
-        configureLaser(coralLaser, "Coral");
+        // configureLaser(coralLaser, "Coral");
         configureLaser(elevatorLaser, "Elevator");
     }
+
 
     private void configureLaser(LaserCan laser, String name) {
         try {
@@ -41,20 +42,22 @@ public class TOFSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Update measurements for both sensors
-        updateCoralMeasurement();
+        // updateCoralMeasurement();
         updateElevatorMeasurement();
 
         // Post to SmartDashboard for debugging
-        SmartDashboard.putNumber("Coral Distance (mm)", lastCoralDistance);
+        // SmartDashboard.putNumber("Coral Distance (mm)", lastCoralDistance);
         SmartDashboard.putNumber("Elevator Distance (mm)", lastElevatorDistance);
     }
 
+    /* 
     private void updateCoralMeasurement() {
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
             lastCoralDistance = measurement.distance_mm;
         }
     }
+        */
 
     private void updateElevatorMeasurement() {
         LaserCan.Measurement measurement = elevatorLaser.getMeasurement();
@@ -63,29 +66,35 @@ public class TOFSubsystem extends SubsystemBase {
         }
     }
 
+    /* 
     // Getter methods for distances (in millimeters)
     public double getCoralDistanceMillimeters() {
         return lastCoralDistance;
     }
+    */
 
     public double getElevatorDistanceMillimeters() {
         return lastElevatorDistance;
     }
 
+    /*
     // Getter methods for distances (in meters)
     public double getCoralDistanceMeters() {
         return lastCoralDistance / 1000.0;
     }
+         */
 
     public double getElevatorDistanceMeters() {
         return lastElevatorDistance / 1000.0;
     }
 
+    /* 
     // Methods to check if measurements are valid
     public boolean isCoralRangeValid() {
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
         return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
     }
+*/
 
     public boolean isElevatorRangeValid() {
         LaserCan.Measurement measurement = elevatorLaser.getMeasurement();
