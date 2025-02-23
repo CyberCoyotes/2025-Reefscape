@@ -4,10 +4,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-// import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-// import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
@@ -17,6 +15,14 @@ public class ElevatorCommands {
         this.elevator = elevator;
         this.wrist = wrist;
     }
+
+    /**
+     * Sets elevator operation mode
+     */
+    // public Command setMode(ElevatorMode mode) {
+        // return elevator.runOnce(() -> elevator.setMode(mode))
+            // .withName("SetElevatorMode(" + mode + ")");
+    // }
 
     /**
      * Creates a command to increment elevator up with fine control

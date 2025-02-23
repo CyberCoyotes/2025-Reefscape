@@ -208,6 +208,33 @@ public class EffectorSubsystem extends SubsystemBase {
         };
     }
 
+    public Command intakeAlgae() {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            setEffectorOutput(EffectorConstants.INTAKE_ALGAE);
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                // TODO There is a bit of a random hiccup at times
+                stopMotor();
+            }
+        };
+    }
+
+    // Duty Cycle Control
+    public Command scoreAlgae() {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            setEffectorOutput(EffectorConstants.SCORE_ALGAE);
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                // TODO There is a bit of a random hiccup at times
+                stopMotor();
+            }
+        };
+    }
+
     // Torque Control Commands
     public Command runEffectorTorque() {
         return run(() -> {

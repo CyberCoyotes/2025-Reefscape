@@ -4,11 +4,9 @@ import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ScoreL2Command;
-import frc.robot.commands.SetEndEffectorCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.endEffector.EffectorState;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
 public class AutoRoutines {
@@ -273,6 +271,7 @@ public class AutoRoutines {
                                 
                         ));
 
+                // TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
                 TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
                 return routine;
         }
