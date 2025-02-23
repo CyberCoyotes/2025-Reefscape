@@ -272,6 +272,7 @@ public class AutoRoutines {
                         ));
 
                 // TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
+                TwoMetersT.atTime("scoreL1").onTrue(new SetEndEffectorCommand(m_score, EffectorState.SCORE_CORAL).withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine ReefSMASH() {
