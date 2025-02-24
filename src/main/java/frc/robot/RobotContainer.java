@@ -29,13 +29,14 @@ import frc.robot.subsystems.wrist.WristSubsystem.WristPositions;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
-    private final WristSubsystem.CommandFactory wristCommands = new WristSubsystem.CommandFactory(wrist);
+    private final WristCommands wristCommands = new WristCommands(wrist);
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands;
@@ -136,8 +137,8 @@ public class RobotContainer {
         // driverController.start().and(driverController.a().onTrue(elevatorCommands.moveToHomeRaw()));
 
         // driverController.y().onTrue(elevatorCommands.moveToL3Raw());
-        driverController.b().onTrue(wristCommands.moveTo(WristPositions.SCORE_L2));
-        driverController.a().onTrue(wristCommands.moveTo(WristPositions.STOWED));
+        driverController.a().onTrue(wristCommands.setStowed());
+        driverController.b().onTrue(wristCommands.setL2());
 
         driverController.povUp().whileTrue(elevator.incrementUpCommand());
         driverController.povDown().whileTrue(elevator.decrementDownCommand());
