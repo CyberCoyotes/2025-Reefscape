@@ -39,7 +39,7 @@ public class RobotContainer {
     private final WristCommands wristCommands = new WristCommands(wrist);
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands;
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
@@ -72,9 +72,6 @@ public class RobotContainer {
 
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
-
-        elevatorCommands = new ElevatorCommands(elevator, wrist);
-        // wristCommands = new WristCommands();
 
         configureBindings();
         configureAutoRoutines();
@@ -114,13 +111,7 @@ public class RobotContainer {
                                                                                             // with negative X (left)
                 ));
 
-        /*
-         * FIXME Comment out for Testing of other commands
-         * driverController.b().whileTrue(drivetrain.applyRequest(() ->
-         * point.withModuleDirection(new Rotation2d(-driverController.getLeftY(),
-         * -driverController.getLeftX()))
-         * ));
-         */
+        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));        
 
         /***** Driver Controls *****/
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -140,8 +131,8 @@ public class RobotContainer {
         driverController.a().onTrue(wristCommands.setStowed());
         driverController.b().onTrue(wristCommands.setL2());
 
-        driverController.povUp().whileTrue(elevator.incrementUpCommand());
-        driverController.povDown().whileTrue(elevator.decrementDownCommand());
+        driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
+        driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
         driverController.povLeft().whileTrue(wristCommands.incrementIn());
         driverController.povRight().whileTrue(wristCommands.incrementOut());
 
