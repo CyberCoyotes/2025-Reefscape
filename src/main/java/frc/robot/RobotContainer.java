@@ -25,17 +25,17 @@ import frc.robot.subsystems.TOFSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem.WristPositions;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.ElevatorCommands;
-import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
 
     private final WristSubsystem wrist = new WristSubsystem();
-    private final WristCommands wristCommands;
+    private final WristSubsystem.CommandFactory wristCommands = new WristSubsystem.CommandFactory(wrist);
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands;
@@ -73,7 +73,7 @@ public class RobotContainer {
         autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
 
         elevatorCommands = new ElevatorCommands(elevator, wrist);
-        wristCommands = new WristCommands();
+        // wristCommands = new WristCommands();
 
         configureBindings();
         configureAutoRoutines();
@@ -129,15 +129,20 @@ public class RobotContainer {
 
         // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
 
-        driverController.x().onTrue(elevatorCommands.moveToL2Raw());
-        driverController.y().onTrue(elevatorCommands.moveToL3Raw());
-        // driverController.b().onTrue(elevatorCommands.moveToL4());
-        driverController.a().onTrue(elevatorCommands.moveToHomeRaw());
+        // driverController.start().and(driverController.x().onTrue(elevatorCommands.moveToL2Raw()));
+        
+        driverController.x().onTrue(elevatorCommands.moveToHomeRaw());
+        driverController.y().onTrue(elevatorCommands.moveToL2Raw());
+        // driverController.start().and(driverController.a().onTrue(elevatorCommands.moveToHomeRaw()));
+
+        // driverController.y().onTrue(elevatorCommands.moveToL3Raw());
+        driverController.b().onTrue(wristCommands.moveTo(WristPositions.SCORE_L2));
+        driverController.a().onTrue(wristCommands.moveTo(WristPositions.STOWED));
 
         driverController.povUp().whileTrue(elevator.incrementUpCommand());
         driverController.povDown().whileTrue(elevator.decrementDownCommand());
-        // driverController.povLeft().onTrue(wristCommands.setSafePose(wrist));
-        // driverController.povRight().onTrue(wristCommands.setSafePose(wrist));
+        driverController.povLeft().whileTrue(wristCommands.incrementIn());
+        driverController.povRight().whileTrue(wristCommands.incrementOut());
 
         /***** Operator Controls *****/
 
