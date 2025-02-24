@@ -45,22 +45,14 @@ public class ElevatorCommands {
      * Creates a command to increment elevator up safely (checks wrist position)
      */
     public Command incrementUp() {
-        return Commands.either(
-            incrementUpRaw(),
-            Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
-        ).withName("SafeElevatorIncrement(up)");
+        return incrementUpRaw().withName("SafeElevatorIncrement(up)");
     }
 
     /**
      * Creates a command to increment elevator down safely (checks wrist position)
      */
     public Command incrementDown() {
-        return Commands.either(
-            incrementDownRaw(),
-            Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
-        ).withName("SafeElevatorIncrement(down)");
+        return incrementDownRaw().withName("SafeElevatorIncrement(down)");
     }
 
     /**
@@ -79,12 +71,24 @@ public class ElevatorCommands {
     /**
      * Creates a command that safely moves the elevator to a target position
      */
+    /* FIXME
     private Command createMoveToPosition(double targetPosition) {
         return Commands.either(
             createMoveToPositionRaw(targetPosition),
             Commands.none(),
             () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
         ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
+    }*/
+
+    // FIXME See above
+    private Command createMoveToPosition(double targetPosition) {
+        return new FunctionalCommand(
+            () -> {},  // No initialization
+            () -> elevator.setPosition(targetPosition),
+            interrupted -> {},  // No end behavior needed
+            () -> elevator.isAtPosition(targetPosition),
+            elevator
+        ).withName("MoveElevatorTo(" + targetPosition + ")");
     }
 
     // Preset position commands - raw movement
