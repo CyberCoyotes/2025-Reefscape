@@ -181,7 +181,7 @@ public class EffectorSubsystem extends SubsystemBase {
     }
 
     // Duty Cycle Control
-    public Command intakeCoral() {
+    public Command intakeCoralNoSensor() {
         return new RunCommand(() -> {
             setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.INTAKE_CORAL);
@@ -258,7 +258,7 @@ public class EffectorSubsystem extends SubsystemBase {
      *
      * @return A command that runs the effector motor with sensor feedback.
      */
-    public Command runEffectorWithSensor() {
+    public Command intakeCoral() {
         return run(() -> {
             if (isCoralDetected() == true) {
                 stopMotor();
@@ -270,6 +270,13 @@ public class EffectorSubsystem extends SubsystemBase {
     public void periodic() {
         // Update the coral laser measurement
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
+        
+        // Update last distance if measurement is valid
+        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+            lastCoralDistance = measurement.distance_mm;
+        }
+
+        stopIfDetected();
 
         // Handle automatic stopping based on sensor reading stopIfDetected();
 
