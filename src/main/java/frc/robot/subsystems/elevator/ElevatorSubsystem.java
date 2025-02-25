@@ -207,7 +207,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         Logger.recordOutput("Elevator/Position/Current", getPosition());
         Logger.recordOutput("Elevator/Position/Target", targetPosition);
         Logger.recordOutput("Elevator/AtTarget", isAtPosition(targetPosition));
-        // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wristCommmand.isSafeForElevator());
+        // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wrist.inSafePosition());
         // Motor Telemetry
         Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());

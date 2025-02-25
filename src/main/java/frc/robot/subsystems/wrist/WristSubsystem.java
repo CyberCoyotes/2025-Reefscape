@@ -134,8 +134,12 @@ public class WristSubsystem extends SubsystemBase {
         return getPosition() >= WristPositions.L2.getRotations();
     }
 
+
     @Override
     public void periodic() {
+        // update inSafePosition
+        boolean safeForElevator = inSafePosition();
+
         // Update SmartDashboard
         SmartDashboard.putNumber("Wrist/Position (rot)", getPosition());
         SmartDashboard.putNumber("Wrist/Target (rot)", targetPosition);
@@ -162,7 +166,7 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("Wrist/Voltage", wristMotor.getMotorVoltage().getValue());
         Logger.recordOutput("Wrist/Position", wristMotor.getPosition().getValue());
         Logger.recordOutput("Wrist/Stator Current", wristMotor.getStatorCurrent().getValue());
-        Logger.recordOutput("Wrist/Safe for Elevator",inSafePosition());
+        Logger.recordOutput("Wrist/Safe for Elevator",safeForElevator);
     }
 
 }
