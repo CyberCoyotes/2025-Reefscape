@@ -153,6 +153,8 @@ public class RobotContainer {
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
+        operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
+        operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
         
         operatorController.x().whileTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
         operatorController.y().whileTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
