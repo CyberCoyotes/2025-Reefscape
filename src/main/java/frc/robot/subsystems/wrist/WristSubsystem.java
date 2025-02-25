@@ -84,7 +84,7 @@ public class WristSubsystem extends SubsystemBase {
         STOWED(0.0), // Stowed position from config
         L2(2.15), // L2 scoring position from your value
         L3(2.15), // L3 scoring position from your value
-        L4(3.5), // Estimated
+        L4(2.15), // Estimated
         PICK_ALGAE(8.0), // Estimated
         SCORE_ALGAE(18); // Estimated
 

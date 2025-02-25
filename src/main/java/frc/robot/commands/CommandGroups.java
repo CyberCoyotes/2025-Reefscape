@@ -9,7 +9,7 @@ public class CommandGroups {
 public Command moveToL2Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     return Commands.sequence(
         wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToL2()      // Then move elevator (this already checks wrist.inSafePosition())
+        elevatorCommands.moveToL2Raw()      // Then move elevator (this already checks wrist.inSafePosition())
     ).withName("MoveToL2Sequence");
 }
 
@@ -25,7 +25,7 @@ public Command moveToL3Group(WristCommands wristCommands, ElevatorCommands eleva
 public Command moveToL4Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     return Commands.sequence(
         wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToL4(),
+        elevatorCommands.moveToL4Raw(),
         wristCommands.setL4()      // Then move elevator (this already checks wrist.inSafePosition())
     ).withName("MoveToL4Sequence");
 }
@@ -52,7 +52,7 @@ public Command moveToAlgae3Group(WristCommands wristCommands, ElevatorCommands e
 public Command moveToHomeGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     return Commands.sequence(
         wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToHome()      // Then move elevator (this already checks wrist.inSafePosition())
+        elevatorCommands.moveToHomeRaw()      // Then move elevator (this already checks wrist.inSafePosition())
     ).withName("MoveToHomeSequence");
 }
 
@@ -60,7 +60,7 @@ public Command moveToHomeGroup(WristCommands wristCommands, ElevatorCommands ele
 public Command moveToScoreAlgae(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     return Commands.sequence(
         wristCommands.setAlgae(),           // First move wrist to L2
-        elevatorCommands.moveToL2()      // Then move elevator (this already checks wrist.inSafePosition())
+        elevatorCommands.moveToL2Raw()      // Then move elevator (this already checks wrist.inSafePosition())
     ).withName("MoveToHomeSequence");
 }
 

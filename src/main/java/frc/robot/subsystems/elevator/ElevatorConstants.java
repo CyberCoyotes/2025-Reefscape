@@ -18,7 +18,7 @@ public final class ElevatorConstants {
 
     
     // Soft Limits (in rotations)
-    public static final double FORWARD_LIMIT = 2.50;
+    public static final double FORWARD_LIMIT = 4.67; // Updated 2-24-25
     public static final double REVERSE_LIMIT = 0;
     
   

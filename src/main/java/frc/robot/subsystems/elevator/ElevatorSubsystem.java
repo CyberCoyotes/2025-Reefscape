@@ -30,7 +30,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         L1(0.00),
         L2(0.89),
         L3(2.27),
-        L4( 3.5),
+        L4( 4.66), // Updated 2-24-25
         Algae2(0.5),
         Algae3(1.0);
 
@@ -122,7 +122,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
 
         // Configure soft limits
-        leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+        leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.FORWARD_LIMIT;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
@@ -169,7 +169,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public void setPosition(double positionRotations) {
         // TODO Make sure limits are respected in motor configs first! Then remove
-        targetPosition = MathUtil.clamp(positionRotations, ElevatorConstants.REVERSE_LIMIT, ElevatorConstants.FORWARD_LIMIT);
+        targetPosition = positionRotations;
         
         // Only move if change is larger than deadband
         if (Math.abs(targetPosition - getPosition()) > DEADBAND) {

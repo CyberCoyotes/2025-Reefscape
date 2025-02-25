@@ -28,6 +28,7 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem.WristPositions;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.commands.ClimberCommands;
+import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.WristCommands;
 
@@ -44,6 +45,7 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
+    private final CommandGroups commandGroups = new CommandGroups();
     private final TOFSubsystem m_tof = new TOFSubsystem();
 
 
@@ -118,22 +120,16 @@ public class RobotContainer {
 
         driverController.leftBumper().whileTrue(endEffector.intakeCoral());
         driverController.rightBumper().whileTrue(endEffector.scoreCoral());
-
-        // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
-
-        // driverController.start().and(driverController.x().onTrue(elevatorCommands.moveToL2Raw()));
         
-        driverController.x().onTrue(elevatorCommands.moveToHomeRaw());
-        driverController.y().onTrue(elevatorCommands.moveToL2Raw());
-        // driverController.start().and(driverController.a().onTrue(elevatorCommands.moveToHomeRaw()));
+        driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
+        driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
 
-        // driverController.y().onTrue(elevatorCommands.moveToL3Raw());
-        driverController.a().onTrue(wristCommands.setStowed());
-        driverController.b().onTrue(wristCommands.setL2());
+        driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
+        driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
         driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
         driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
-        driverController.povLeft().whileTrue(wristCommands.incrementIn());
+        driverController.povLeft().whileTrue(wristCommands.setStowed());
         driverController.povRight().whileTrue(wristCommands.incrementOut());
 
         /***** Operator Controls *****/
