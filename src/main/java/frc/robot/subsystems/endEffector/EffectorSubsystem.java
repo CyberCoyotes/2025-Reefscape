@@ -13,6 +13,7 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.ConfigurationFailedException;
 import frc.robot.Constants;
+import java.util.function.BooleanSupplier;
 
 public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
@@ -36,7 +37,7 @@ public class EffectorSubsystem extends SubsystemBase {
     // Status tracking
     private boolean isStoppedDueToLaser = false;
     private double stopTimestamp = 0;
-    private static final double RESUME_DELAY_SECONDS = 1.0;
+    private static final double RESUME_DELAY_SECONDS = 3.0; // Changed from 1.0 to 3.0 seconds
     private double lastCoralDistance = 0.0;
 
     // Status signals for monitoring
@@ -139,7 +140,8 @@ public class EffectorSubsystem extends SubsystemBase {
         return lastCoralDistance;
     }
 
-    private static final double CORAL_DETECT_THRESHOLD = 30.0; // 30mm
+    // Changed from 30mm to 100mm (10cm)
+    private static final double CORAL_DETECT_THRESHOLD = 100.0; // 100mm = 10cm
 
     public boolean isCoralDetected() {
         return getCoralDistanceMillimeters() < CORAL_DETECT_THRESHOLD;
@@ -188,8 +190,39 @@ public class EffectorSubsystem extends SubsystemBase {
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
+            }
+        };
+    }
+
+    /**
+     * Creates a command that runs the effector until a coral is detected
+     * or the button is released. If coral is detected, motor stops for 3 seconds.
+     * 
+     * @param buttonReleased A boolean supplier that returns true when the button is released
+     * @return A command that controls the effector with automated coral detection
+     */
+    public Command intakeCoralWithSensor(BooleanSupplier buttonReleased) {
+        return new RunCommand(() -> {
+            // If coral is detected, motor is already stopped due to stopIfDetected() in periodic()
+            if (!isCoralDetected() && !isStoppedDueToLaser) {
+                setControlMode(ControlMode.DUTY_CYCLE);
+                setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+            }
+        }, this) {
+            @Override
+            public boolean isFinished() {
+                // End the command if the button is released
+                return buttonReleased.getAsBoolean();
+            }
+
+            @Override
+            public void end(boolean interrupted) {
+                // If ending due to button release and not due to coral detection,
+                // make sure to stop the motor
+                if (!isStoppedDueToLaser) {
+                    stopMotor();
+                }
             }
         };
     }
@@ -202,11 +235,11 @@ public class EffectorSubsystem extends SubsystemBase {
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
     }
+    
     public Command slowCoral() {
         return new RunCommand(() -> {
             setControlMode(ControlMode.DUTY_CYCLE);
@@ -214,7 +247,6 @@ public class EffectorSubsystem extends SubsystemBase {
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
@@ -227,7 +259,6 @@ public class EffectorSubsystem extends SubsystemBase {
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
@@ -241,7 +272,6 @@ public class EffectorSubsystem extends SubsystemBase {
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
@@ -272,10 +302,13 @@ public class EffectorSubsystem extends SubsystemBase {
      */
     public Command intakeCoral() {
         return run(() -> {
-            if (isCoralDetected() == true) {
+            if (isCoralDetected()) {
                 stopMotor();
+            } else {
+                setControlMode(ControlMode.DUTY_CYCLE);
+                setEffectorOutput(EffectorConstants.INTAKE_CORAL);
             }
-        }).until(() -> isCoralDetected() == true);
+        }).until(this::isCoralDetected);
     }
 
     @Override
@@ -288,9 +321,8 @@ public class EffectorSubsystem extends SubsystemBase {
             lastCoralDistance = measurement.distance_mm;
         }
 
+        // Handle automatic stopping based on sensor reading
         stopIfDetected();
-
-        // Handle automatic stopping based on sensor reading stopIfDetected();
 
         // Update dashboard
         SmartDashboard.putString("Effector/Control Mode", currentControlMode.toString());
@@ -302,5 +334,6 @@ public class EffectorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
         SmartDashboard.putBoolean("Effector/Sensor/Laser Valid", isCoralRangeValid());
         SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
+        SmartDashboard.putBoolean("Effector/Stopped Due To Detection", isStoppedDueToLaser);
     }
 }
