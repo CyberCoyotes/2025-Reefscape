@@ -70,10 +70,11 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    public RobotContainer() {
 
-        autoFactory = drivetrain.createAutoFactory();
-        autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
+    autoFactory = drivetrain.createAutoFactory(); // Leave outside container?
+    autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector); // Leave outside container?
+  
+    public RobotContainer() {
 
         configureBindings();
         configureAutoRoutines();
@@ -83,18 +84,22 @@ public class RobotContainer {
     }
 
     private void configureAutoRoutines() {
+        
+       // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
+       // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
+       //autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
+       autoChooser.addRoutine("ScoreTwoMetersBack", autoRoutines::ScoreTwoMetersBack); 
+       autoChooser.addRoutine("SetupA", autoRoutines::SetupA);
+       autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
+       autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
+       autoChooser.addRoutine("STJ-L1 To CSA-L1", autoRoutines::STJL12);
+       autoChooser.addRoutine("SBE-L1 To CSB-L1", autoRoutines::SBEL12);
+       autoChooser.addRoutine("STJ-L1?", autoRoutines::STJL1);
+       autoChooser.addRoutine("M-H-L1?", autoRoutines::MHL1);
+       //autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
+      // autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
 
-        // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
-        // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
-        // autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters);
-        autoChooser.addRoutine("ScoreTwoMetersBack", autoRoutines::ScoreTwoMetersBack);
-        autoChooser.addRoutine("SetupA", autoRoutines::SetupA);
-        autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-        autoChooser.addRoutine("STA-L1?", autoRoutines::STAL1);
-        autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
-        autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
-
-        SmartDashboard.putData("Autonomous", autoChooser);
+       SmartDashboard.putData("Autonomous", autoChooser);
 
     }
 

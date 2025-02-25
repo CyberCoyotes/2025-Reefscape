@@ -207,6 +207,18 @@ public class EffectorSubsystem extends SubsystemBase {
             }
         };
     }
+    public Command slowCoral() {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            setEffectorOutput(EffectorConstants.lSCORE_CORAL);
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                // TODO There is a bit of a random hiccup at times
+                stopMotor();
+            }
+        };
+    }
 
     public Command intakeAlgae() {
         return new RunCommand(() -> {
