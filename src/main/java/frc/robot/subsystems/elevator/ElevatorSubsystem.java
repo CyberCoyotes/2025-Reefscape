@@ -122,7 +122,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
 
         // Configure soft limits
-        leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.FORWARD_LIMIT;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
