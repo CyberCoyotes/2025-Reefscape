@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 // Command Factory methods
@@ -24,11 +25,17 @@ public class WristCommands {
     }
 
     public Command incrementOut() {
-        return this.subsystem.runOnce(() -> this.subsystem.incrementOut());
+        return Commands.run(
+            () -> subsystem.incrementOut())
+        .finallyDo((boolean interrupted) -> subsystem.setPosition(subsystem.getPosition()))
+        .withName("IncrementWristOut");
     }
 
     public Command incrementIn() {
-        return this.subsystem.runOnce(() -> this.subsystem.incrementIn());
+        return Commands.run(
+            () -> subsystem.incrementIn())
+        .finallyDo((boolean interrupted) -> subsystem.setPosition(subsystem.getPosition()))
+        .withName("IncrementWristIn");
     }
 
     public Command moveTo(WristSubsystem.WristPositions wristPose) {
@@ -55,7 +62,7 @@ public class WristCommands {
         return moveToPosition(WristSubsystem.WristPositions.PICK_ALGAE.getRotations());
     }
 
-    public Command setAlgae() {
+    public Command scoreAlgae() {
         return moveToPosition(WristSubsystem.WristPositions.SCORE_ALGAE.getRotations());
     }
     public Command resetWrist() {

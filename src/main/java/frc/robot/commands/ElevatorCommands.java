@@ -23,7 +23,7 @@ public class ElevatorCommands {
     /**
      * Creates a command to increment elevator up with fine control
      */
-    public Command incrementUpRaw() {
+    public Command incrementUpNoCheck() {
         return elevator.runOnce(() -> elevator.incrementPosition(true))
             .withName("ElevatorIncrement(up)");
     }
@@ -31,7 +31,7 @@ public class ElevatorCommands {
     /**
      * Creates a command to increment elevator down with fine control
      */
-    public Command incrementDownRaw() {
+    public Command incrementDownNoCheck() {
         return elevator.runOnce(() -> elevator.incrementPosition(false))
             .withName("ElevatorIncrement(down)");
     }
@@ -40,14 +40,14 @@ public class ElevatorCommands {
      * Creates a command to increment elevator up safely (checks wrist position)
      */
     public Command incrementUp() {
-        return incrementUpRaw().withName("SafeElevatorIncrement(up)");
+        return incrementUpNoCheck().withName("SafeElevatorIncrement(up)");
     }
 
     /**
      * Creates a command to increment elevator down safely (checks wrist position)
      */
     public Command incrementDown() {
-        return incrementDownRaw().withName("SafeElevatorIncrement(down)");
+        return incrementDownNoCheck().withName("SafeElevatorIncrement(down)");
     }
 
     public double increment = 0.02;
@@ -65,7 +65,7 @@ public class ElevatorCommands {
     /**
      * Creates a command that moves the elevator to a target position
      */
-    private Command moveToPositionRaw(double targetPosition) {
+    private Command setPositionNoCheck(double targetPosition) {
         return new FunctionalCommand(
             () -> {},  // No initialization
             () -> elevator.setPosition(targetPosition),
@@ -78,64 +78,73 @@ public class ElevatorCommands {
     /**
      * Creates a command that safely moves the elevator to a target position
      */
-    // moveToPosition
+    // setPosition
     // 
-    private Command moveToPosition(double targetPosition) {
+    private Command setPosition(double targetPosition) {
         return Commands.either(
-            moveToPositionRaw(targetPosition),
+            setPositionNoCheck(targetPosition),
             Commands.none(),
             () -> wrist.inSafePosition()  // Use wrist subsystem's method
         ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
     }
 
-    // Preset position commands - raw movement
-    public Command moveToHomeRaw() {
-        return moveToPositionRaw(ElevatorPosition.HOME.getPosition()).withName("MoveElevatorToHome");
+    // Preset position commands - NoCheck movement
+    public Command setHomeNoCheck() {
+        return setPositionNoCheck(ElevatorPosition.HOME.getPosition()).withName("MoveElevatorToHome");
     }
 
-    public Command moveToL1Raw() {
-        return moveToPositionRaw(ElevatorPosition.L1.getPosition()).withName("MoveElevatorToL1Pose");
+    public Command setL1NoCheck() {
+        return setPositionNoCheck(ElevatorPosition.L1.getPosition()).withName("MoveElevatorToL1Pose");
     }
 
-    public Command moveToL2Raw() {
-        return moveToPositionRaw(ElevatorPosition.L2.getPosition()).withName("MoveElevatorToL2Pose");
+    public Command setL2NoCheck() {
+        return setPositionNoCheck(ElevatorPosition.L2.getPosition()).withName("MoveElevatorToL2Pose");
     }
 
-    public Command moveToL3Raw() {
-        return moveToPositionRaw(ElevatorPosition.L3.getPosition()).withName("MoveElevatorToL3Pose");
+    public Command setL3NoCheck() {
+        return setPositionNoCheck(ElevatorPosition.L3.getPosition()).withName("MoveElevatorToL3Pose");
     }
 
-    public Command moveToL4Raw() {
-        return moveToPositionRaw(ElevatorPosition.L4.getPosition()).withName("MoveElevatorToL3Pose");
+    public Command setL4NoCheck() {
+        return setPositionNoCheck(ElevatorPosition.L4.getPosition()).withName("MoveElevatorToL3Pose");
     }
+
+    public Command setAlgae2NoCheck() {
+        return setPositionNoCheck(ElevatorPosition.Algae2.getPosition()).withName("SafeMoveElevatorToL5Pose");
+    }
+
+    public Command setAlgae3NoCheck() {
+        return setPositionNoCheck(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
+    }
+
 
     // Preset position commands - safe movement
-    public Command moveToHome() {
-        return moveToPosition(ElevatorPosition.HOME.getPosition()).withName("SafeMoveElevatorToHome");
+    public Command setHome() {
+        return setPosition(ElevatorPosition.HOME.getPosition()).withName("SafeMoveElevatorToHome");
     }
 
-    public Command moveToL1() {
-        return moveToPosition(ElevatorPosition.L1.getPosition()).withName("SafeMoveElevatorToL1Pose");
+    public Command setL1() {
+        return setPosition(ElevatorPosition.L1.getPosition()).withName("SafeMoveElevatorToL1Pose");
     }
 
-    public Command moveToL2() {
-        return moveToPosition(ElevatorPosition.L2.getPosition()).withName("SafeMoveElevatorToL2Pose");
+    public Command setL2() {
+        return setPosition(ElevatorPosition.L2.getPosition()).withName("SafeMoveElevatorToL2Pose");
     }
 
-    public Command moveToL3() {
-        return moveToPosition(ElevatorPosition.L3.getPosition()).withName("SafeMoveElevatorToL3Pose");
+    public Command setL3() {
+        return setPosition(ElevatorPosition.L3.getPosition()).withName("SafeMoveElevatorToL3Pose");
     }
 
-    public Command moveToL4() {
-        return moveToPosition(ElevatorPosition.L4.getPosition()).withName("SafeMoveElevatorToL4Pose");
+    public Command setL4() {
+        return setPosition(ElevatorPosition.L4.getPosition()).withName("SafeMoveElevatorToL4Pose");
     }
 
-    public Command moveToPickAlgae2Raw() {
-        return moveToPositionRaw(ElevatorPosition.Algae2.getPosition()).withName("SafeMoveElevatorToL5Pose");
+    public Command setAlgae2() {
+        return setPositionNoCheck(ElevatorPosition.Algae2.getPosition()).withName("SafeMoveElevatorToL5Pose");
     }
 
-    public Command moveToPickAlgae3Raw() {
-        return moveToPositionRaw(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
+    public Command setAlgae3() {
+        return setPositionNoCheck(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
     }
 
 }

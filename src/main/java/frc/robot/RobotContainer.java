@@ -48,10 +48,11 @@ public class RobotContainer {
     
     private final TOFSubsystem m_tof = new TOFSubsystem();
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second //
-                                                                                      // max angular velocity
-
+    // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
+    // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); 
+    
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
@@ -70,20 +71,18 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-
-    autoFactory = drivetrain.createAutoFactory(); // Leave outside container?
-    autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector); // Leave outside container?
-  
     public RobotContainer() {
-
+        autoFactory = drivetrain.createAutoFactory(); // Leave outside container?
+        autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector, elevator); // Leave outside container?
+    
         configureBindings();
         configureAutoRoutines();
-        // SmartDashboard.putBoolean("Wrist/EncoderConnected", false);
-        // wrist.setWristZero(); // Verify encoder reading resets
-
     }
 
+
     private void configureAutoRoutines() {
+
+        // TODO Create user friendly names for the Drive Team
         
        // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
        // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
@@ -119,49 +118,61 @@ public class RobotContainer {
                 ));
 
         /***********************************************
-         * Driver Controls
-         *
+         ** Driver Controls **
          ***********************************************/
-        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        /***** Driver Controls *****/
-        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); // Resets the gyro
+        // driverController.back().onTrue((/* */));
 
         driverController.leftBumper().whileTrue(endEffector.intakeCoral());
         driverController.rightBumper().whileTrue(endEffector.scoreCoral());
+
+        driverController.leftTrigger().whileTrue(endEffector.intakeAlgae());
+        driverController.rightTrigger().whileTrue(endEffector.scoreAlgae());
+
+        /* 
+            ⬆️                                       **Y**  
+          ⬅️  ➡️                               **X**      **B**
+            ⬇️                                       **A**
+        */
 
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
-        driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+        // Add a slow motion command for the driver to use when button held
+        // driverController.b().onTrue(/* */);
 
-        driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
-        driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
+        // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
+        // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
         driverController.povLeft().whileTrue(wristCommands.setStowed());
-        driverController.povRight().whileTrue(wristCommands.incrementOut());
+        // driverController.povRight().whileTrue(wristCommands.incrementOut());
 
         /***********************************************
-         * Operator Controls
+         ** Operator Controls **
          ***********************************************/
-        operatorController.leftBumper().whileTrue(endEffector.intakeAlgae());
-        operatorController.rightBumper().whileTrue(endEffector.scoreAlgae());
+        operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
+        operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
-        operatorController.a().whileTrue(climberCommands.climbUpCommand());
-        operatorController.b().whileTrue(climberCommands.climbDownCommand());
-        // operatorController.x().whileTrue(_());
-        // operatorController.y().whileTrue(_());
+        
+        operatorController.x().whileTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
+        operatorController.y().whileTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
 
-        operatorController.povUp().whileTrue(elevatorCommands.incrementUpRaw()); // Orange but no movement
-        operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
-        // operatorController.povLeft().onTrue(WristCommands.incrementDown(wrist));
-        // operatorController.povRight().onTrue(WristCommands.setSafePose(wrist));
+        operatorController.a().whileTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+        operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+
+        operatorController.povUp().whileTrue(elevatorCommands.incrementUpNoCheck()); // Orange but no movement
+        operatorController.povDown().whileTrue(elevatorCommands.incrementDownNoCheck());
+        operatorController.povLeft().whileTrue(wristCommands.incrementIn());
+        operatorController.povRight().whileTrue(wristCommands.incrementOut());
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-    }
+    } // End of configureBindings
 
     public Command getAutonomousCommand() {
         return autoChooser.selectedCommand();
-    }
-}
+
+    } // End of getAutonomousCommand
+
+
+} // End of RobotContainer

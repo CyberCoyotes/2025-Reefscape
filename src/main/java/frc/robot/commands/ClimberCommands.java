@@ -14,7 +14,7 @@ public class ClimberCommands {
         this.climber = climber;
         this.wrist = wrist;
     }
-    public Command climbUpCommand() {
+    public Command incrementUp() {
         return Commands.run(
             () -> climber.climbUp())
         // TODO Consider adding a wrist set position command here
@@ -30,7 +30,7 @@ public class ClimberCommands {
     /**
      * Returns a Command that drives the motor at -6 V until canceled or interrupted.
      */
-    public Command climbDownCommand() {
+    public Command incrementDown() {
         return Commands.run(
             () -> climber.climbDown())
         // When command ends, stop the motor by setting 0 V:
@@ -42,7 +42,7 @@ public class ClimberCommands {
      * Returns a Command that immediately stops the climb motor (0 V).
      * This can be used in “instant” scenarios.
      */
-    public Command stopClimbCommand() {
+    public Command stopClimb() {
         return Commands.runOnce(
             () -> climber.stopClimb()
         ).withName("StopClimb");
