@@ -18,15 +18,10 @@ public final class ElevatorConstants {
 
     
     // Soft Limits (in rotations)
-    public static final double FORWARD_LIMIT = 2.50;
+    public static final double FORWARD_LIMIT = 4.67; // Updated 2-24-25
     public static final double REVERSE_LIMIT = 0;
     
-    // Preset Positions (in rotations)
-    public static final double HOME_POSE =  0.00;
-    public static final double L1_POSE =    0.10;
-    public static final double L2_POSE =    0.89;
-    public static final double L3_POSE =    2.27;
-    public static final double L4_POSE =    (FORWARD_LIMIT * 0.95); // TODO: Check this value, likely about 50
+  
     
     //
         // Motion Magic

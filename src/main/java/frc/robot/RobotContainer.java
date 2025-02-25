@@ -28,6 +28,7 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem.WristPositions;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.commands.ClimberCommands;
+import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.WristCommands;
 
@@ -39,11 +40,12 @@ public class RobotContainer {
     private final WristCommands wristCommands = new WristCommands(wrist);
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands;
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
+    private final CommandGroups commandGroups = new CommandGroups();
     private final TOFSubsystem m_tof = new TOFSubsystem();
 
 
@@ -72,9 +74,6 @@ public class RobotContainer {
 
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
-
-        elevatorCommands = new ElevatorCommands(elevator, wrist);
-        // wristCommands = new WristCommands();
 
         configureBindings();
         configureAutoRoutines();
@@ -114,35 +113,23 @@ public class RobotContainer {
                                                                                             // with negative X (left)
                 ));
 
-        /*
-         * FIXME Comment out for Testing of other commands
-         * driverController.b().whileTrue(drivetrain.applyRequest(() ->
-         * point.withModuleDirection(new Rotation2d(-driverController.getLeftY(),
-         * -driverController.getLeftX()))
-         * ));
-         */
+        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));        
 
         /***** Driver Controls *****/
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         driverController.leftBumper().whileTrue(endEffector.intakeCoral());
         driverController.rightBumper().whileTrue(endEffector.scoreCoral());
-
-        // driverController.start().onTrue(wrist.runOnce(() -> wrist.setWristZero()));
-
-        // driverController.start().and(driverController.x().onTrue(elevatorCommands.moveToL2Raw()));
         
-        driverController.x().onTrue(elevatorCommands.moveToHomeRaw());
-        driverController.y().onTrue(elevatorCommands.moveToL2Raw());
-        // driverController.start().and(driverController.a().onTrue(elevatorCommands.moveToHomeRaw()));
+        driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
+        driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
 
-        // driverController.y().onTrue(elevatorCommands.moveToL3Raw());
-        driverController.a().onTrue(wristCommands.setStowed());
-        driverController.b().onTrue(wristCommands.setL2());
+        driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
+        driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        driverController.povUp().whileTrue(elevator.incrementUpCommand());
-        driverController.povDown().whileTrue(elevator.decrementDownCommand());
-        driverController.povLeft().whileTrue(wristCommands.incrementIn());
+        driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
+        driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
+        driverController.povLeft().whileTrue(wristCommands.setStowed());
         driverController.povRight().whileTrue(wristCommands.incrementOut());
 
         /***** Operator Controls *****/

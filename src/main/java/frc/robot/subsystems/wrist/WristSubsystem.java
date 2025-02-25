@@ -84,7 +84,7 @@ public class WristSubsystem extends SubsystemBase {
         STOWED(0.0), // Stowed position from config
         L2(2.15), // L2 scoring position from your value
         L3(2.15), // L3 scoring position from your value
-        L4(3.5), // Estimated
+        L4(2.15), // Estimated
         PICK_ALGAE(8.0), // Estimated
         SCORE_ALGAE(18); // Estimated
 
@@ -134,8 +134,12 @@ public class WristSubsystem extends SubsystemBase {
         return getPosition() >= WristPositions.L2.getRotations();
     }
 
+
     @Override
     public void periodic() {
+        // update inSafePosition
+        boolean safeForElevator = inSafePosition();
+
         // Update SmartDashboard
         SmartDashboard.putNumber("Wrist/Position (rot)", getPosition());
         SmartDashboard.putNumber("Wrist/Target (rot)", targetPosition);
@@ -162,7 +166,7 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("Wrist/Voltage", wristMotor.getMotorVoltage().getValue());
         Logger.recordOutput("Wrist/Position", wristMotor.getPosition().getValue());
         Logger.recordOutput("Wrist/Stator Current", wristMotor.getStatorCurrent().getValue());
-        Logger.recordOutput("Wrist/Safe for Elevator",inSafePosition());
+        Logger.recordOutput("Wrist/Safe for Elevator",safeForElevator);
     }
 
 }
