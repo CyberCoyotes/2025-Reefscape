@@ -71,7 +71,7 @@ public class RobotContainer {
         public RobotContainer() {
 
                 autoFactory = drivetrain.createAutoFactory();
-                autoRoutines = new AutoRoutines(autoFactory, drivetrain);
+                autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
 
                 elevatorCommands = new ElevatorCommands(elevator, wrist);
                 wristCommands = new WristCommands();
@@ -91,9 +91,13 @@ public class RobotContainer {
        autoChooser.addRoutine("ScoreTwoMetersBack", autoRoutines::ScoreTwoMetersBack); 
        autoChooser.addRoutine("SetupA", autoRoutines::SetupA);
        autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-       autoChooser.addRoutine("STA-L1?", autoRoutines::STAL1);
-       autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
-       autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
+       autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
+       autoChooser.addRoutine("STJ-L1 To CSA-L1", autoRoutines::STJL12);
+       autoChooser.addRoutine("SBE-L1 To CSB-L1", autoRoutines::SBEL12);
+       autoChooser.addRoutine("STJ-L1?", autoRoutines::STJL1);
+       autoChooser.addRoutine("M-H-L1?", autoRoutines::MHL1);
+       //autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
+      // autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
 
        SmartDashboard.putData("Autonomous", autoChooser);
 
