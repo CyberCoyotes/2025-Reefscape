@@ -2,72 +2,91 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class CommandGroups {
- 
-// TODO Check if this is the correct
-public Command moveToL2Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToL2Raw()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToL2Sequence");
-}
 
-// TODO Check if this is the correct
-public Command moveToL3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToL3()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToL3Sequence");
-}
+    public Command moveToHomeGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // Move wrist to safe travel position if not already
+                wristCommands.setL2(),
+                // Move the elevator to home position
+                elevatorCommands.setHomeNoCheck(),
+                // TODO Add as a check that elevator has completed its command AND reached its target
+                // Wait for 0.35 seconds
+                new WaitUntilCommand(0.35), 
+                // Stow the elevator
+                wristCommands.setStowed()
 
-// TODO Check if this is the correct
-public Command moveToL4Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToL4Raw(),
-        wristCommands.setL4()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToL4Sequence");
-}
+        ).withName("MoveToHomeSequence");
+    }
 
-// TODO Check if this is the correct
-public Command moveToAlgae2Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToPickAlgae2Raw(),
-        wristCommands.setAlgae()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToAlgaeSequence");
-}
+    public Command moveToL1Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // wristCommands.setL1(), // First move wrist to L2
+                // elevatorCommands.moveToL2NoCheck() // Then move elevator (this already checks wrist.inSafePosition())
+        ).withName("MoveToL2Sequence");
+    }
 
-// TODO Check if this is the correct
-public Command moveToAlgae3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToPickAlgae3Raw(),
-        wristCommands.setAlgae()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToAlgaeSequence");
-}
+    public Command moveToL2Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                wristCommands.setL2(), // First move wrist to L2
+                elevatorCommands.setL2NoCheck() // Then move elevator (this already checks wrist.inSafePosition())
+        ).withName("MoveToL2Sequence");
+    }
 
-// TODO Check if this is the correct
-public Command moveToHomeGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setL2(),           // First move wrist to L2
-        elevatorCommands.moveToHomeRaw()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToHomeSequence");
-}
+    public Command moveToL3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                wristCommands.setL2(), // First move wrist to L2
+                elevatorCommands.setL3() // Then move elevator (this already checks wrist.inSafePosition())
+        ).withName("MoveToL3Sequence");
+    }
 
-// TODO Check if this is the correct
-public Command moveToScoreAlgae(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        wristCommands.setAlgae(),           // First move wrist to L2
-        elevatorCommands.moveToL2Raw()      // Then move elevator (this already checks wrist.inSafePosition())
-    ).withName("MoveToHomeSequence");
-}
+    public Command moveToL4Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                wristCommands.setL2(), // First move wrist to L2
+                elevatorCommands.setL4NoCheck(),
+                wristCommands.setL4() // Then move elevator (this already checks wrist.inSafePosition())
+        ).withName("MoveToL4Sequence");
+    }
 
-// Example 2 template - awaiting your specific requirements
-public Command customSequence(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    return Commands.sequence(
-        // Add your desired command sequence here
-    ).withName("CustomSequence");
-}
+    // TODO
+    public Command moveToPickAlgae2Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // Move to safe wrist position
+                wristCommands.setL2(),
+                // Move elevator up and underneath the algae
+                elevatorCommands.setL2NoCheck(),
+                // Move elevator up && run coral?
+                elevatorCommands.setAlgae2NoCheck(),
+                // Move elevator up to final picking position
+                wristCommands.pickAlgae()
+        ).withName("MoveToAlgaeSequence");
+    }
+
+    // TODO 
+    public Command moveToPickAlgae3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // Move to safe wrist position
+                wristCommands.setL2(),
+                // Move elevator up and underneath the algae
+                elevatorCommands.setL2NoCheck(),
+                // Move elevator up && run coral?
+                elevatorCommands.setAlgae2NoCheck(),
+                // Move elevator up to final picking position
+                wristCommands.pickAlgae()
+        ).withName("MoveToAlgaeSequence");
+    }
+
+    // TODO
+    public Command moveToScoreAlgae(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // Move the wrist to a down and "out" position
+                wristCommands.scoreAlgae(),
+                // TODO This position needs to be verified!
+                // Move the elevator to the algae scoring position
+                elevatorCommands.setL2NoCheck()
+        ).withName("MoveToHomeSequence");
+    }
+
 }
