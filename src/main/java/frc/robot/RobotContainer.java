@@ -131,9 +131,9 @@ public class RobotContainer {
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.25));
 
         /* 
-            ⬆️                                       **Y**  
-          ⬅️  ➡️                               **X**      **B**
-            ⬇️                                       **A**
+                                                **Y**  
+                                          **X**      **B**
+                                                **A**
         */
 
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
