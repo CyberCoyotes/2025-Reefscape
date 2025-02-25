@@ -85,7 +85,7 @@ public class WristSubsystem extends SubsystemBase {
         L2(2.15), // L2 scoring position from your value
         L3(2.15), // L3 scoring position from your value
         L4(2.15), // Estimated
-        PICK_ALGAE(8.0), // Estimated
+        PICK_ALGAE(14.0), // Estimated 8
         SCORE_ALGAE(18); // Estimated
 
         private final double rotations;
