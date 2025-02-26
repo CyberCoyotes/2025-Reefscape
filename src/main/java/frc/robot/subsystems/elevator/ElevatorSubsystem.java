@@ -28,11 +28,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        L2(0.95), // was .89
+        L2(0.90), // was .89; Drive team requested 2-25-25 that it be decreased from 0.95
+        Algae2(1.1), // TODO Test
         L3(2.27),
         L4(4.66), // Updated 2-24-25
-        Algae2(1.1),
-        Algae3(1.0);
+        Algae3(2.45), // TODO Test
+        L4( 4.66); // Updated 2-24-25
 
         private final double position;
 
