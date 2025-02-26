@@ -13,8 +13,7 @@ public class CommandGroups {
                 // Move the elevator to home position
                 elevatorCommands.setHomeNoCheck(),
                 // TODO Add as a check that elevator has completed its command AND reached its target
-                // Wait for 0.35 seconds
-                new WaitUntilCommand(0.35), 
+
                 // Stow the elevator
                 wristCommands.setStowed()
 
