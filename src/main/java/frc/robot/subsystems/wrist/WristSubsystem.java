@@ -31,8 +31,8 @@ public class WristSubsystem extends SubsystemBase {
     private static final double kG = 0.05;
 
     // Motion Profile Constraints (from config file)
-    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second
-    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared
+    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second // TODO Bump up?
+    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared // TODO Bump up?
     private static final double MOTION_MAGIC_JERK = 300.0; // rotations per second cubed
 
     private double targetPosition = 0.0;
@@ -84,9 +84,9 @@ public class WristSubsystem extends SubsystemBase {
         STOWED(0.0), // Stowed position from config
         L2(2.15), // L2 scoring position from your value
         L3(2.15), // L3 scoring position from your value
-        L4(2.15), // Estimated
-        PICK_ALGAE(14.0), // Estimated 8
-        SCORE_ALGAE(18); // Estimated
+        L4(14.0), // Estimated
+        PICK_ALGAE(14.0), // Estimated 8 which was about horitzontal
+        SCORE_ALGAE(18.0); // Estimated about 19 max with Phoenix Tuner
 
         private final double rotations;
 
