@@ -163,8 +163,11 @@ public class RobotContainer {
         operatorController.a().whileTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
         operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        operatorController.povUp().whileTrue(elevatorCommands.incrementUpNoCheck()); // Orange but no movement
-        operatorController.povDown().whileTrue(elevatorCommands.incrementDownNoCheck());
+        operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
+        operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
+        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); TODO Test this command as well
+        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); TODO Test this command as well
+        
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());
 
