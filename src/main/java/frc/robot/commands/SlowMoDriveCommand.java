@@ -30,12 +30,7 @@ public class SlowMoDriveCommand extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        // Restore normal speed by reapplying the default command
-        drivetrain.setDefaultCommand(
-            drivetrain.applyRequest(() -> new SwerveRequest.FieldCentric()
-                .withVelocityX(-driverController.getLeftY())
-                .withVelocityY(-driverController.getLeftX())
-                .withRotationalRate(-driverController.getRightX()))
-        );
+        // The default command will automatically take over when this command ends
+        // No need to explicitly set a new default command here
     }
 }
