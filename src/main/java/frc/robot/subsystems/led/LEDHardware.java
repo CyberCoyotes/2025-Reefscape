@@ -4,6 +4,7 @@ import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.led.*;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Constants;
 
 @SuppressWarnings("unused") // Suppresses unused variable warning
 
@@ -11,7 +12,7 @@ public class LEDHardware {
     // Hardware state tracking
     private final CANdle candle;
     private Animation currentAnimation;
-    private LEDConfig config;
+    private LEDConstants config;
     private boolean isConfigured = false;
     private int configRetryCount = 0;
     private static final int MAX_CONFIG_RETRIES = 3;
@@ -30,12 +31,12 @@ public class LEDHardware {
     
     public LEDHardware() {
         // Using the constant directly since we know we're using CANdle
-        candle = new CANdle(LEDConfig.Constants.CANDLE_ID, "rio");
-        config = LEDConfig.defaultConfig();
-        DataLogManager.log("LEDHardware: Initialized with CANdle ID " + LEDConfig.Constants.CANDLE_ID);
+        candle = new CANdle(Constants.CANDLE_ID, "rio");
+        config = LEDConstants.defaultConfig();
+        DataLogManager.log("LEDHardware: Initialized with CANdle ID " + Constants.CANDLE_ID);
     }
 
-    public void configure(LEDConfig config) {
+    public void configure(LEDConstants config) {
         this.config = config;
         configRetryCount = 0;
         attemptConfiguration();

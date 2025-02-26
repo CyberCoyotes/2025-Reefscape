@@ -15,7 +15,8 @@ import com.ctre.phoenix.led.TwinkleOffAnimation;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.led.LEDConfig.Constants;
+import frc.robot.Constants;
+import frc.robot.subsystems.led.LEDConstants;
 
 public class LEDSubsystem extends SubsystemBase {
     private final CANdle candle;
