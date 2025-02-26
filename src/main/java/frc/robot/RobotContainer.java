@@ -30,6 +30,7 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 
 public class RobotContainer {
@@ -131,7 +132,7 @@ public class RobotContainer {
         driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
         driverController.leftTrigger().whileTrue(endEffector.intakeAlgae());
-        driverController.rightTrigger().whileTrue(endEffector.scoreAlgae());
+        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.25));
 
         /* 
                 **Y**  
@@ -144,7 +145,7 @@ public class RobotContainer {
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // Add a slow motion command for the driver to use when button held
-        // driverController.b().onTrue(/* */);
+        driverController.b().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.25));
 
         // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());

@@ -38,7 +38,7 @@ public class CommandGroups {
     public Command moveToL3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 wristCommands.setL2(), // First move wrist to L2
-                elevatorCommands.setL3() // Then move elevator (this already checks wrist.inSafePosition())
+                elevatorCommands.setL3NoCheck() // Then move elevator (this already checks wrist.inSafePosition())
         ).withName("MoveToL3Sequence");
     }
 
