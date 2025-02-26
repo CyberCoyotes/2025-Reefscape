@@ -48,4 +48,19 @@ public class ClimberCommands {
         ).withName("StopClimb");
     }
 
+    // New command to toggle servo position by 90 degrees
+    public Command toggleServoCommand() {
+        return Commands.runOnce(
+            () -> climber.rotateServo90Degrees()
+        ).withName("ToggleServo");
+    }
+    
+    // Command to set servo to specific angle
+    public Command setServoAngleCommand(double angle) {
+        return Commands.runOnce(
+            () -> climber.setServoAngle(angle)
+        ).withName("SetServoAngle");
+    }
+    
+
 }
