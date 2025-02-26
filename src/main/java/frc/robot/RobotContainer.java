@@ -125,9 +125,8 @@ public class RobotContainer {
         // driverController.back().onTrue((/* */));
 
         // The button's boolean supplier is used to determine when the button is released
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor(null));
-        
-
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor(() -> true));
+        driverController.leftBumper().whileTrue(endEffector.intakeCoral());
 
         driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
@@ -135,9 +134,9 @@ public class RobotContainer {
         driverController.rightTrigger().whileTrue(endEffector.scoreAlgae());
 
         /* 
-            ⬆️                                       **Y**  
-          ⬅️  ➡️                               **X**      **B**
-            ⬇️                                       **A**
+                **Y**  
+            **X**   **B**
+                **A**
         */
 
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));

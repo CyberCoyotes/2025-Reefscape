@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.ConfigurationFailedException;
 import frc.robot.Constants;
@@ -19,26 +18,19 @@ public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
     private final LaserCan coralLaser;
 
-    // Control mode selection
-    public enum ControlMode {
-        DUTY_CYCLE, // Simple percent output control
-        TORQUE_FOC // Advanced torque control
-    }
-
-    // TODO Test Both Control Modes
-    private ControlMode currentControlMode = ControlMode.DUTY_CYCLE; // Default to simple control
-    // private ControlMode currentControlMode = ControlMode.TORQUE_FOC; // Default
-    // to simple control
-
     // Control requests (pre-allocated to avoid memory churn)
     private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
-    private final TorqueCurrentFOC torqueRequest = new TorqueCurrentFOC(0);
 
     // Status tracking
     private boolean isStoppedDueToLaser = false;
     private double stopTimestamp = 0;
-    private static final double RESUME_DELAY_SECONDS = 3.0; // Changed from 1.0 to 3.0 seconds
+    private static final double RESUME_DELAY_SECONDS = 1.0; 
     private double lastCoralDistance = 0.0;
+    private double previousDistance = 1000.0; // For trend detection
+    
+    // Detection settings
+    private static final double CORAL_DETECT_THRESHOLD = 150.0; // Increased from 100mm to 150mm
+    private static final double CORAL_APPROACH_THRESHOLD = 250.0; // Earlier warning threshold
 
     // Status signals for monitoring
     private final StatusSignal<Voltage> supplyVoltage;
@@ -53,11 +45,11 @@ public class EffectorSubsystem extends SubsystemBase {
         torqueCurrent = motor.getTorqueCurrent();
         motorVoltage = motor.getMotorVoltage();
 
-        // Set update frequencies
-        supplyVoltage.setUpdateFrequency(10); // 10 Hz
-        supplyCurrent.setUpdateFrequency(50); // 50 Hz
-        torqueCurrent.setUpdateFrequency(50); // 50 Hz
-        motorVoltage.setUpdateFrequency(50); // 50 Hz
+        // Set all update frequencies to same value for consistency
+        supplyVoltage.setUpdateFrequency(50); // Increased to 50 Hz
+        supplyCurrent.setUpdateFrequency(50);
+        torqueCurrent.setUpdateFrequency(50);
+        motorVoltage.setUpdateFrequency(50);
 
         configureMotor();
 
@@ -71,9 +63,10 @@ public class EffectorSubsystem extends SubsystemBase {
     private void configureMotor() {
         var config = EffectorConstants.EFFECTOR_CONFIG;
 
-        // Add current limits for torque control
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40;
+        // Simplify current limiting - only use one type
+        config.CurrentLimits.SupplyCurrentLimitEnable = false;
+        config.CurrentLimits.StatorCurrentLimitEnable = true;
+        config.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply configuration
         motor.getConfigurator().apply(config);
@@ -82,7 +75,9 @@ public class EffectorSubsystem extends SubsystemBase {
     private void configureLaser() {
         try {
             coralLaser.setRangingMode(LaserCan.RangingMode.SHORT);
-            coralLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 16, 16));
+            // Smaller region of interest for faster processing
+            coralLaser.setRegionOfInterest(new LaserCan.RegionOfInterest(6, 6, 12, 12));
+            // Faster timing budget for quicker measurements
             coralLaser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
         } catch (ConfigurationFailedException e) {
             System.out.println("Coral Laser configuration failed! " + e);
@@ -90,44 +85,18 @@ public class EffectorSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the control mode for the effector
-     * 
-     * @param mode The desired control mode (DUTY_CYCLE or TORQUE_FOC)
-     */
-    public void setControlMode(ControlMode mode) {
-        currentControlMode = mode;
-        // Reset the motor to 0 when switching modes
-        stopMotor();
-    }
-
-    /**
-     * Sets the effector output based on the current control mode
-     * 
-     * @param output The desired output (-1 to 1 for duty cycle, amps for torque)
+     * Sets the effector output using duty cycle control
+     * @param output The desired output (-1 to 1)
      */
     public void setEffectorOutput(double output) {
-        switch (currentControlMode) {
-            case DUTY_CYCLE:
-                motor.setControl(dutyCycleRequest.withOutput(output));
-                break;
-            case TORQUE_FOC:
-                motor.setControl(torqueRequest.withOutput(output));
-                break;
-        }
+        motor.setControl(dutyCycleRequest.withOutput(output));
     }
 
     /**
-     * Stops the motor regardless of control mode
+     * Stops the motor
      */
     public void stopMotor() {
-        switch (currentControlMode) {
-            case DUTY_CYCLE:
-                motor.setControl(dutyCycleRequest.withOutput(0));
-                break;
-            case TORQUE_FOC:
-                motor.setControl(torqueRequest.withOutput(0));
-                break;
-        }
+        motor.setControl(dutyCycleRequest.withOutput(0));
     }
 
     // Sensor methods
@@ -136,15 +105,30 @@ public class EffectorSubsystem extends SubsystemBase {
         return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
     }
 
-    public double getCoralDistanceMillimeters() {
+    // Measured in mm
+    public double getCoralDistance() {
         return lastCoralDistance;
     }
 
-    // Changed from 30mm to 100mm (10cm)
-    private static final double CORAL_DETECT_THRESHOLD = 100.0; // 100mm = 10cm
-
+    /**
+     * Detects coral using both absolute distance and trend detection
+     * @return true if coral is detected or approaching rapidly
+     */
     public boolean isCoralDetected() {
-        return getCoralDistanceMillimeters() < CORAL_DETECT_THRESHOLD;
+        double currentDistance = getCoralDistance();
+        
+        // Check if coral is close enough to detect
+        boolean isClose = currentDistance < CORAL_DETECT_THRESHOLD;
+        
+        // Check if coral is approaching rapidly (distance decreasing and within warning threshold)
+        boolean isApproaching = currentDistance < previousDistance &&
+                                currentDistance < CORAL_APPROACH_THRESHOLD &&
+                                (previousDistance - currentDistance) > 20; // Rapid approach threshold
+        
+        // Update previous distance for next check
+        previousDistance = currentDistance;
+        
+        return isClose || isApproaching;
     }
 
     public void stopIfDetected() {
@@ -155,17 +139,12 @@ public class EffectorSubsystem extends SubsystemBase {
                 stopMotor();
                 isStoppedDueToLaser = true;
                 stopTimestamp = currentTime;
+                
+                // Log detection for debugging
+                System.out.println("Coral detected at distance: " + lastCoralDistance + "mm, motor stopped");
             }
         } else if (isStoppedDueToLaser && (currentTime - stopTimestamp > RESUME_DELAY_SECONDS)) {
-            // Resume with appropriate control mode
-            switch (currentControlMode) {
-                case DUTY_CYCLE:
-                    setEffectorOutput(EffectorConstants.SCORE_CORAL);
-                    break;
-                case TORQUE_FOC:
-                    setEffectorOutput(EffectorConstants.SCORE_CURRENT_AMPS);
-                    break;
-            }
+            // Motor resumes after delay has passed and coral is no longer detected
             isStoppedDueToLaser = false;
         }
     }
@@ -174,18 +153,9 @@ public class EffectorSubsystem extends SubsystemBase {
      * Command Factories
      ******************************/
 
-    // Duty Cycle Control Commands
-    public Command runEffectorDutyCycleORIGINAL() {
-        return run(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
-            setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-        });
-    }
-
     // Duty Cycle Control
     public Command intakeCoralNoSensor() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.INTAKE_CORAL);
         }, this) {
             @Override
@@ -196,8 +166,8 @@ public class EffectorSubsystem extends SubsystemBase {
     }
 
     /**
-     * Creates a command that runs the effector until a coral is detected
-     * or the button is released. If coral is detected, motor stops for 3 seconds.
+     * Creates a command that runs the effector until coral is detected
+     * or the button is released. If coral is detected, motor stops for delay.
      * 
      * @param buttonReleased A boolean supplier that returns true when the button is released
      * @return A command that controls the effector with automated coral detection
@@ -206,7 +176,6 @@ public class EffectorSubsystem extends SubsystemBase {
         return new RunCommand(() -> {
             // If coral is detected, motor is already stopped due to stopIfDetected() in periodic()
             if (!isCoralDetected() && !isStoppedDueToLaser) {
-                setControlMode(ControlMode.DUTY_CYCLE);
                 setEffectorOutput(EffectorConstants.INTAKE_CORAL);
             }
         }, this) {
@@ -230,7 +199,6 @@ public class EffectorSubsystem extends SubsystemBase {
     // Duty Cycle Control
     public Command scoreCoral() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.SCORE_CORAL);
         }, this) {
             @Override
@@ -242,7 +210,6 @@ public class EffectorSubsystem extends SubsystemBase {
     
     public Command slowCoral() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.lSCORE_CORAL);
         }, this) {
             @Override
@@ -254,7 +221,6 @@ public class EffectorSubsystem extends SubsystemBase {
 
     public Command intakeAlgae() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.INTAKE_ALGAE);
         }, this) {
             @Override
@@ -264,10 +230,8 @@ public class EffectorSubsystem extends SubsystemBase {
         };
     }
 
-    // Duty Cycle Control
     public Command scoreAlgae() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.SCORE_ALGAE);
         }, this) {
             @Override
@@ -277,38 +241,20 @@ public class EffectorSubsystem extends SubsystemBase {
         };
     }
 
-    // Torque Control Commands
-    public Command runEffectorTorque() {
-        return run(() -> {
-            setControlMode(ControlMode.TORQUE_FOC);
-            setEffectorOutput(EffectorConstants.INTAKE_CURRENT_AMPS);
-        });
-    }
-
-    public Command scoreEffectorTorque() {
-        return run(() -> {
-            setControlMode(ControlMode.TORQUE_FOC);
-            setEffectorOutput(EffectorConstants.SCORE_CURRENT_AMPS);
-        });
-    }
-
-    // Common Commands
     /**
-     * Creates a command that runs the effector motor until a coral is detected by
-     * the sensor.
-     * If a coral is detected, the motor will stop.
+     * Creates a command that runs the effector motor until coral is detected by
+     * the sensor. If coral is detected, the motor will stop.
      *
      * @return A command that runs the effector motor with sensor feedback.
      */
     public Command intakeCoral() {
-        return run(() -> {
+        return new RunCommand(() -> {
             if (isCoralDetected()) {
                 stopMotor();
             } else {
-                setControlMode(ControlMode.DUTY_CYCLE);
                 setEffectorOutput(EffectorConstants.INTAKE_CORAL);
             }
-        }).until(this::isCoralDetected);
+        }, this).until(this::isCoralDetected);
     }
 
     @Override
@@ -325,15 +271,15 @@ public class EffectorSubsystem extends SubsystemBase {
         stopIfDetected();
 
         // Update dashboard
-        SmartDashboard.putString("Effector/Control Mode", currentControlMode.toString());
         SmartDashboard.putNumber("Effector/Current", supplyCurrent.getValueAsDouble());
         SmartDashboard.putNumber("Effector/Torque", torqueCurrent.getValueAsDouble());
         SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
         SmartDashboard.putNumber("Effector/Supply Voltage", supplyVoltage.getValueAsDouble());
 
-        SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
+        SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistance());
         SmartDashboard.putBoolean("Effector/Sensor/Laser Valid", isCoralRangeValid());
         SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
         SmartDashboard.putBoolean("Effector/Stopped Due To Detection", isStoppedDueToLaser);
+        SmartDashboard.putNumber("Effector/Sensor/Previous Distance", previousDistance);
     }
 }
