@@ -19,7 +19,19 @@ public class WristSubsystem extends SubsystemBase {
     private static final double GEAR_RATIO = 80.0;
     private static final double REVERSE_LIMIT = 0.0; // In rotations
     private static final double FORWARD_LIMIT = 20.0; // In rotations
-    private static final double INCREMENT = 0.10; // 0.5 rotations per button press
+    private static final double INCREMENT = 0.30;
+    /*  
+    0.10    Way too slow
+    0.20
+    0.30
+    0.40
+    0.50
+    0.60
+    0.70
+    0.80
+    0.90
+    1.00
+     */ // 0.5 rotations per button press
     private static final double POSE_TOLERANCE = 0.02; // TODO Implement 0.02 rotations tolerance
 
     // Motion Magic Constants (from config file)
@@ -157,6 +169,7 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Wrist/Motion Magic Acceleration", MOTION_MAGIC_ACCELERATION);
         SmartDashboard.putNumber("Wrist/Motion Magic Jerk", MOTION_MAGIC_JERK);
         SmartDashboard.putNumber("Wrist/ForwardLimit", FORWARD_LIMIT);
+        SmartDashboard.putNumber("Wrist/Increment", INCREMENT);
         
         // For Telemetry logging
         Logger.recordOutput("Wrist/Position", getPosition());
