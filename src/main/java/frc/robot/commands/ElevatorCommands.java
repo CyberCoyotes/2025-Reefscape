@@ -129,6 +129,9 @@ public class ElevatorCommands {
         return setPositionNoCheck(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
     }
 
+    public Command setScoreAlgaeNoCheck() {
+        return setPositionNoCheck(ElevatorPosition.ScoreAlgae.getPosition()).withName("SafeMoveElevatorToScoreAlgaePose");
+    }
 
     // Preset position commands - safe movement
     public Command setHome() {
