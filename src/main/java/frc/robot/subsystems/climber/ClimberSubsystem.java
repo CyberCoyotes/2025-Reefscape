@@ -1,5 +1,6 @@
 package frc.robot.subsystems.climber;
 
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -7,9 +8,10 @@ import frc.robot.Constants;
 
 // Phoenix 6 imports
 import com.ctre.phoenix6.hardware.TalonFX;
-
 import org.littletonrobotics.junction.Logger;
 
+import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
 public class ClimberSubsystem extends SubsystemBase {
@@ -17,10 +19,12 @@ public class ClimberSubsystem extends SubsystemBase {
     // Motor & control request object
     private final TalonFX climbMotor;
     private final VoltageOut voltageRequest;
+    private final PositionVoltage positionRequest;
 
-    // voltage variable
-    public final double CLIMB_VOLTAGE = 9; // With a max of 12, This should be about 3/4 of the max voltage
-
+    
+    // REV Smart Servo
+    private final Servo climbServo;
+    private boolean servoExtended = false;
 
     public ClimberSubsystem() {
         // Initialize motor
@@ -28,17 +32,37 @@ public class ClimberSubsystem extends SubsystemBase {
 
         // Create a Voltage control request initially set to 0 V
         voltageRequest = new VoltageOut(0);
-    }
+        
+        positionRequest = new PositionVoltage(0).withSlot(0);
 
+        // Initialize servo on PWM port
+        climbServo = new Servo(ClimbConstants.SERVO_PWM_CHANNEL);
+        
+        // Set initial servo position to retracted
+        climbServo.setAngle(ClimbConstants.SERVO_MIN_ANGLE);
+    
+        // configureClimberMotor();
+
+        }
+
+        public void configureClimberMotor() {
+            
+            SoftwareLimitSwitchConfigs softLimitConfig = new SoftwareLimitSwitchConfigs();
+            softLimitConfig.ForwardSoftLimitEnable = false; // TODO Test
+            // softLimitConfig.ForwardSoftLimitThreshold = ClimbConstants.FORWARD_SOFT_LIMIT;
+            softLimitConfig.ReverseSoftLimitEnable = false; // TODO Test
+            // softLimitConfig.ReverseSoftLimitThreshold = ClimbConstants.REVERSE_SOFT_LIMIT;
+            climbMotor.getConfigurator().apply(softLimitConfig);
+        }
 
     // Output to lift the robot up
     public void climbUp() {
-        climbMotor.setControl(voltageRequest.withOutput(-CLIMB_VOLTAGE));  // 6 V out of max ~12 V
+        climbMotor.setControl(voltageRequest.withOutput(-ClimbConstants.CLIMB_VOLTAGE));
     }
 
     // Output to lower the robot down
     public void climbDown() {
-        climbMotor.setControl(voltageRequest.withOutput(CLIMB_VOLTAGE));
+        climbMotor.setControl(voltageRequest.withOutput(ClimbConstants.CLIMB_VOLTAGE));
     }
 
     public void stopClimb() {
@@ -48,53 +72,39 @@ public class ClimberSubsystem extends SubsystemBase {
     public void holdClimb() {
         climbMotor.setControl(voltageRequest.withOutput(0.5));
     }
-
-    /***********************
-     * 
-     ****************************/
- 
-    public Command climbUpCommand() {
-        return run(
-            () -> climbUp())
-        // When command ends, stop the motor by setting 0 V:
-        .finallyDo((boolean interrupted) -> stopClimb())
-        .withName("ClimbUp");
+    
+    // Servo control methods
+    public void rotateServo90Degrees() {
+        if (servoExtended) {
+            climbServo.setAngle(ClimbConstants.SERVO_MIN_ANGLE);
+        } else {
+            climbServo.setAngle(ClimbConstants.SERVO_MAX_ANGLE);
+        }
+        servoExtended = !servoExtended;
     }
-
-    /**
-     * Returns a Command that drives the motor at -6 V until canceled or interrupted.
-     */
-    public Command climbDownCommand() {
-        return run(
-            () -> climbDown())
-        // When command ends, stop the motor by setting 0 V:
-        .finallyDo((boolean interrupted) -> stopClimb())
-        .withName("ClimbDown");
+    
+    public void setServoAngle(double angle) {
+        climbServo.setAngle(angle);
+        servoExtended = (angle >= 45.0); // Consider extended if angle is >= 45 degrees
     }
-
-    /**
-     * Returns a Command that immediately stops the climb motor (0 V).
-     * This can be used in “instant” scenarios.
-     */
-    public Command stopClimbCommand() {
-        return runOnce(
-            () -> stopClimb()
-        ).withName("StopClimb");
+    
+    public double getServoAngle() {
+        return climbServo.getAngle();
     }
-
-
-    public Command climbUpCommand_v2() {
-        return runOnce(this::climbUp);
+    
+    public boolean isServoExtended() {
+        return servoExtended;
     }
 
     
     @Override
     public void periodic() {
         // Send position to Logger
-        // Currently using Voltage, but get position from encoder. This would need to be RAW as the climb motor doesn't always start at the same position
         Logger.recordOutput("Climber/MotorPosition", climbMotor.getPosition().getValue());
         // Get the power output of the motor
         Logger.recordOutput("Climber/MotorVoltage", climbMotor.getSupplyVoltage().getValue());
-  
+        // Log servo position
+        Logger.recordOutput("Climber/ServoAngle", climbServo.getAngle());
+        Logger.recordOutput("Climber/ServoExtended", servoExtended);
     }
 }
