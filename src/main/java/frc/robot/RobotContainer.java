@@ -30,6 +30,7 @@ import frc.robot.subsystems.TOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
@@ -48,6 +49,9 @@ public class RobotContainer {
     private final CommandGroups commandGroups = new CommandGroups();
     
     private final TOFSubsystem m_tof = new TOFSubsystem();
+
+   private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+
 
     // kSpeedAt12Volts desired top speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
