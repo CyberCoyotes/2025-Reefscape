@@ -38,18 +38,6 @@ public class TOFSubsystem extends SubsystemBase {
         }
     }
 
-    @Override
-    public void periodic() {
-        // Update measurements for both sensors
-        updateCoralMeasurement();
-        updateElevatorMeasurement();
-
-        // Post to SmartDashboard for debugging
-        SmartDashboard.putNumber("Coral Distance (mm)", lastCoralDistance);
-        SmartDashboard.putNumber("Elevator Distance (mm)", lastElevatorDistance);
-    }
-
-
     private void updateCoralMeasurement() {
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
@@ -85,35 +73,20 @@ public class TOFSubsystem extends SubsystemBase {
         LaserCan.Measurement measurement = elevatorLaser.getMeasurement();
         return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
     }
+
+    @Override
+    public void periodic() {
+        // Update measurements for both sensors
+        updateCoralMeasurement();
+        updateElevatorMeasurement();
+    }
+
+    public void updateDashboard() {
+            // Move dashboard updates to this separate method
+            SmartDashboard.putNumber("Coral Distance (mm)", lastCoralDistance);
+            SmartDashboard.putNumber("Elevator Distance (mm)", lastElevatorDistance);
+    }
+
 }
 
-// Example usage in a command or another subsystem
-/*
-// Get distances
-double coralDistance = m_tof.getCoralDistanceMeters();
-double elevatorDistance = m_tof.getElevatorDistanceMillimeters();
-
-// Check if readings are valid
-if (m_tof.isCoralRangeValid()) {
-    // Use coral distance
-}
-
-if (m_tof.isElevatorRangeValid()) {
-    // Use elevator distance
-}
- */
-
-
-/* 
-// Example command that triggers when target is within range
-public Command isTargetInRange() {
-    return new FunctionalCommand(
-        () -> {}, // No initialization
-        () -> {}, // No periodic execution
-        (interrupted) -> {}, // No end behavior
-        () -> m_tof.getCoralDistanceMeters() < 0.5, // Returns true when target is closer than 0.5 meters
-        m_tof // Requires the TOF subsystem
-    );
-}
-    https://claude.ai/chat/e76b632d-add8-4303-82f2-40758a6cd975
-    */
+    // https://claude.ai/chat/e76b632d-add8-4303-82f2-40758a6cd975
