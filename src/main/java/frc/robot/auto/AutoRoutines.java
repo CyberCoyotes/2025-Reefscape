@@ -24,22 +24,44 @@ public class AutoRoutines {
          
        // private final double scoreDelay = 1.0;
         }
-       
-        public AutoRoutine STA() {
-            final AutoRoutine routine = m_factory.newRoutine("ST-A");
-            final AutoTrajectory STA = routine.trajectory("ST-A",0);
-            final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
-    
-            routine.active().onTrue(
-                    Commands.sequence(
-                            STA.resetOdometry(), // Always reset odometry first
-                            STA.cmd(), // Follow the path
-                            m_drivetrain.stop().withTimeout(2.0), 
-                            STA2.cmd()
-                            
-                    ));
-    
-            return routine;
+        public AutoRoutine STAL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-A-L1");
+                final AutoTrajectory STA = routine.trajectory("ST-A-L1",0);
+                final AutoTrajectory STA2 = routine.trajectory("ST-A-L1",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STA.resetOdometry(), // Always reset odometry first
+                                STA.cmd(),//, // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STA2.cmd()
+                                
+                        ));
+                STA.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                STA.atTime("Load").onTrue(m_score.intakeCoral().withTimeout(2.0));
+                return routine;
+        }
+        public AutoRoutine STAtoL() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-A");
+                final AutoTrajectory STA = routine.trajectory("ST-A",0);
+                final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
+                final AutoTrajectory CSL = routine.trajectory("CS1-L",0);
+                final AutoTrajectory CSL2 = routine.trajectory("CS1-L",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STA.resetOdometry(), // Always reset odometry first
+                                STA.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0),
+                                STA2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                CSL.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSL2.cmd()
+                                
+                        ));
+        
+                return routine;
         }
         public AutoRoutine STH() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-H");
@@ -74,55 +96,52 @@ public class AutoRoutines {
         
                 return routine;
         }
-        public AutoRoutine STJ() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-J");
-                final AutoTrajectory STJ = routine.trajectory("ST-J",0);
-                final AutoTrajectory STJ2 = routine.trajectory("ST-J",1);
+        public AutoRoutine STJL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
+                final AutoTrajectory STJ = routine.trajectory("ST-J-L1",0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J-L1",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
                                 STJ.resetOdometry(), // Always reset odometry first
                                 STJ.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STJ2.cmd()//,
-                                //m_drivetrain.stop().withTimeout(2.0)
-                              
+                                STJ2.cmd()
+                                
                         ));
-        
+                STJ.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
                 return routine;
         }
-        public AutoRoutine STK() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-K");
-                final AutoTrajectory STK = routine.trajectory("ST-K",0);
-                final AutoTrajectory STK2 = routine.trajectory("ST-K",1);
+        public AutoRoutine STKL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-K-L1");
+                final AutoTrajectory STK = routine.trajectory("ST-K-L1",0);
+                final AutoTrajectory STK2 = routine.trajectory("ST-K-L1",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
                                 STK.resetOdometry(), // Always reset odometry first
                                 STK.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STK2.cmd()//,
-                                //m_drivetrain.stop().withTimeout(2.0)
-                              
+                                STK2.cmd()
+                                
                         ));
-        
+                STK.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
                 return routine;
         }
-        public AutoRoutine STL() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-L");
-                final AutoTrajectory STL = routine.trajectory("ST-L",0);
-                final AutoTrajectory STL2 = routine.trajectory("ST-L,",1);
+        public AutoRoutine STLL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-L-L1");
+                final AutoTrajectory STL = routine.trajectory("ST-L-L1",0);
+                final AutoTrajectory STL2 = routine.trajectory("ST-L-L1",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
                                 STL.resetOdometry(), // Always reset odometry first
                                 STL.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                STL2.cmd()//,
-                               // m_drivetrain.stop().withTimeout(2.0)
-                              
+                                STL2.cmd()
+                                
                         ));
-        
+                STL.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine SBB() {
@@ -142,38 +161,57 @@ public class AutoRoutines {
         
                 return routine;
         }
-        public AutoRoutine SBC() {
-                final AutoRoutine routine = m_factory.newRoutine("SB-C");
-                final AutoTrajectory SBC = routine.trajectory("SB-C",0);
-                final AutoTrajectory SBC2 = routine.trajectory("SB-C",1);
+        public AutoRoutine SBBtoC() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-B");
+                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
+                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
+                final AutoTrajectory CSC = routine.trajectory("CS2-C",0);
+                final AutoTrajectory CSC2 = routine.trajectory("CS2-C",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(), // Always reset odometry first
+                                SBB.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                SBB2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSC.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSC2.cmd()
+                        ));
+        
+                return routine;
+        }
+        public AutoRoutine SBCL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-C-L1");
+                final AutoTrajectory SBC = routine.trajectory("ST-C-L1",0);
+                final AutoTrajectory SBC2 = routine.trajectory("ST-C-L1",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
                                 SBC.resetOdometry(), // Always reset odometry first
                                 SBC.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                SBC2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
-                              
+                                SBC2.cmd()
+                                
                         ));
-        
+                SBC.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
                 return routine;
         }
-        public AutoRoutine SBD() {
-                final AutoRoutine routine = m_factory.newRoutine("SB-D");
-                final AutoTrajectory SBD = routine.trajectory("SB-D",0);
-                final AutoTrajectory SBD2 = routine.trajectory("SB-D",1);
+        public AutoRoutine SBDL1() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-D-L1");
+                final AutoTrajectory SBD = routine.trajectory("ST-D-L1",0);
+                final AutoTrajectory SBD2 = routine.trajectory("ST-D-L1",1);
         
                 routine.active().onTrue(
                         Commands.sequence(
                                 SBD.resetOdometry(), // Always reset odometry first
                                 SBD.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0), 
-                                SBD2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
-                              
+                                SBD2.cmd()
+                                
                         ));
-        
+                SBD.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine SBE() {
@@ -235,22 +273,6 @@ public class AutoRoutines {
                         Commands.sequence(
                                 TwoMeters.resetOdometry(), // Always reset odometry first
                                 TwoMeters.cmd() // Follow the path
-                                
-                        ));
-        
-                return routine;
-        }
-        public AutoRoutine TwoMetersBack() {
-                final AutoRoutine routine = m_factory.newRoutine("TwoMetersBack");
-                final AutoTrajectory TwoMetersT = routine.trajectory("TwoMetersBack",0);
-                final AutoTrajectory Back = routine.trajectory("TwoMetersBack",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                TwoMetersT.resetOdometry(), // Always reset odometry first
-                                TwoMetersT.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
-                                Back.cmd()
                                 
                         ));
         
@@ -331,101 +353,7 @@ public class AutoRoutines {
         
                 return routine;
         }
-        public AutoRoutine STA3() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-A");
-                final AutoTrajectory STA = routine.trajectory("ST-A",0);
-                final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
-                final AutoTrajectory CSL = routine.trajectory("CS1-L",0);
-                final AutoTrajectory CSL2 = routine.trajectory("CS1-L",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STA.resetOdometry(), // Always reset odometry first
-                                STA.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
-                                STA2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0), 
-                                CSL.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
-                                CSL2.cmd()
-                                
-                        ));
-        
-                return routine;
-        }
-        public AutoRoutine SBBetter() {
-                final AutoRoutine routine = m_factory.newRoutine("SB-B");
-                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
-                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
-                final AutoTrajectory CSC = routine.trajectory("CS2-C",0);
-                final AutoTrajectory CSC2 = routine.trajectory("CS2-C",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                SBB.resetOdometry(), // Always reset odometry first
-                                SBB.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0), 
-                                SBB2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
-                                CSC.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
-                                CSC2.cmd()
-                        ));
-        
-                return routine;
-        }
-        //just in case
-        public AutoRoutine SetupA() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-A");
-                final AutoTrajectory STA = routine.trajectory("ST-A",0);
-                final AutoTrajectory STA2 = routine.trajectory("ST-A",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STA.resetOdometry(), // Always reset odometry first
-                                STA.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0)//, 
-                              //  STA2.cmd()
-                                
-                        ));
-        
-                return routine;
-        }
-        public AutoRoutine SetupB() {
-                final AutoRoutine routine = m_factory.newRoutine("SB-B");
-                final AutoTrajectory SBB = routine.trajectory("SB-B",0);
-                final AutoTrajectory SBB2 = routine.trajectory("SB-B",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                SBB.resetOdometry(), // Always reset odometry first
-                                SBB.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0)//, 
-                                //SBB2.cmd(),
-                               // m_drivetrain.stop().withTimeout(2.0)
-                              
-                        ));
-        
-                return routine;
-        }
-        public AutoRoutine STAL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-A-L1");
-                final AutoTrajectory STA = routine.trajectory("ST-A-L1",0);
-                final AutoTrajectory STA2 = routine.trajectory("ST-A-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STA.resetOdometry(), // Always reset odometry first
-                                STA.cmd(),//, // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0), 
-                                STA2.cmd()
-                                
-                        ));
-                STA.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
-                STA.atTime("Load").onTrue(m_score.intakeCoral().withTimeout(2.0));
-                return routine;
-        }
-        public AutoRoutine STJL12() {
+        public AutoRoutine STJtoAL1() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
                 final AutoTrajectory STJ = routine.trajectory("ST-J-L1",0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J-L1",1);
@@ -449,12 +377,61 @@ public class AutoRoutines {
                 CSA2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }
-        public AutoRoutine SBEL12() {
+        public AutoRoutine STJtoAL12() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
+                final AutoTrajectory STJ = routine.trajectory("ST-J-L1",0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J-L1",1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A",0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A",1);
+        
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STJ.resetOdometry(), // Always reset odometry first
+                                STJ.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                STJ2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSA.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSA2.cmd()
+                                
+                        ));
+                        STJ.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                        STJ2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
+                        CSA.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                        CSA2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
+                        return routine;
+        }
+        public AutoRoutine SBEtoBL1() {
                 final AutoRoutine routine = m_factory.newRoutine("SB-E-L1");
                 final AutoTrajectory SBE = routine.trajectory("SB-E-L1",0);
                 final AutoTrajectory SBE2 = routine.trajectory("SB-E-L1",1);
                 final AutoTrajectory CSB = routine.trajectory("CS2-B-L1",0);
                 final AutoTrajectory CSB2 = routine.trajectory("CS2-B-L1",1);                
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBE.resetOdometry(), // Always reset odometry first
+                                SBE.cmd(),//, // Follow the path
+                                m_drivetrain.stop().withTimeout(2.0), 
+                                SBE2.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSB.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                CSB2.cmd()
+                        ));
+                SBE.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                SBE2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
+                CSB.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
+                return routine;
+        }
+        public AutoRoutine SBEtoBL12() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-E-L1");
+                final AutoTrajectory SBE = routine.trajectory("SB-E-L1",0);
+                final AutoTrajectory SBE2 = routine.trajectory("SB-E-L1",1);
+                final AutoTrajectory CSB = routine.trajectory("CS2-B",0);
+                final AutoTrajectory CSB2 = routine.trajectory("CS2-B",1);                
 
                 routine.active().onTrue(
                         Commands.sequence(
@@ -489,101 +466,5 @@ public class AutoRoutines {
                 MH.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
                 MH2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
                 return routine;
-        }
-        public AutoRoutine STJL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
-                final AutoTrajectory STJ = routine.trajectory("ST-J-L1",0);
-                final AutoTrajectory STJ2 = routine.trajectory("ST-J-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STJ.resetOdometry(), // Always reset odometry first
-                                STJ.cmd()//, // Follow the path
-                                //m_drivetrain.stop().withTimeout(2.0), 
-                                //STJ2.cmd()
-                                
-                        ));
-                STJ.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
-                return routine;
-        }
-        public AutoRoutine STLL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-L-L1");
-                final AutoTrajectory STL = routine.trajectory("ST-L-L1",0);
-                final AutoTrajectory STL2 = routine.trajectory("ST-L-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STL.resetOdometry(), // Always reset odometry first
-                                STL.cmd()//, // Follow the path
-                                //m_drivetrain.stop().withTimeout(2.0), 
-                                //STL2.cmd()
-                                
-                        ));
-                //STL.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
-                return routine;
-        }
-        public AutoRoutine STKL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-K-L1");
-                final AutoTrajectory STK = routine.trajectory("ST-K-L1",0);
-                final AutoTrajectory STK2 = routine.trajectory("ST-K-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STK.resetOdometry(), // Always reset odometry first
-                                STK.cmd()//, // Follow the path
-                                //m_drivetrain.stop().withTimeout(2.0), 
-                                //STK2.cmd()
-                                
-                        ));
-                //STK.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
-                return routine;
-        }
-        public AutoRoutine SBDL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-D-L1");
-                final AutoTrajectory SBD = routine.trajectory("ST-D-L1",0);
-                final AutoTrajectory SBD2 = routine.trajectory("ST-D-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                SBD.resetOdometry(), // Always reset odometry first
-                                SBD.cmd()//, // Follow the path
-                                //m_drivetrain.stop().withTimeout(2.0), 
-                                //SBD2.cmd()
-                                
-                        ));
-                //SBD.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
-                return routine;
-        }
-        public AutoRoutine SBCL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-C-L1");
-                final AutoTrajectory SBC = routine.trajectory("ST-C-L1",0);
-                final AutoTrajectory SBC2 = routine.trajectory("ST-C-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                SBC.resetOdometry(), // Always reset odometry first
-                                SBC.cmd()//, // Follow the path
-                                //m_drivetrain.stop().withTimeout(2.0), 
-                                //SBC2.cmd()
-                                
-                        ));
-                //SBC.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
-                return routine;
-        }
-        public AutoRoutine SBEL1() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-E-L1");
-                final AutoTrajectory SBE = routine.trajectory("ST-E-L1",0);
-                final AutoTrajectory SBE2 = routine.trajectory("ST-E-L1",1);
-        
-                routine.active().onTrue(
-                        Commands.sequence(
-                                SBE.resetOdometry(), // Always reset odometry first
-                                SBE.cmd()//, // Follow the path
-                                //m_drivetrain.stop().withTimeout(2.0), 
-                                //SBE2.cmd()
-                                
-                        ));
-                //SBE.atTime("scoreL1").onTrue(m_score.scoreCoral().withTimeout(1.0));
-                return routine;
-        }
+        }        
 }
