@@ -7,8 +7,6 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TOFSubsystem extends SubsystemBase {
-    // Constants for LaserCAN IDs
-
     // LaserCAN devices
     private final LaserCan coralLaser;
     private final LaserCan elevatorLaser;
@@ -16,7 +14,15 @@ public class TOFSubsystem extends SubsystemBase {
     // Last valid measurements
     private double lastCoralDistance = 0.0;
     private double lastElevatorDistance = 0.0;
-
+    
+    // Filtered measurements for smoother readings
+    private double filteredCoralDistance = 0.0;
+    private double filteredElevatorDistance = 0.0;
+    
+    // Adjust based on testing
+    // Suggested lowering to improve responsiveness. Started with 0.8
+    private static final double FILTER_FACTOR = 0.2; 
+    
     public TOFSubsystem() {
         // Initialize both LaserCAN sensors
         coralLaser = new LaserCan(Constants.CORAL_LASER_ID);
@@ -26,7 +32,6 @@ public class TOFSubsystem extends SubsystemBase {
         configureLaser(coralLaser, "Coral");
         configureLaser(elevatorLaser, "Elevator");
     }
-
 
     private void configureLaser(LaserCan laser, String name) {
         try {
@@ -47,20 +52,27 @@ public class TOFSubsystem extends SubsystemBase {
         // Post to SmartDashboard for debugging
         SmartDashboard.putNumber("Coral Distance (mm)", lastCoralDistance);
         SmartDashboard.putNumber("Elevator Distance (mm)", lastElevatorDistance);
+        SmartDashboard.putBoolean("Coral Range Valid", isCoralRangeValid());
+        SmartDashboard.putBoolean("Elevator Range Valid", isElevatorRangeValid());
     }
-
 
     private void updateCoralMeasurement() {
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            lastCoralDistance = measurement.distance_mm;
+            // Apply simple low-pass filter for smoother readings
+            filteredCoralDistance = (FILTER_FACTOR * filteredCoralDistance) + 
+                                   ((1 - FILTER_FACTOR) * measurement.distance_mm);
+            lastCoralDistance = filteredCoralDistance;
         }
     }
 
     private void updateElevatorMeasurement() {
         LaserCan.Measurement measurement = elevatorLaser.getMeasurement();
         if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            lastElevatorDistance = measurement.distance_mm;
+            // Apply simple low-pass filter for smoother readings
+            filteredElevatorDistance = (FILTER_FACTOR * filteredElevatorDistance) + 
+                                      ((1 - FILTER_FACTOR) * measurement.distance_mm);
+            lastElevatorDistance = filteredElevatorDistance;
         }
     }
 
@@ -69,11 +81,9 @@ public class TOFSubsystem extends SubsystemBase {
         return lastCoralDistance;
     }
 
-    // Getter methods for distances (mm)
     public double getElevatorDistance() {
         return lastElevatorDistance;
     }
-
     
     // Methods to check if measurements are valid
     public boolean isCoralRangeValid() {
@@ -86,34 +96,3 @@ public class TOFSubsystem extends SubsystemBase {
         return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
     }
 }
-
-// Example usage in a command or another subsystem
-/*
-// Get distances
-double coralDistance = m_tof.getCoralDistanceMeters();
-double elevatorDistance = m_tof.getElevatorDistanceMillimeters();
-
-// Check if readings are valid
-if (m_tof.isCoralRangeValid()) {
-    // Use coral distance
-}
-
-if (m_tof.isElevatorRangeValid()) {
-    // Use elevator distance
-}
- */
-
-
-/* 
-// Example command that triggers when target is within range
-public Command isTargetInRange() {
-    return new FunctionalCommand(
-        () -> {}, // No initialization
-        () -> {}, // No periodic execution
-        (interrupted) -> {}, // No end behavior
-        () -> m_tof.getCoralDistanceMeters() < 0.5, // Returns true when target is closer than 0.5 meters
-        m_tof // Requires the TOF subsystem
-    );
-}
-    https://claude.ai/chat/e76b632d-add8-4303-82f2-40758a6cd975
-    */

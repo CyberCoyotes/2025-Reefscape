@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.ConfigurationFailedException;
 import frc.robot.Constants;
@@ -18,26 +17,28 @@ public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
     private final LaserCan coralLaser;
 
-    // Control mode selection
-    public enum ControlMode {
-        DUTY_CYCLE, // Simple percent output control
-        TORQUE_FOC // Advanced torque control
-    }
-
-    // TODO Test Both Control Modes
-    private ControlMode currentControlMode = ControlMode.DUTY_CYCLE; // Default to simple control
-    // private ControlMode currentControlMode = ControlMode.TORQUE_FOC; // Default
-    // to simple control
-
-    // Control requests (pre-allocated to avoid memory churn)
+    // Control request (pre-allocated to avoid memory churn)
     private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
-    private final TorqueCurrentFOC torqueRequest = new TorqueCurrentFOC(0);
 
-    // Status tracking
+    // State tracking
+    public enum EffectorState {
+        IDLE,
+        INTAKING,
+        HOLDING_GAME_PIECE,
+        SCORING
+    }
+    
+    private EffectorState currentState = EffectorState.IDLE;
     private boolean isStoppedDueToLaser = false;
     private double stopTimestamp = 0;
     private static final double RESUME_DELAY_SECONDS = 1.0;
     private double lastCoralDistance = 0.0;
+    private double filteredDistance = 0.0;
+    private static final double FILTER_FACTOR = 0.8; // Adjust based on testing
+
+    // Distance thresholds with hysteresis
+    private static final double CORAL_DETECT_THRESHOLD = 30.0; // 30mm
+    private static final double CORAL_RELEASE_THRESHOLD = 35.0; // 35mm
 
     // Status signals for monitoring
     private final StatusSignal<Voltage> supplyVoltage;
@@ -68,14 +69,8 @@ public class EffectorSubsystem extends SubsystemBase {
     }
 
     private void configureMotor() {
-        var config = EffectorConstants.EFFECTOR_CONFIG;
-
-        // Add current limits for torque control
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
-        config.CurrentLimits.SupplyCurrentLimit = 40;
-
         // Apply configuration
-        motor.getConfigurator().apply(config);
+        motor.getConfigurator().apply(EffectorConstants.EFFECTOR_CONFIG);
     }
 
     private void configureLaser() {
@@ -89,44 +84,20 @@ public class EffectorSubsystem extends SubsystemBase {
     }
 
     /**
-     * Sets the control mode for the effector
+     * Sets the effector output using duty cycle control
      * 
-     * @param mode The desired control mode (DUTY_CYCLE or TORQUE_FOC)
-     */
-    public void setControlMode(ControlMode mode) {
-        currentControlMode = mode;
-        // Reset the motor to 0 when switching modes
-        stopMotor();
-    }
-
-    /**
-     * Sets the effector output based on the current control mode
-     * 
-     * @param output The desired output (-1 to 1 for duty cycle, amps for torque)
+     * @param output The desired output (-1 to 1 for duty cycle)
      */
     public void setEffectorOutput(double output) {
-        switch (currentControlMode) {
-            case DUTY_CYCLE:
-                motor.setControl(dutyCycleRequest.withOutput(output));
-                break;
-            case TORQUE_FOC:
-                motor.setControl(torqueRequest.withOutput(output));
-                break;
-        }
+        motor.setControl(dutyCycleRequest.withOutput(output));
     }
 
     /**
-     * Stops the motor regardless of control mode
+     * Stops the motor
      */
     public void stopMotor() {
-        switch (currentControlMode) {
-            case DUTY_CYCLE:
-                motor.setControl(dutyCycleRequest.withOutput(0));
-                break;
-            case TORQUE_FOC:
-                motor.setControl(torqueRequest.withOutput(0));
-                break;
-        }
+        motor.setControl(dutyCycleRequest.withOutput(0));
+        currentState = EffectorState.IDLE;
     }
 
     // Sensor methods
@@ -139,31 +110,29 @@ public class EffectorSubsystem extends SubsystemBase {
         return lastCoralDistance;
     }
 
-    private static final double CORAL_DETECT_THRESHOLD = 30.0; // 30mm
-
     public boolean isCoralDetected() {
-        return getCoralDistanceMillimeters() < CORAL_DETECT_THRESHOLD;
+        if (lastCoralDistance < CORAL_DETECT_THRESHOLD) {
+            return true;
+        } else if (isStoppedDueToLaser && lastCoralDistance < CORAL_RELEASE_THRESHOLD) {
+            // Keep returning true until we're clearly past the threshold (hysteresis)
+            return true;
+        }
+        return false;
     }
 
-    public void stopIfDetected() {
+    private void stopIfDetected() {
         double currentTime = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
 
-        if (isCoralDetected()) {
+        if (lastCoralDistance < CORAL_DETECT_THRESHOLD) {
             if (!isStoppedDueToLaser) {
                 stopMotor();
                 isStoppedDueToLaser = true;
-                stopTimestamp = currentTime;
+                currentState = EffectorState.HOLDING_GAME_PIECE;
             }
+            // Reset timer while object is still detected
+            stopTimestamp = currentTime;
         } else if (isStoppedDueToLaser && (currentTime - stopTimestamp > RESUME_DELAY_SECONDS)) {
-            // Resume with appropriate control mode
-            switch (currentControlMode) {
-                case DUTY_CYCLE:
-                    setEffectorOutput(EffectorConstants.SCORE_CORAL);
-                    break;
-                case TORQUE_FOC:
-                    setEffectorOutput(EffectorConstants.SCORE_CURRENT_AMPS);
-                    break;
-            }
+            // Only clear the flag, don't auto-restart
             isStoppedDueToLaser = false;
         }
     }
@@ -172,115 +141,90 @@ public class EffectorSubsystem extends SubsystemBase {
      * Command Factories
      ******************************/
 
-    // Duty Cycle Control Commands
-    public Command runEffectorDutyCycleORIGINAL() {
-        return run(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
-            setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-        });
-    }
-
-    // Duty Cycle Control
+    // Coral Commands (with laser detection)
     public Command intakeCoralNoSensor() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+            currentState = EffectorState.INTAKING;
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
     }
 
-    // Duty Cycle Control
     public Command scoreCoral() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.SCORE_CORAL);
+            currentState = EffectorState.SCORING;
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
     }
+    
     public Command slowCoral() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.lSCORE_CORAL);
+            currentState = EffectorState.SCORING;
         }, this) {
             @Override
             public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
                 stopMotor();
             }
         };
     }
 
-    public Command intakeAlgae() {
-        return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
-            setEffectorOutput(EffectorConstants.INTAKE_ALGAE);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
-                stopMotor();
-            }
-        };
-    }
-
-    // Duty Cycle Control
-    public Command scoreAlgae() {
-        return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
-            setEffectorOutput(EffectorConstants.SCORE_ALGAE);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                // TODO There is a bit of a random hiccup at times
-                stopMotor();
-            }
-        };
-    }
-
-    // Torque Control Commands
-    public Command runEffectorTorque() {
-        return run(() -> {
-            setControlMode(ControlMode.TORQUE_FOC);
-            setEffectorOutput(EffectorConstants.INTAKE_CURRENT_AMPS);
-        });
-    }
-
-    public Command scoreEffectorTorque() {
-        return run(() -> {
-            setControlMode(ControlMode.TORQUE_FOC);
-            setEffectorOutput(EffectorConstants.SCORE_CURRENT_AMPS);
-        });
-    }
-
-    // Common Commands
     /**
      * Creates a command that runs the effector motor until a coral is detected by
-     * the sensor.
+     * the laser sensor.
      * If a coral is detected, the motor will stop.
      *
      * @return A command that runs the effector motor with sensor feedback.
      */
     public Command intakeCoral() {
         return new RunCommand(() -> {
-            setControlMode(ControlMode.DUTY_CYCLE);
-            
-            // If coral is detected, stop the motor
-            if (isCoralDetected()) {
+            // Direct distance check for faster response
+            if (!isStoppedDueToLaser && lastCoralDistance < CORAL_DETECT_THRESHOLD) {
                 stopMotor();
-            } else {
-                // No coral detected, run the intake
+                isStoppedDueToLaser = true;
+                stopTimestamp = edu.wpi.first.wpilibj.Timer.getFPGATimestamp();
+                currentState = EffectorState.HOLDING_GAME_PIECE;
+            } else if (!isStoppedDueToLaser) {
+                // Only run if we haven't detected anything yet
                 setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+                currentState = EffectorState.INTAKING;
             }
+            // Once stopped, stay stopped until command ends
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                stopMotor();
+                isStoppedDueToLaser = false;
+            }
+        };
+    }
+    
+    // Algae Commands (NO laser detection)
+    public Command intakeAlgae() {
+        return new RunCommand(() -> {
+            setEffectorOutput(EffectorConstants.INTAKE_ALGAE);
+            currentState = EffectorState.INTAKING;
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                stopMotor();
+            }
+        };
+    }
+
+    public Command scoreAlgae() {
+        return new RunCommand(() -> {
+            setEffectorOutput(EffectorConstants.SCORE_ALGAE);
+            currentState = EffectorState.SCORING;
         }, this) {
             @Override
             public void end(boolean interrupted) {
@@ -289,24 +233,35 @@ public class EffectorSubsystem extends SubsystemBase {
         };
     }
     
-    
+    public Command holdAlgae() {
+        return new RunCommand(() -> {
+            setEffectorOutput(EffectorConstants.HOLD_ALGAE);
+            currentState = EffectorState.HOLDING_GAME_PIECE;
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                stopMotor();
+            }
+        };
+    }
 
     @Override
     public void periodic() {
-        // Update the coral laser measurement
-        LaserCan.Measurement measurement = coralLaser.getMeasurement();
+           // Update measurement with minimal processing
+    LaserCan.Measurement measurement = coralLaser.getMeasurement();
+    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+        // Less filtering, faster response
+        lastCoralDistance = (FILTER_FACTOR * lastCoralDistance) + (0.7 * measurement.distance_mm);
         
-        // Update last distance if measurement is valid
-        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
-            lastCoralDistance = measurement.distance_mm;
+        // Critical check right after getting data
+        if (currentState == EffectorState.INTAKING && lastCoralDistance < CORAL_DETECT_THRESHOLD) {
+            stopMotor();
+            isStoppedDueToLaser = true;
         }
-
-        stopIfDetected();
-
-        // Handle automatic stopping based on sensor reading stopIfDetected();
+    }
 
         // Update dashboard
-        SmartDashboard.putString("Effector/Control Mode", currentControlMode.toString());
+        SmartDashboard.putString("Effector/State", currentState.toString());
         SmartDashboard.putNumber("Effector/Current", supplyCurrent.getValueAsDouble());
         SmartDashboard.putNumber("Effector/Torque", torqueCurrent.getValueAsDouble());
         SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
@@ -315,5 +270,6 @@ public class EffectorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
         SmartDashboard.putBoolean("Effector/Sensor/Laser Valid", isCoralRangeValid());
         SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
+        SmartDashboard.putBoolean("Effector/Stopped Due To Laser", isStoppedDueToLaser);
     }
 }
