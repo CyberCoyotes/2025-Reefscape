@@ -24,7 +24,7 @@ public class ClimberSubsystem extends SubsystemBase {
     
     // REV Smart Servo
     private final Servo climbServo;
-    private boolean servoExtended = false;
+    private boolean servoExtended = true;
 
     public ClimberSubsystem() {
         // Initialize motor
