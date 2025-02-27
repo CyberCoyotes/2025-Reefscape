@@ -2,7 +2,6 @@ package frc.robot.subsystems.climber;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -48,9 +47,9 @@ public class ClimberSubsystem extends SubsystemBase {
         public void configureClimberMotor() {
             
             SoftwareLimitSwitchConfigs softLimitConfig = new SoftwareLimitSwitchConfigs();
-            softLimitConfig.ForwardSoftLimitEnable = false; // TODO Test
+            softLimitConfig.ForwardSoftLimitEnable = false; // TODO Test before using
             // softLimitConfig.ForwardSoftLimitThreshold = ClimbConstants.FORWARD_SOFT_LIMIT;
-            softLimitConfig.ReverseSoftLimitEnable = false; // TODO Test
+            softLimitConfig.ReverseSoftLimitEnable = false; // TODO Test before using
             // softLimitConfig.ReverseSoftLimitThreshold = ClimbConstants.REVERSE_SOFT_LIMIT;
             climbMotor.getConfigurator().apply(softLimitConfig);
         }

@@ -169,8 +169,8 @@ public class RobotContainer {
 
         operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
-        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); TODO Test this command as well
-        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); TODO Test this command as well
+        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); // TODO Test before using
+        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); // TODO Test before using
         
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());
