@@ -1,7 +1,9 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.climber.ClimbConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -48,19 +50,18 @@ public class ClimberCommands {
         ).withName("StopClimb");
     }
 
-    // New command to toggle servo position by 90 degrees
-    public Command toggleServoCommand() {
-        return Commands.runOnce(
-            () -> climber.rotateServo90Degrees()
-        ).withName("ToggleServo");
-    }
     
     // Command to set servo to specific angle
-    public Command setServoAngleCommand(double angle) {
+    public Command setServoAngle() {
         return Commands.runOnce(
-            () -> climber.setServoAngle(angle)
+            () -> climber.setServoAngle(ClimbConstants.SERVO_ANGLE)
         ).withName("SetServoAngle");
     }
     
+    // Servo commands
+    public Command toggleServo() {
+        return climber.runOnce(() -> climber.rotateServoRange())
+            .withName("ToggleServo");
+    }
 
 }

@@ -73,8 +73,16 @@ public class ClimberSubsystem extends SubsystemBase {
         climbMotor.setControl(voltageRequest.withOutput(0.5));
     }
     
-    // Servo control methods
-    public void rotateServo90Degrees() {
+    public void setServoAngle(double angle) {
+        climbServo.setAngle(angle);
+        servoExtended = (angle >= 45.0);
+    }
+    
+    public double getServoAngle() {
+        return climbServo.getAngle();
+    }
+    
+    public void rotateServoRange() {
         if (servoExtended) {
             climbServo.setAngle(ClimbConstants.SERVO_MIN_ANGLE);
         } else {
@@ -82,23 +90,18 @@ public class ClimberSubsystem extends SubsystemBase {
         }
         servoExtended = !servoExtended;
     }
-    
-    public void setServoAngle(double angle) {
-        climbServo.setAngle(angle);
-        servoExtended = (angle >= 45.0); // Consider extended if angle is >= 45 degrees
-    }
-    
-    public double getServoAngle() {
-        return climbServo.getAngle();
-    }
-    
-    public boolean isServoExtended() {
-        return servoExtended;
-    }
 
-    
     @Override
     public void periodic() {
+
+        // Add these debug outputs
+        SmartDashboard.putNumber("Servo/Angle", climbServo.getAngle());
+        SmartDashboard.putBoolean("Servo/Extended", servoExtended);
+        SmartDashboard.putNumber("Servo/Position", climbServo.getPosition());  // 0-1 range
+        
+        // Try to diagnose if servo commands are being sent
+        SmartDashboard.putNumber("Servo/RequestedAngle", climbServo.getAngle());
+        
         // Send position to Logger
         Logger.recordOutput("Climber/MotorPosition", climbMotor.getPosition().getValue());
         // Get the power output of the motor

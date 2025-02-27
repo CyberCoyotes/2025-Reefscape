@@ -13,6 +13,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
+import frc.robot.auto.AutoRoutines;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -150,9 +152,8 @@ public class RobotContainer {
          ** Operator Controls **
          ***********************************************/
 
-         // Rotates the servo to a specific angle (90 deg) when the start button is pressed
-        operatorController.start().onTrue(climberCommands.setServoAngleCommand(30));
-
+         // Rotates the servo to a specific angle when the start button is pressed
+        operatorController.start().onTrue(climberCommands.toggleServo());
 
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
