@@ -10,10 +10,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import org.littletonrobotics.junction.Logger;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.controls.VoltageOut;
 
-public class ClimberVoltageSubsystem extends SubsystemBase {
+public class ClimberSubsystem extends SubsystemBase {
 
     // Motor & control request object
     private final TalonFX climbMotor;
@@ -23,7 +22,7 @@ public class ClimberVoltageSubsystem extends SubsystemBase {
     public final double CLIMB_VOLTAGE = 9; // With a max of 12, This should be about 3/4 of the max voltage
 
 
-    public ClimberVoltageSubsystem() {
+    public ClimberSubsystem() {
         // Initialize motor
         climbMotor = new TalonFX(Constants.CLIMBER_ID, Constants.kCANBus);
 
@@ -92,7 +91,10 @@ public class ClimberVoltageSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Send position to Logger
-        Logger.recordOutput("climbMotorPosition", climbMotor.getPosition().getValue());
-
+        // Currently using Voltage, but get position from encoder. This would need to be RAW as the climb motor doesn't always start at the same position
+        Logger.recordOutput("Climber/MotorPosition", climbMotor.getPosition().getValue());
+        // Get the power output of the motor
+        Logger.recordOutput("Climber/MotorVoltage", climbMotor.getSupplyVoltage().getValue());
+  
     }
 }

@@ -3,11 +3,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
-// import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorMode;
+import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPosition;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-// import java.util.function.DoubleSupplier;
 
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
@@ -18,6 +19,7 @@ public class ElevatorCommands {
         this.wrist = wrist;
     }
 
+   
     /**
      * Creates a command to increment elevator up with fine control
      */
@@ -38,28 +40,32 @@ public class ElevatorCommands {
      * Creates a command to increment elevator up safely (checks wrist position)
      */
     public Command incrementUp() {
-        return Commands.either(
-            incrementUpRaw(),
-            Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
-        ).withName("SafeElevatorIncrement(up)");
+        return incrementUpRaw().withName("SafeElevatorIncrement(up)");
     }
 
     /**
      * Creates a command to increment elevator down safely (checks wrist position)
      */
     public Command incrementDown() {
-        return Commands.either(
-            incrementDownRaw(),
-            Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
-        ).withName("SafeElevatorIncrement(down)");
+        return incrementDownRaw().withName("SafeElevatorIncrement(down)");
+    }
+
+    public double increment = 0.02;
+
+    public Command incrementUpCommand() {
+        return elevator.run(() -> elevator.incrementPosition(increment))
+            .withName("IncrementElevatorUp");
+    }
+
+    public Command decrementDownCommand() {
+        return elevator.run(() -> elevator.incrementPosition(-increment))
+                .withName("IncrementElevatorDown");
     }
 
     /**
      * Creates a command that moves the elevator to a target position
      */
-    private Command createMoveToPositionRaw(double targetPosition) {
+    private Command moveToPositionRaw(double targetPosition) {
         return new FunctionalCommand(
             () -> {},  // No initialization
             () -> elevator.setPosition(targetPosition),
@@ -72,49 +78,64 @@ public class ElevatorCommands {
     /**
      * Creates a command that safely moves the elevator to a target position
      */
-    private Command createMoveToPosition(double targetPosition) {
+    // moveToPosition
+    // 
+    private Command moveToPosition(double targetPosition) {
         return Commands.either(
-            createMoveToPositionRaw(targetPosition),
+            moveToPositionRaw(targetPosition),
             Commands.none(),
-            () -> wrist.isSafeForElevator()  // Use wrist subsystem's method
+            () -> wrist.inSafePosition()  // Use wrist subsystem's method
         ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
     }
 
     // Preset position commands - raw movement
     public Command moveToHomeRaw() {
-        return createMoveToPositionRaw(0.0).withName("MoveElevatorToHome");
+        return moveToPositionRaw(ElevatorPosition.HOME.getPosition()).withName("MoveElevatorToHome");
     }
 
     public Command moveToL1Raw() {
-        return createMoveToPositionRaw(0.2).withName("MoveElevatorToL1Pose");
+        return moveToPositionRaw(ElevatorPosition.L1.getPosition()).withName("MoveElevatorToL1Pose");
     }
 
     public Command moveToL2Raw() {
-        return createMoveToPositionRaw(0.5).withName("MoveElevatorToL2Pose");
+        return moveToPositionRaw(ElevatorPosition.L2.getPosition()).withName("MoveElevatorToL2Pose");
     }
 
     public Command moveToL3Raw() {
-        return createMoveToPositionRaw(0.9).withName("MoveElevatorToL3Pose");
+        return moveToPositionRaw(ElevatorPosition.L3.getPosition()).withName("MoveElevatorToL3Pose");
+    }
+
+    public Command moveToL4Raw() {
+        return moveToPositionRaw(ElevatorPosition.L4.getPosition()).withName("MoveElevatorToL3Pose");
     }
 
     // Preset position commands - safe movement
     public Command moveToHome() {
-        return createMoveToPosition(0.0).withName("SafeMoveElevatorToHome");
+        return moveToPosition(ElevatorPosition.HOME.getPosition()).withName("SafeMoveElevatorToHome");
     }
 
     public Command moveToL1() {
-        return createMoveToPosition(0.2).withName("SafeMoveElevatorToL1Pose");
+        return moveToPosition(ElevatorPosition.L1.getPosition()).withName("SafeMoveElevatorToL1Pose");
     }
 
     public Command moveToL2() {
-        return createMoveToPosition(0.5).withName("SafeMoveElevatorToL2Pose");
+        return moveToPosition(ElevatorPosition.L2.getPosition()).withName("SafeMoveElevatorToL2Pose");
     }
 
     public Command moveToL3() {
-        return createMoveToPosition(0.9).withName("SafeMoveElevatorToL3Pose");
+        return moveToPosition(ElevatorPosition.L3.getPosition()).withName("SafeMoveElevatorToL3Pose");
     }
 
     public Command moveToL4() {
-        return createMoveToPosition(0.9).withName("SafeMoveElevatorToL4Pose");
+        return moveToPosition(ElevatorPosition.L4.getPosition()).withName("SafeMoveElevatorToL4Pose");
     }
+
+    public Command moveToPickAlgae2Raw() {
+        return moveToPositionRaw(ElevatorPosition.Algae2.getPosition()).withName("SafeMoveElevatorToL5Pose");
+    }
+
+    public Command moveToPickAlgae3Raw() {
+        return moveToPositionRaw(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
+    }
+
 }

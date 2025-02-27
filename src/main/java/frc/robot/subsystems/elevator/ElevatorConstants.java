@@ -18,25 +18,20 @@ public final class ElevatorConstants {
 
     
     // Soft Limits (in rotations)
-    public static final double FORWARD_LIMIT = 0.50;
+    public static final double FORWARD_LIMIT = 4.67; // Updated 2-24-25
     public static final double REVERSE_LIMIT = 0;
     
-    // Preset Positions (in rotations)
-    public static final double HOME_POSE =  0.00;
-    public static final double L1_POSE =    0.00;
-    public static final double L2_POSE =    0.09;
-    public static final double L3_POSE =    0.27;
-    public static final double L4_POSE =    (FORWARD_LIMIT * 0.95); // TODO: Check this value, likely about 50
+  
     
     //
         // Motion Magic
     public class TestMode {
-        public static final double CRUISE_VELOCITY = 40; // Rotations per second
-        public static final double ACCELERATION = 40; // Rotations per second^2
+        public static final double CRUISE_VELOCITY = 20; // Rotations per second
+        public static final double ACCELERATION = 20; // Rotations per second^2
         public static final double JERK = 100; // Rotations per second^3
         
         // PID Values
-        public static final double kP = 4.0;
+        public static final double kP = 1.0;
         public static final double kI = 0.01;
         public static final double kD = 0.10;
         public static final double kS = 0.50;
