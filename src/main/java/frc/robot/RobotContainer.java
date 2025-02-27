@@ -14,7 +14,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,7 +28,6 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
-import frc.robot.commands.ServoTestCommand;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 
@@ -153,8 +151,8 @@ public class RobotContainer {
          ** Operator Controls **
          ***********************************************/
 
-         // Rotates the servo to a specific angle (90 deg) when the start button is pressed
-        operatorController.start().onTrue(climberCommands.toggleServoCommand());
+         // Rotates the servo to a specific angle when the start button is pressed
+        operatorController.start().onTrue(climberCommands.toggleServo());
 
 
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
@@ -169,20 +167,10 @@ public class RobotContainer {
         operatorController.a().whileTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
         operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpNoCheck());
-        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownNoCheck());
-        // operatorController.povLeft().whileTrue(wristCommands.incrementIn());
-        // operatorController.povRight().whileTrue(wristCommands.incrementOut());
-
-        // Test button for servo movement
-        operatorController.povUp().onTrue(new ServoTestCommand(climber));  // Button 1 (A on Xbox controller)
-
-        // Bind your toggle command to a button
-        operatorController.povDown().onTrue(climberCommands.toggleServoCommand());  // Button 2 (B on Xbox controller)
-
-        // Bind specific angles to buttons if needed
-        operatorController.povLeft().onTrue(climberCommands.setServoAngleCommand(0.0));    // Button 3 (X) - Min position
-        operatorController.povRight().onTrue(climberCommands.setServoAngleCommand(180.0));  // Button 4 (Y) - Max position
+        operatorController.povUp().whileTrue(elevatorCommands.incrementUpNoCheck());
+        operatorController.povDown().whileTrue(elevatorCommands.incrementDownNoCheck());
+        operatorController.povLeft().whileTrue(wristCommands.incrementIn());
+        operatorController.povRight().whileTrue(wristCommands.incrementOut());
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

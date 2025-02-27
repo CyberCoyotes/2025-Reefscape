@@ -14,8 +14,10 @@ public class ClimbConstants {
 
     public final static int SERVO_PWM_CHANNEL = 0; 
     
-    public final static double SERVO_MIN_ANGLE = 0.0; // TODO Check the min angle for the servo
+    public final static double SERVO_MIN_ANGLE = 0.0;
     
-    public final static double SERVO_MAX_ANGLE = 90.0; // TODO Check the max angle for the servo
+    public final static double SERVO_MAX_ANGLE = 90.0;
+
+    public final static double SERVO_ANGLE = 90.0; // TODO Check the max angle for the servo
 
 }
