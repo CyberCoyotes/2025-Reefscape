@@ -55,7 +55,6 @@ public class CommandGroups {
         ).withName("MoveToL4Sequence");
     }
 
-    // TODO
     public Command moveToPickAlgae2Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // Move to safe wrist position
@@ -69,7 +68,6 @@ public class CommandGroups {
         ).withName("MoveToAlgaeSequence");
     }
 
-    // TODO 
     public Command moveToPickAlgae3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // Move to safe wrist position
@@ -83,7 +81,6 @@ public class CommandGroups {
         ).withName("MoveToAlgaeSequence");
     }
 
-    // TODO
     public Command moveToScoreAlgae(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // Move the wrist to a down and "out" position

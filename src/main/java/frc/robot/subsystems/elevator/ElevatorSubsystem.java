@@ -13,10 +13,8 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Subsystem Modes
@@ -28,11 +26,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        L2(0.90), // was .89; Drive team requested 2-25-25 that it be decreased from 0.95
+        L2(0.90),
         Algae2(1.1), // TODO Test
         L3(2.27),
         Algae3(2.45), // TODO Test
-        L4( 4.66); // Updated 2-24-25
+        L4( 4.66);
 
         private final double position;
 
