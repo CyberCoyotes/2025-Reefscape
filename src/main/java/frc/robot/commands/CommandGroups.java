@@ -71,11 +71,12 @@ public class CommandGroups {
     public Command moveToPickAlgae3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // Move to safe wrist position
-                wristCommands.setL2(),
+                wristCommands.setL3(),
                 // Move elevator up and underneath the algae
-                elevatorCommands.setL2NoCheck(),
+                elevatorCommands.setAlgae3NoCheck(),
+
                 // Move elevator up && run coral?
-                elevatorCommands.setAlgae2NoCheck(),
+
                 // Move elevator up to final picking position
                 wristCommands.pickAlgae()
         ).withName("MoveToAlgaeSequence");
