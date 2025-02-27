@@ -19,7 +19,20 @@ public class WristSubsystem extends SubsystemBase {
     private static final double GEAR_RATIO = 80.0;
     private static final double REVERSE_LIMIT = 0.0; // In rotations
     private static final double FORWARD_LIMIT = 20.0; // In rotations
-    private static final double INCREMENT = 0.10; // 0.5 rotations per button press
+    private static final double INCREMENT = 1.00;
+    /*  
+    0.10    Way too slow
+    0.20
+    0.30    better
+    0.40
+    0.50
+    0.60
+    0.70
+    0.80
+    0.90
+    1.00 better
+
+     */ // 0.5 rotations per button press
     private static final double POSE_TOLERANCE = 0.02; // TODO Implement 0.02 rotations tolerance
 
     // Motion Magic Constants (from config file)
@@ -31,8 +44,8 @@ public class WristSubsystem extends SubsystemBase {
     private static final double kG = 0.05;
 
     // Motion Profile Constraints (from config file)
-    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second
-    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared
+    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second // TODO Bump up?
+    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared // TODO Bump up?
     private static final double MOTION_MAGIC_JERK = 300.0; // rotations per second cubed
 
     private double targetPosition = 0.0;
@@ -70,7 +83,7 @@ public class WristSubsystem extends SubsystemBase {
 
         // Configure current limits
         config.CurrentLimits.SupplyCurrentLimit = 40;
-        config.CurrentLimits.SupplyCurrentLimitEnable = true;
+        config.CurrentLimits.SupplyCurrentLimitEnable = false;
 
         // Set brake mode
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -84,9 +97,9 @@ public class WristSubsystem extends SubsystemBase {
         STOWED(0.0), // Stowed position from config
         L2(2.15), // L2 scoring position from your value
         L3(2.15), // L3 scoring position from your value
-        L4(2.15), // Estimated
-        PICK_ALGAE(14.0), // Estimated 8
-        SCORE_ALGAE(18); // Estimated
+        L4(14.0), // Estimated
+        PICK_ALGAE(14.0), // Estimated 8 which was about horitzontal
+        SCORE_ALGAE(18.0); // Estimated about 19 max with Phoenix Tuner
 
         private final double rotations;
 
@@ -157,6 +170,7 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Wrist/Motion Magic Acceleration", MOTION_MAGIC_ACCELERATION);
         SmartDashboard.putNumber("Wrist/Motion Magic Jerk", MOTION_MAGIC_JERK);
         SmartDashboard.putNumber("Wrist/ForwardLimit", FORWARD_LIMIT);
+        SmartDashboard.putNumber("Wrist/Increment", INCREMENT);
         
         // For Telemetry logging
         Logger.recordOutput("Wrist/Position", getPosition());

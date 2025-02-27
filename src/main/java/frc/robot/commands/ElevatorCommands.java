@@ -24,7 +24,14 @@ public class ElevatorCommands {
      * Creates a command to increment elevator up with fine control
      */
     public Command incrementUpNoCheck() {
-        return elevator.runOnce(() -> elevator.incrementPosition(true))
+        return elevator.runOnce(() -> elevator.incrementPosition(true)) 
+        // This was probably called the wrong `incrementPosition` method 
+            .withName("ElevatorIncrement(up)");
+    }
+
+    public Command incrementUpVersion2() {
+        return elevator.runOnce(() -> elevator.incrementPosition(ElevatorSubsystem.INCREMENT)) 
+        // This was probably called the wrong `incrementPosition` method 
             .withName("ElevatorIncrement(up)");
     }
 
@@ -33,7 +40,14 @@ public class ElevatorCommands {
      */
     public Command incrementDownNoCheck() {
         return elevator.runOnce(() -> elevator.incrementPosition(false))
+        // This was probably called the wrong `incrementPosition` method
             .withName("ElevatorIncrement(down)");
+    }
+
+    public Command incrementDownVersion2() {
+        return elevator.runOnce(() -> elevator.incrementPosition(-ElevatorSubsystem.INCREMENT)) 
+        // This was probably called the wrong `incrementPosition` method 
+            .withName("ElevatorIncrement(up)");
     }
 
     /**

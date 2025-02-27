@@ -271,12 +271,25 @@ public class EffectorSubsystem extends SubsystemBase {
      * @return A command that runs the effector motor with sensor feedback.
      */
     public Command intakeCoral() {
-        return run(() -> {
-            if (isCoralDetected() == true) {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            
+            // If coral is detected, stop the motor
+            if (isCoralDetected()) {
+                stopMotor();
+            } else {
+                // No coral detected, run the intake
+                setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+            }
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
                 stopMotor();
             }
-        }).until(() -> isCoralDetected() == true);
+        };
     }
+    
+    
 
     @Override
     public void periodic() {

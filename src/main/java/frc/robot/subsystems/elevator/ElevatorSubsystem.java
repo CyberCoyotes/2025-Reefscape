@@ -28,11 +28,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        L2(0.95), // was .89
+        L2(0.90), // was .89; Drive team requested 2-25-25 that it be decreased from 0.95
+        Algae2(1.1), // TODO Test
         L3(2.27),
-        L4( 4.66), // Updated 2-24-25
-        Algae2(1.1),
-        Algae3(1.0);
+        Algae3(2.45), // TODO Test
+        L4( 4.66); // Updated 2-24-25
 
         private final double position;
 
@@ -45,7 +45,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 
-  // Hardware
+    // Hardware
     private final TalonFX elevatorLeader;
     private final TalonFX elevatorFollower;
 
@@ -57,14 +57,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double targetPosition = 0.0;
     // public WristSubsystem wristSub;
 
-    
     // Increment Settings
-    private static final double INCREMENT = 0.02; // Small adjustments
-    
+    public static final double INCREMENT = 0.02; // Small adjustments
+
     // Tolerance/Deadband Settings
     private static final double POSITION_TOLERANCE = 0.02;
     private static final double DEADBAND = 0.02;
-
 
     private final Slot1Configs safetyGains = new Slot1Configs()
             .withKP(1.0)
@@ -117,8 +115,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.kG = ElevatorConstants.kG;
 
         // Configure motion magic
-        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY; // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION; // TODO Change to performance mode
+        // TODO Change to performance mode
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY; 
+        // TODO Change to performance mode
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
         leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
 
         // Configure soft limits
@@ -140,7 +140,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure follower motor to oppose the leader
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-     
+
         elevatorFollower.getConfigurator().apply(followerConfig);
 
         // Set up follower to follow leader with opposite direction
@@ -151,26 +151,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader.setPosition(0);
     }
 
-    public void incrementPosition(boolean up) {
-        double currentPos = getPosition();
-        double increment = up ? INCREMENT : -INCREMENT;
-        
-        // Use slot 2 for incremental movement
-        motionMagicRequest = motionMagicRequest.withSlot(2);
-        
-        // TODO Make sure limits are respected in motor configs
-        double newTarget = (currentPos + increment);
-    
-        setPosition(newTarget);
-        
-        // Reset back to current mode's slot for next movement
-        motionMagicRequest = motionMagicRequest.withSlot(0);
-    }
-
     public void setPosition(double positionRotations) {
-        // TODO Make sure limits are respected in motor configs first! Then remove
         targetPosition = positionRotations;
-        
+
         // Only move if change is larger than deadband
         if (Math.abs(targetPosition - getPosition()) > DEADBAND) {
             elevatorLeader.setControl(motionMagicRequest.withPosition(targetPosition * ElevatorConstants.GEAR_RATIO));
@@ -179,13 +162,28 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader.setControl(motionMagicRequest.withPosition(positionRotations * ElevatorConstants.GEAR_RATIO));
     }
 
+    public void incrementPosition(boolean up) {
+        double currentPos = getPosition();
+        double increment = up ? INCREMENT : -INCREMENT;
 
+        // Use slot 2 for incremental movement
+        motionMagicRequest = motionMagicRequest.withSlot(2);
 
+        // TODO Make sure limits are respected in motor configs
+        double newTarget = (currentPos + increment);
+
+        setPosition(newTarget);
+
+        // Reset back to current mode's slot for next movement
+        motionMagicRequest = motionMagicRequest.withSlot(0);
+    }
+
+    // This is required for the incremental command 
     public void incrementPosition(double increment) {
         double currentPos = getPosition();
         double newPos = currentPos + increment;
         setPosition(newPos);
-    }   
+    }
 
     public double getPosition() {
         return elevatorLeader.getPosition().getValueAsDouble() / ElevatorConstants.GEAR_RATIO;
@@ -199,6 +197,25 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE;
     }
 
+    /*********************************
+     * Command Factories
+     ********************************/
+
+    // TODO Test these original commands
+    public Command setPositionCommand(double position) {
+        return run(() -> setPosition(position))
+                .withName("SetElevatorPosition");
+    }
+
+    public Command incrementUp() {
+        return run(() -> incrementPosition(INCREMENT))
+                .withName("IncrementElevatorUp");
+    }
+
+    public Command incrementDown() {
+        return run(() -> incrementPosition(-INCREMENT))
+                .withName("IncrementElevatorDown");
+    }
 
     @Override
     public void periodic() {
@@ -211,7 +228,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Motor Telemetry
         Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Elevator/Velocity", elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
+        Logger.recordOutput("Elevator/Velocity",
+                elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
 
         // Log the applied motor voltage
         Logger.recordOutput("Elevator/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
@@ -225,21 +243,3 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
     }
 }
-
-
-/* TODO Test if these are needed and then delete
- * public Command incrementUpCommand() {
-        return run(() -> incrementPosition(0.02))
-                .withName("IncrementElevatorUp");
-    }
-
-    public Command decrementDownCommand() {
-        return run(() -> incrementPosition(-0.02))
-                .withName("IncrementElevatorDown");
-    }
-
-        public Command setPositionCommand(double position) {
-        return run(() -> setPosition(position))
-                .withName("SetElevatorPosition");
-    }
- */

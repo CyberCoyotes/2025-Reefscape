@@ -13,8 +13,8 @@ public class CommandGroups {
                 // Move the elevator to home position
                 elevatorCommands.setHomeNoCheck(),
                 // TODO Add as a check that elevator has completed its command AND reached its target
-                // Wait for 0.35 seconds
-                new WaitUntilCommand(0.35), 
+                // Removed a wait command here <--. Hopefully this will allow wrist to move to stow
+
                 // Stow the elevator
                 wristCommands.setStowed()
 
@@ -37,16 +37,21 @@ public class CommandGroups {
 
     public Command moveToL3Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
-                wristCommands.setL2(), // First move wrist to L2
-                elevatorCommands.setL3NoCheck() // Then move elevator (this already checks wrist.inSafePosition())
+                // Set the wrist to L3, i.e. a safe position
+                wristCommands.setL3(),
+                // Move the elevator to L3
+                elevatorCommands.setL3NoCheck()
         ).withName("MoveToL3Sequence");
     }
 
     public Command moveToL4Group(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
-                wristCommands.setL2(), // First move wrist to L2
+                // Set the wrist to L2, i.e. a safe position
+                wristCommands.setL2(),
+                // Move the elevator to L4
                 elevatorCommands.setL4NoCheck(),
-                wristCommands.setL4() // Then move elevator (this already checks wrist.inSafePosition())
+                // TODO check this position
+                wristCommands.setL4()
         ).withName("MoveToL4Sequence");
     }
 

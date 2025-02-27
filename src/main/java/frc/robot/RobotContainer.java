@@ -14,22 +14,23 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.TOFSubsystem;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.auto.AutoRoutines;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.TOFSubsystem;
+import frc.robot.subsystems.climber.ClimberSubsystem;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
@@ -154,7 +155,6 @@ public class RobotContainer {
          // Rotates the servo to a specific angle when the start button is pressed
         operatorController.start().onTrue(climberCommands.toggleServo());
 
-
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
@@ -167,8 +167,11 @@ public class RobotContainer {
         operatorController.a().whileTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
         operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        operatorController.povUp().whileTrue(elevatorCommands.incrementUpNoCheck());
-        operatorController.povDown().whileTrue(elevatorCommands.incrementDownNoCheck());
+        operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
+        operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
+        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); TODO Test this command as well
+        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); TODO Test this command as well
+        
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());
 
