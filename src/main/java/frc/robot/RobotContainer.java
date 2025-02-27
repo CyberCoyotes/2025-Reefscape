@@ -124,7 +124,7 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); // Resets the gyro
         // driverController.back().onTrue((/* */));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoral());
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralNoSensor());
         driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
         driverController.leftTrigger().whileTrue(endEffector.intakeAlgae());

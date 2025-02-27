@@ -100,13 +100,20 @@ public class EffectorSubsystem extends SubsystemBase {
         currentState = EffectorState.IDLE;
     }
 
+    public void stopMotorVersion2(){
+        LaserCan.Measurement measurement = coralLaser.getMeasurement();
+        if (measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT && measurement.distance_mm <= 50) {
+            motor.set(0);
+            }
+        }
+
     // Sensor methods
     public boolean isCoralRangeValid() {
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
         return measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT;
     }
 
-    public double getCoralDistanceMillimeters() {
+    public double getCoralDistance() {
         return lastCoralDistance;
     }
 
@@ -136,6 +143,7 @@ public class EffectorSubsystem extends SubsystemBase {
             isStoppedDueToLaser = false;
         }
     }
+
 
     /******************************
      * Command Factories
@@ -178,6 +186,19 @@ public class EffectorSubsystem extends SubsystemBase {
         };
     }
 
+    public Command intakeCoralSmart() {
+        return new RunCommand(() -> {
+            setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+            currentState = EffectorState.INTAKING;
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                stopMotorVersion2();
+            }
+        };
+    }
+
+
     /**
      * Creates a command that runs the effector motor until a coral is detected by
      * the laser sensor.
@@ -188,6 +209,12 @@ public class EffectorSubsystem extends SubsystemBase {
     public Command intakeCoral() {
         return new RunCommand(() -> {
             // Direct distance check for faster response
+            // Run the motor while a button is pressed (defined in Robot container), 
+            // but stop if a game piece is detected, see stopMotorVersion2()
+
+            stopMotorVersion2();
+
+            // 
             if (!isStoppedDueToLaser && lastCoralDistance < CORAL_DETECT_THRESHOLD) {
                 stopMotor();
                 isStoppedDueToLaser = true;
@@ -267,7 +294,7 @@ public class EffectorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
         SmartDashboard.putNumber("Effector/Supply Voltage", supplyVoltage.getValueAsDouble());
 
-        SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
+        SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistance());
         SmartDashboard.putBoolean("Effector/Sensor/Laser Valid", isCoralRangeValid());
         SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
         SmartDashboard.putBoolean("Effector/Stopped Due To Laser", isStoppedDueToLaser);
