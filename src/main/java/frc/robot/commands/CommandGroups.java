@@ -81,14 +81,19 @@ public class CommandGroups {
         ).withName("MoveToAlgaeSequence");
     }
 
-    public Command moveToScoreAlgae(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+    public Command moveToScoreAlgaeGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // Move the wrist to a down and "out" position
                 wristCommands.scoreAlgae(),
-                // TODO This position needs to be verified!
-                // Move the elevator to the algae scoring position
-                elevatorCommands.setL2NoCheck()
-        ).withName("MoveToHomeSequence");
+                
+                // Move the elevator to the algae scoring position;
+                /*
+                 * TODO Position needs to be verified
+                 * Previously this was set to L2, based on observation at practice field it should be less than L2
+                 */
+                elevatorCommands.setScoreAlgaeNoCheck()
+
+        ).withName("ScoringAlgaeSequence");
     }
 
 }

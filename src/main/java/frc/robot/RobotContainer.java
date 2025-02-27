@@ -161,11 +161,11 @@ public class RobotContainer {
         operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
         operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
         
-        operatorController.x().whileTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
-        operatorController.y().whileTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
+        operatorController.x().onTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
+        operatorController.y().onTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
 
-        operatorController.a().whileTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+        operatorController.a().onTrue(commandGroups.moveToScoreAlgaeGroup(wristCommands, elevatorCommands));
+        // operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
         operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
