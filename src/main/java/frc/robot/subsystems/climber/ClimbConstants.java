@@ -12,7 +12,7 @@ public class ClimbConstants {
     public final static double CLIMB_TOLERANCE = 0.1; //
 
 
-    public final static int SERVO_PWM_CHANNEL = 1; // TODO Check the PWM port for the servo 
+    public final static int SERVO_PWM_CHANNEL = 0; 
     
     public final static double SERVO_MIN_ANGLE = 0.0; // TODO Check the min angle for the servo
     
