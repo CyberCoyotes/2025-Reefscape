@@ -8,8 +8,8 @@ public class Constants {
     // Drivertrain is 1 through 12
     // Pigeon = 15
 
-    public static final int WRIST_ENCODER_ID = 21;
     public static final int WRIST_MOTOR_ID = 20;
+    public static final int WRIST_ENCODER_ID = 21;
     
     public static final int EFFECTOR_MOTOR_ID = 22; 
 
@@ -18,10 +18,12 @@ public class Constants {
 
     public static final int CLIMBER_ID = 25;
 
-    public static final int CANDLE_ID = 30;
+    public static final int CANDLE_ID = 14;
 
-    public static final int CORAL_LASER_ID = 51;
+    // public static final int CORAL_LASER_ID = 51;
     public static final int ELEVATOR_LASER_ID = 52;
+
+    // public static final int CORAL_SENSOR_ID = 42;
 
     // CANBus. Canivore is already integrated into the drivetrain
     public static final CANBus kCANBus = new CANBus("rio");

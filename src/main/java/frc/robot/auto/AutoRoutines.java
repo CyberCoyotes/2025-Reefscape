@@ -35,8 +35,8 @@ public class AutoRoutines<IntakeSubsystem> {
                                 STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
-                STA.atTime("Load").onTrue(m_score.intakeCoral().withTimeout(2.0));
+                STA.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                STA.atTime("Load").onTrue(m_score.intakeCoralNoSensor().withTimeout(2.0));
                 return routine;
         }
 
@@ -383,9 +383,9 @@ public class AutoRoutines<IntakeSubsystem> {
                                         CSA.cmd(),
                                         m_drivetrain.stop().withTimeout(2.0),
                                         CSA2.cmd()));
-                STJ.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 STJ2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
-                CSA.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                CSA.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 CSA2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -409,9 +409,9 @@ public class AutoRoutines<IntakeSubsystem> {
                                         CSA2.cmd()
 
                                 ));
-                STJ.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 STJ2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
-                CSA.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                CSA.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 CSA2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -433,9 +433,9 @@ public class AutoRoutines<IntakeSubsystem> {
                                 CSB.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0),
                                 CSB2.cmd()));
-                SBE.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                SBE.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 SBE2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
-                CSB.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                CSB.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 CSB2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -457,9 +457,9 @@ public class AutoRoutines<IntakeSubsystem> {
                                 CSB.cmd(),
                                 m_drivetrain.stop().withTimeout(2.0),
                                 CSB2.cmd()));
-                SBE.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                SBE.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 SBE2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
-                CSB.atTime("scoreL1").onTrue(m_score.intakeCoral().withTimeout(1.0));
+                CSB.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 CSB2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }

@@ -83,8 +83,8 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public ElevatorSubsystem() {
         // Initialize motors
-        elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID);
-        elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID);
+        elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID, Constants.kCANBus);
+        elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID, Constants.kCANBus);
         // this.wristSub = wristSub;
 
         // Initialize control requests
