@@ -153,6 +153,7 @@ public class WristSubsystem extends SubsystemBase {
         // update inSafePosition
         boolean safeForElevator = inSafePosition();
 
+        /*
         // Update SmartDashboard
         SmartDashboard.putNumber("Wrist/Position (rot)", getPosition());
         SmartDashboard.putNumber("Wrist/Target (rot)", targetPosition);
@@ -181,6 +182,7 @@ public class WristSubsystem extends SubsystemBase {
         Logger.recordOutput("Wrist/Position", wristMotor.getPosition().getValue());
         Logger.recordOutput("Wrist/Stator Current", wristMotor.getStatorCurrent().getValue());
         Logger.recordOutput("Wrist/Safe for Elevator",safeForElevator);
+         */
     }
 
 }

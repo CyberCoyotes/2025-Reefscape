@@ -303,8 +303,7 @@ public class EffectorSubsystem extends SubsystemBase {
 
         stopIfDetected();
 
-        // Handle automatic stopping based on sensor reading stopIfDetected();
-
+        /* 
         // Update dashboard
         SmartDashboard.putString("Effector/Control Mode", currentControlMode.toString());
         SmartDashboard.putNumber("Effector/Current", supplyCurrent.getValueAsDouble());
@@ -315,5 +314,6 @@ public class EffectorSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
         SmartDashboard.putBoolean("Effector/Sensor/Laser Valid", isCoralRangeValid());
         SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
+        */
     }
 }

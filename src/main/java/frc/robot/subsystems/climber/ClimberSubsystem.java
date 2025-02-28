@@ -93,6 +93,7 @@ public class ClimberSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
 
+        /*
         // Add these debug outputs
         SmartDashboard.putNumber("Servo/Angle", climbServo.getAngle());
         SmartDashboard.putBoolean("Servo/Extended", servoExtended);
@@ -108,5 +109,6 @@ public class ClimberSubsystem extends SubsystemBase {
         // Log servo position
         Logger.recordOutput("Climber/ServoAngle", climbServo.getAngle());
         Logger.recordOutput("Climber/ServoExtended", servoExtended);
+         */
     }
 }

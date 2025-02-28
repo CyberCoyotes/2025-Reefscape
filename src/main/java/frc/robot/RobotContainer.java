@@ -14,7 +14,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
-
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -80,7 +81,11 @@ public class RobotContainer {
         autoFactory = drivetrain.createAutoFactory(); // Leave outside container?
         autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector, elevator); // Leave outside container?
     
-        configureBindings();
+         UsbCamera camera = CameraServer.startAutomaticCapture();
+        camera.setResolution(320, 240);
+        camera.setFPS(15
+        );
+            configureBindings();
         configureAutoRoutines();
     }
 
