@@ -17,6 +17,6 @@ public class ClimbConstants {
     
     public final static double SERVO_MAX_ANGLE = 90.0;
 
-    public final static double SERVO_ANGLE = 90.0;
+    public final static double SERVO_ANGLE = -90.0;
 
 }

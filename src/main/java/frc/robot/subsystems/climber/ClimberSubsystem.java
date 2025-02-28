@@ -39,6 +39,8 @@ public class ClimberSubsystem extends SubsystemBase {
         
         // Set initial servo position to retracted
         climbServo.setAngle(ClimbConstants.SERVO_MIN_ANGLE);
+        climbServo.setAngle(ClimbConstants.SERVO_MAX_ANGLE);
+
     
         // configureClimberMotor();
 
