@@ -89,20 +89,15 @@ public class RobotContainer {
 
         // TODO Create user friendly names for the Drive Team
         
-       // autoChooser.addRoutine("Drive Forward", autoRoutines::driveForward);
-       // autoChooser.addRoutine("Center Score", autoRoutines::driveForward);
-       //autoChooser.addRoutine("TwoMeters", autoRoutines::TwoMeters); 
-       autoChooser.addRoutine("ScoreTwoMetersBack", autoRoutines::ScoreTwoMetersBack); 
-       autoChooser.addRoutine("SetupA", autoRoutines::SetupA);
-       autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-       autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
-       autoChooser.addRoutine("STJ-L1 To CSA-L1", autoRoutines::STJL12);
-       autoChooser.addRoutine("SBE-L1 To CSB-L1", autoRoutines::SBEL12);
-       autoChooser.addRoutine("STJ-L1?", autoRoutines::STJL1);
-       autoChooser.addRoutine("M-H-L1?", autoRoutines::MHL1);
-       //autoChooser.addRoutine("SmashA", autoRoutines::ReefSMASH);
-      // autoChooser.addRoutine("SmashB", autoRoutines::ReefSMASH2);
+       autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
+       //autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
+       autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
+       //autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2", autoRoutines::SBEtoBL12);
+       autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
 
+       //autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
+      // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
+      // autoChooser.addRoutine("STJ-L1", autoRoutines::STJL1);
        SmartDashboard.putData("Autonomous", autoChooser);
 
     }
