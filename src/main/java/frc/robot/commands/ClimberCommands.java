@@ -2,21 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-// import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import frc.robot.subsystems.climber.ClimberVoltageSubsystem;
+import frc.robot.subsystems.climber.ClimbConstants;
+import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-// import java.util.function.DoubleSupplier;
 
 public class ClimberCommands {
-    private final ClimberVoltageSubsystem climber;
+    private final ClimberSubsystem climber;
     private final WristSubsystem wrist;
 
-    public ClimberCommands(ClimberVoltageSubsystem climber, WristSubsystem wrist) {
+    public ClimberCommands(ClimberSubsystem climber, WristSubsystem wrist) {
         this.climber = climber;
         this.wrist = wrist;
     }
-    public Command climbUpCommand() {
+    public Command incrementUp() {
         return Commands.run(
             () -> climber.climbUp())
         // TODO Consider adding a wrist set position command here
@@ -32,7 +31,7 @@ public class ClimberCommands {
     /**
      * Returns a Command that drives the motor at -6 V until canceled or interrupted.
      */
-    public Command climbDownCommand() {
+    public Command incrementDown() {
         return Commands.run(
             () -> climber.climbDown())
         // When command ends, stop the motor by setting 0 V:
@@ -44,10 +43,24 @@ public class ClimberCommands {
      * Returns a Command that immediately stops the climb motor (0 V).
      * This can be used in “instant” scenarios.
      */
-    public Command stopClimbCommand() {
+    public Command stopClimb() {
         return Commands.runOnce(
             () -> climber.stopClimb()
         ).withName("StopClimb");
+    }
+
+    
+    // Command to set servo to specific angle
+    public Command setServoAngle() {
+        return Commands.runOnce(
+            () -> climber.setServoAngle(ClimbConstants.SERVO_ANGLE)
+        ).withName("SetServoAngle");
+    }
+    
+    // Servo commands
+    public Command toggleServo() {
+        return climber.runOnce(() -> climber.rotateServoRange())
+            .withName("ToggleServo");
     }
 
 }

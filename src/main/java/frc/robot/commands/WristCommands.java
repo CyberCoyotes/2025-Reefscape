@@ -2,65 +2,70 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.wrist.WristConstants.Positions;
 
-/**
- * Factory for creating wrist-related commands.
- * This class provides static methods to create commands for controlling the wrist subsystem.
- */
+// Command Factory methods
 public class WristCommands {
+    private final WristSubsystem subsystem;
+    private static final double DEFAULT_TOLERANCE = 0.05; // 0.05 rotations tolerance
 
-    /**
-     * Creates a command to move the wrist to a specific position
-     */
-    public static Command setPosition(WristSubsystem wrist, double targetRotations) {
-        return Commands.run(() -> wrist.setPosition(targetRotations), wrist)
-                      .until(() -> wrist.atTargetPosition(0.02))
-                      .withName("Wrist To " + targetRotations);
+    public WristCommands(WristSubsystem subsystem) {
+        this.subsystem = subsystem;
     }
 
-    /**
-     * Creates a command to clear sticky faults
-     */
-    /* 
-    public static Command clearFaults(WristSubsystem wrist) {
-        return Commands.runOnce(wrist::clearStickyFaults, wrist)
-                      .withName("Clear Wrist Faults");
-    }*/
+    public Command moveToPosition(double targetRotations) {
+        return moveToPosition(targetRotations, DEFAULT_TOLERANCE);
+    }
 
-    /**
-     * Common wrist positions as static command generators
-     */
-    // public static final class Positions {
-        // private Positions() {}
+    public Command moveToPosition(double targetRotations, double toleranceRotations) {
+        return this.subsystem.runEnd(
+                () -> this.subsystem.setPosition(targetRotations),
+                () -> this.subsystem.setPosition(this.subsystem.getPosition()))
+                .until(() -> this.subsystem.atPosition(targetRotations, toleranceRotations));
+    }
 
-        public static Command setSafePose(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.SAFE).withName("WristSafeForElevator");
-        }
-        public static Command setLoadCoral(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.LOAD_CORAL).withName("LoadCoral");
-        }
-    
-        public static Command setGrabAlgae(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.GRAB_ALGAE).withName("LoadCoral");
-        }
+    public Command incrementOut() {
+        return Commands.run(
+            () -> subsystem.incrementOut())
+        .finallyDo((boolean interrupted) -> subsystem.setPosition(subsystem.getPosition()))
+        .withName("IncrementWristOut");
+    }
 
-        public static Command setL1(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.L1).withName("WristL1");
-        }
+    public Command incrementIn() {
+        return Commands.run(
+            () -> subsystem.incrementIn())
+        .finallyDo((boolean interrupted) -> subsystem.setPosition(subsystem.getPosition()))
+        .withName("IncrementWristIn");
+    }
 
-        public static Command setL2(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.L2).withName("WristL2");
-        }
+    public Command moveTo(WristSubsystem.WristPositions wristPose) {
+        return moveToPosition(wristPose.getRotations());
+    }
 
-        public static Command setL3(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.L3).withName("WristL3");
-        }
-        public static Command setL4(WristSubsystem wrist) {
-            return setPosition(wrist, WristConstants.Positions.L4).withName("WristL4");
-        }
+    public Command setStowed() {
+        return moveToPosition(WristSubsystem.WristPositions.STOWED.getRotations());
+    }
 
-    
+    public Command setL2() {
+        return moveToPosition(WristSubsystem.WristPositions.L2.getRotations());
+    }
+
+    public Command setL3() {
+        return moveToPosition(WristSubsystem.WristPositions.L3.getRotations());
+    }
+
+    public Command setL4() {
+        return moveToPosition(WristSubsystem.WristPositions.L4.getRotations());
+    }
+
+    public Command pickAlgae() {
+        return moveToPosition(WristSubsystem.WristPositions.PICK_ALGAE.getRotations());
+    }
+
+    public Command scoreAlgae() {
+        return moveToPosition(WristSubsystem.WristPositions.SCORE_ALGAE.getRotations());
+    }
+    public Command resetWrist() {
+        return this.subsystem.runOnce(() -> this.subsystem.resetWrist());
+    }
 }

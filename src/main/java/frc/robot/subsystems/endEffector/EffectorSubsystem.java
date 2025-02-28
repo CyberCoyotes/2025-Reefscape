@@ -181,7 +181,7 @@ public class EffectorSubsystem extends SubsystemBase {
     }
 
     // Duty Cycle Control
-    public Command intakeCoral() {
+    public Command intakeCoralNoSensor() {
         return new RunCommand(() -> {
             setControlMode(ControlMode.DUTY_CYCLE);
             setEffectorOutput(EffectorConstants.INTAKE_CORAL);
@@ -220,6 +220,33 @@ public class EffectorSubsystem extends SubsystemBase {
         };
     }
 
+    public Command intakeAlgae() {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            setEffectorOutput(EffectorConstants.INTAKE_ALGAE);
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                // TODO There is a bit of a random hiccup at times
+                stopMotor();
+            }
+        };
+    }
+
+    // Duty Cycle Control
+    public Command scoreAlgae() {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            setEffectorOutput(EffectorConstants.SCORE_ALGAE);
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
+                // TODO There is a bit of a random hiccup at times
+                stopMotor();
+            }
+        };
+    }
+
     // Torque Control Commands
     public Command runEffectorTorque() {
         return run(() -> {
@@ -243,18 +270,38 @@ public class EffectorSubsystem extends SubsystemBase {
      *
      * @return A command that runs the effector motor with sensor feedback.
      */
-    public Command runEffectorWithSensor() {
-        return run(() -> {
-            if (isCoralDetected() == true) {
+    public Command intakeCoral() {
+        return new RunCommand(() -> {
+            setControlMode(ControlMode.DUTY_CYCLE);
+            
+            // If coral is detected, stop the motor
+            if (isCoralDetected()) {
+                stopMotor();
+            } else {
+                // No coral detected, run the intake
+                setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+            }
+        }, this) {
+            @Override
+            public void end(boolean interrupted) {
                 stopMotor();
             }
-        }).until(() -> isCoralDetected() == true);
+        };
     }
+    
+    
 
     @Override
     public void periodic() {
         // Update the coral laser measurement
         LaserCan.Measurement measurement = coralLaser.getMeasurement();
+        
+        // Update last distance if measurement is valid
+        if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+            lastCoralDistance = measurement.distance_mm;
+        }
+
+        stopIfDetected();
 
         // Handle automatic stopping based on sensor reading stopIfDetected();
 
