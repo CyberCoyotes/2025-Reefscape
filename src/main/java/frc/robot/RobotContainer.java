@@ -27,7 +27,7 @@ import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.TOFSubsystem;
+import frc.robot.subsystems.ElevatorLaserSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -49,7 +49,7 @@ public class RobotContainer {
 
     private final CommandGroups commandGroups = new CommandGroups();
     
-    private final TOFSubsystem m_tof = new TOFSubsystem();
+    private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
@@ -85,7 +85,8 @@ public class RobotContainer {
         camera.setResolution(320, 240);
         camera.setFPS(15
         );
-            configureBindings();
+        
+        configureBindings();
         configureAutoRoutines();
     }
 
