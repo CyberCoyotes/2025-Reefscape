@@ -125,14 +125,19 @@ public class RobotContainer {
         /***********************************************
          ** Driver Controls **
          ***********************************************/
-        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); // Resets the gyro
+
+        // Resets the gyro
+         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); 
+        
         // driverController.back().onTrue((/* */));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoral());
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
+        driverController.leftBumper().whileTrue(endEffector.intakeCoral()); // (+)
+        driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
 
-        driverController.leftTrigger().whileTrue(endEffector.intakeAlgae());
-        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.25));
+        // TODO Add a slow reverse Coral for fine tuning
+        driverController.leftTrigger().whileTrue(endEffector.intakeAlgae()); // (-)
+        // Have been trying 25%, bump up to 35% for testing
+        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
         /* 
                                                 **Y**  
