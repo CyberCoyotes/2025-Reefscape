@@ -22,7 +22,7 @@ public class LEDSubsystem extends SubsystemBase {
     private final CANdleConfiguration config = new CANdleConfiguration();
     private Animation activeAnimation = null;
 
-    private static final int LED_COUNT = 30; // Adjust for future LED strips
+    private static final int LED_COUNT = 0; // Adjust for future LED strips
 
     public enum LEDColor {
         RED(255, 0, 0),

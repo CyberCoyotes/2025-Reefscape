@@ -6,7 +6,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class EffectorConstants {
 
-    public static final double INTAKE_CORAL = 0.40;
+    public static final double INTAKE_CORAL = 0.25;
     public static final double SCORE_CORAL = 0.25;
     public static final double lSCORE_CORAL = 0.15;
 

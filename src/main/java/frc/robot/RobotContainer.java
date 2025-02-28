@@ -27,6 +27,7 @@ import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.CoralSensorSubsystem;
 import frc.robot.subsystems.ElevatorLaserSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
@@ -52,6 +53,8 @@ public class RobotContainer {
     private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+
+   private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
 
 
     // kSpeedAt12Volts desired top speed
@@ -128,11 +131,11 @@ public class RobotContainer {
         
         // driverController.back().onTrue((/* */));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoral()); // (+)
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
         driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
 
         // TODO Add a slow reverse Coral for fine tuning
-        driverController.leftTrigger().whileTrue(endEffector.intakeAlgae()); // (-)
+        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor()); // (-)
         // Have been trying 25%, bump up to 35% for testing
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
@@ -147,7 +150,7 @@ public class RobotContainer {
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // Add a slow motion command for the driver to use when button held
-        driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.25));
+        // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
         // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
