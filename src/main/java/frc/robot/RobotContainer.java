@@ -77,9 +77,9 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
-        autoFactory = drivetrain.createAutoFactory(); // Leave outside container?
-        autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector, elevator); // Leave outside container?
-    
+        autoFactory = drivetrain.createAutoFactory();
+        autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
+        
         configureBindings();
         configureAutoRoutines();
     }

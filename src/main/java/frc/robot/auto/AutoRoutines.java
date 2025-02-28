@@ -6,20 +6,19 @@ import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
 public class AutoRoutines<IntakeSubsystem> {
         private final AutoFactory m_factory;
         private CommandSwerveDrivetrain m_drivetrain = TunerConstants.createDrivetrain();
         private final EffectorSubsystem m_score;
-        private final ElevatorSubsystem m_elevator;
+        // private final ElevatorSubsystem m_elevator;
 
         public AutoRoutines(AutoFactory factory, CommandSwerveDrivetrain drivetrain, EffectorSubsystem score) {
                 m_factory = factory;
                 m_drivetrain = drivetrain;
                 m_score = new EffectorSubsystem();
-                m_elevator = new ElevatorSubsystem();
+                // m_elevator = new ElevatorSubsystem();
 
         }
 
