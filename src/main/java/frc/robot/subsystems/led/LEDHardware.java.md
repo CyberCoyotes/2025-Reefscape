@@ -30,9 +30,9 @@ public class LEDHardware {
     
     public LEDHardware() {
         // Using the constant directly since we know we're using CANdle
-        candle = new CANdle(LEDConfig.Constants.CANDLE_ID, "rio");
+        candle = new CANdle(frc.robot.Constants.CANDLE_ID);
         config = LEDConfig.defaultConfig();
-        DataLogManager.log("LEDHardware: Initialized with CANdle ID " + LEDConfig.Constants.CANDLE_ID);
+        DataLogManager.log("LEDHardware: Initialized with CANdle ID " + frc.robot.Constants.CANDLE_ID);
     }
 
     public void configure(LEDConfig config) {

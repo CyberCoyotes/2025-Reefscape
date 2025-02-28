@@ -18,7 +18,7 @@ public class Constants {
 
     public static final int CLIMBER_ID = 25;
 
-    public static final int CANDLE_ID = 30;
+    public static final int CANDLE_ID = 14;
 
     // public static final int CORAL_LASER_ID = 51;
     public static final int ELEVATOR_LASER_ID = 52;

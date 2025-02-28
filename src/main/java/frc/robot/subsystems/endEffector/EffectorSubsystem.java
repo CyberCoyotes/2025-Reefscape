@@ -6,6 +6,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,26 +19,46 @@ import frc.robot.Constants;
 public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
     
-    private TimeOfFlight coralSensor = new TimeOfFlight(62);
+    private TimeOfFlight coralSensor = new TimeOfFlight(42);
 
     private int coralDetectionDistance = 100; // mm 
 
+        // NetworkTable entries for more reliable data publishing
+    private final NetworkTable sensorTable;
+    private final NetworkTableEntry distanceEntry;
+    private final NetworkTableEntry isLoadedEntry;
+    private final NetworkTableEntry thresholdEntry;
+
     // Control request (pre-allocated to avoid memory churn)
     private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
-
-    // Status tracking
-    private boolean isStoppedDueToSensor = false;
-    private double stopTimestamp = 0;
-    private static final double RESUME_DELAY_SECONDS = 1.0;
 
     // Status signals for monitoring
     private final StatusSignal<Voltage> supplyVoltage;
     private final StatusSignal<Voltage> motorVoltage;
 
     public EffectorSubsystem() {
+
+        /* ToF SENSOR SETUP */
         // Initialize sensor with short ranging mode and fast update rate (20ms)
         coralSensor.setRangingMode(RangingMode.Short, 1);
 
+         // Set up NetworkTables for more reliable data publishing
+         sensorTable = NetworkTableInstance.getDefault().getTable("CoralSensor");
+         distanceEntry = sensorTable.getEntry("Distance");
+         isLoadedEntry = sensorTable.getEntry("NoteLoaded");
+         thresholdEntry = sensorTable.getEntry("DistanceThreshold");
+         
+         // Initialize threshold in NetworkTables
+         thresholdEntry.setDouble(coralDetectionDistance);
+         
+         // Also set up SmartDashboard for visualization
+         SmartDashboard.putString("CoralSensor/Status", "Initialized");
+         SmartDashboard.putNumber("CoralSensor/Distance Threshold", coralDetectionDistance);
+         
+         // Make distance threshold adjustable from dashboard
+         SmartDashboard.setPersistent("CoralSensor/Distance Threshold");
+
+         /* MOTOR */
         // Configure status signals
         supplyVoltage = motor.getSupplyVoltage();
         motorVoltage = motor.getMotorVoltage();
@@ -47,7 +70,9 @@ public class EffectorSubsystem extends SubsystemBase {
         configureMotor();
 
         StatusSignal.refreshAll(supplyVoltage, motorVoltage);
+
     }
+
 
     private void configureMotor() {
         var config = EffectorConstants.EFFECTOR_CONFIG;

@@ -15,7 +15,7 @@ import com.ctre.phoenix.led.TwinkleOffAnimation;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.led.LEDConfig.Constants;
+import frc.robot.subsystems.led.LEDConfig;
 
 public class LEDSubsystem extends SubsystemBase {
     private final CANdle candle;
@@ -62,7 +62,7 @@ public class LEDSubsystem extends SubsystemBase {
     private AnimationTypes currentAnimation = AnimationTypes.SolidColor;
 
     public LEDSubsystem() {
-        candle = new CANdle(Constants.CANDLE_ID, "rio");
+        candle = new CANdle(frc.robot.Constants.CANDLE_ID);
         configureCANdle();
     }
 

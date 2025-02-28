@@ -6,24 +6,40 @@ import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class CameraSubsystem extends SubsystemBase {
-    
     private UsbCamera camera;
-    
+    private boolean cameraInitialized = false;
+  
     public CameraSubsystem() {
-        // Just start the camera - that's all you need for it to show up in the dashboard
-        camera = CameraServer.startAutomaticCapture();
-        
-        // Configure camera settings
-        camera.setResolution(320, 240);
-        camera.setFPS(15);
-        camera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-        
-        // The camera will now be available in Shuffleboard from the sources list
-        // No need to explicitly add it to a tab
+      // Initialize camera once with proper configuration
+      initializeCamera();
     }
-    
+  
+    private void initializeCamera() {
+      try {
+        // Use camera index 0 (the one that's working)
+        camera = CameraServer.startAutomaticCapture(0);
+        
+        // Configure camera with more conservative settings
+        camera.setResolution(320, 240);
+        camera.setFPS(15);        
+        // IMPORTANT: Set to only maintain the connection without trying to reconnect
+        // This prevents the constant reconnection attempts
+        camera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+        // camera.getProperty("rotation").set(180); // added to flip camera image
+
+        
+        
+
+        cameraInitialized = true;
+        System.out.println("Camera initialized successfully");
+      } catch (Exception e) {
+        System.err.println("Camera initialization failed: " + e.getMessage());
+      }
+    }
+  
     @Override
     public void periodic() {
-        // This method will be called once per scheduler run
+      // Leave this empty or add minimal code
+      // Don't try to reconnect or change settings here
     }
-}
+  }
