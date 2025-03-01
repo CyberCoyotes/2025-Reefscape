@@ -160,7 +160,7 @@ public class RobotContainer {
          ***********************************************/
 
          // Rotates the servo to a specific angle when the start button is pressed
-        operatorController.start().onTrue(climberCommands.toggleServo());
+        operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
 
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
