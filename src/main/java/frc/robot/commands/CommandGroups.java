@@ -5,6 +5,13 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class CommandGroups {
+    public Command releaseKickSetWrist (WristCommands wristCommands, ClimberCommands climbCommands) {
+        return Commands.sequence(
+            // Moves the wrist out of the way
+            wristCommands.setL2(),
+            // Releases the kickstand
+            climbCommands.toggleServo());
+    }
 
     public Command moveToHomeGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
