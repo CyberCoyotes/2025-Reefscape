@@ -377,7 +377,7 @@ public class AutoRoutines<IntakeSubsystem> {
                                 Commands.sequence(
                                         STJ.resetOdometry(), // Always reset odometry first
                                         STJ.cmd(), // , // Follow the path
-                                        m_drivetrain.stop().withTimeout(1.0),
+                                        m_drivetrain.stop().withTimeout(1.5),
                                         STJ2.cmd(),
                                         m_drivetrain.stop().withTimeout(1.0),
                                         CSA.cmd(),
@@ -460,7 +460,7 @@ public class AutoRoutines<IntakeSubsystem> {
                         Commands.sequence(
                                 SBE.resetOdometry(), // Always reset odometry first
                                 SBE.cmd(), // , // Follow the path
-                                m_drivetrain.stop().withTimeout(1.0),
+                                m_drivetrain.stop().withTimeout(1.5),
                                 SBE2.cmd(),
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB.cmd(),
