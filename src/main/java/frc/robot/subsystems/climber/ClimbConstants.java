@@ -2,7 +2,7 @@ package frc.robot.subsystems.climber;
 
 public class ClimbConstants {
     
-    public final static double CLIMB_VOLTAGE = 9; // With a max of 12, This should be about 3/4 of the max voltage
+    public final static double CLIMB_VOLTAGE = 12; // With a max of 12, This should be about 3/4 of the max voltage
     
     // public final static int FORWARD_SOFT_LIMIT = 1000; // TODO Check the forward soft limit for the climber motor
     
