@@ -21,7 +21,8 @@ public class CameraSubsystem extends SubsystemBase {
         
         // Configure camera with more conservative settings
         camera.setResolution(320, 240);
-        camera.setFPS(15);        
+        camera.setFPS(45); // Default was 15 fps
+               
         // IMPORTANT: Set to only maintain the connection without trying to reconnect
         // This prevents the constant reconnection attempts
         camera.setConnectionStrategy(ConnectionStrategy.kKeepOpen);

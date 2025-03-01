@@ -21,7 +21,7 @@ public class EffectorSubsystem extends SubsystemBase {
     
     private TimeOfFlight coralSensor = new TimeOfFlight(42);
 
-    private int coralDetectionDistance = 100; // mm 
+    private int coralDetectionDistance = 80; // mm 
 
         // NetworkTable entries for more reliable data publishing
     private final NetworkTable sensorTable;

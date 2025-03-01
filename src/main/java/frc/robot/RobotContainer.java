@@ -129,7 +129,7 @@ public class RobotContainer {
         
         // driverController.back().onTrue((/* */));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralNoSensor()); // (+)
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
         driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
 
         // TODO Add a slow reverse Coral for fine tuning
