@@ -377,11 +377,11 @@ public class AutoRoutines<IntakeSubsystem> {
                                 Commands.sequence(
                                         STJ.resetOdometry(), // Always reset odometry first
                                         STJ.cmd(), // , // Follow the path
-                                        m_drivetrain.stop().withTimeout(2.0),
+                                        m_drivetrain.stop().withTimeout(1.0),
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(2.0),
+                                        m_drivetrain.stop().withTimeout(1.0),
                                         CSA.cmd(),
-                                        m_drivetrain.stop().withTimeout(2.0),
+                                        m_drivetrain.stop().withTimeout(1.0),
                                         CSA2.cmd()));
                 STJ.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 STJ2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
@@ -401,11 +401,11 @@ public class AutoRoutines<IntakeSubsystem> {
                                 Commands.sequence(
                                         STJ.resetOdometry(), // Always reset odometry first
                                         STJ.cmd(), // Follow the path
-                                        m_drivetrain.stop().withTimeout(2.0),
+                                        m_drivetrain.stop().withTimeout(1.0),
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(2.0),
+                                        m_drivetrain.stop().withTimeout(1.0),
                                         CSA.cmd(),
-                                        m_drivetrain.stop().withTimeout(2.0),
+                                        m_drivetrain.stop().withTimeout(1.0),
                                         CSA2.cmd()
 
                                 ));
@@ -413,6 +413,39 @@ public class AutoRoutines<IntakeSubsystem> {
                 STJ2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 CSA2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
+                return routine;
+        }
+        public AutoRoutine STJtoAL1AL2() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
+                final AutoTrajectory STJ = routine.trajectory("ST-J-L1", 0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J-L1", 1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A-L1", 0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A-L1", 1);
+                final AutoTrajectory CSA3 = routine.trajectory("CS1-A-L1", 0);
+                final AutoTrajectory CSA4 = routine.trajectory("CS1-A-L1", 1);
+
+                routine.active().onTrue(
+                                Commands.sequence(
+                                        STJ.resetOdometry(), // Always reset odometry first
+                                        STJ.cmd(), // Follow the path
+                                        m_drivetrain.stop().withTimeout(1.0),
+                                        STJ2.cmd(),
+                                        m_drivetrain.stop().withTimeout(1.0),
+                                        CSA.cmd(),
+                                        m_drivetrain.stop().withTimeout(1.0),
+                                        CSA2.cmd(),
+                                        m_drivetrain.stop().withTimeout(1.0),
+                                        CSA3.cmd(),
+                                        m_drivetrain.stop().withTimeout(1.0),
+                                        CSA4.cmd()
+
+                                ));
+                STJ.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                STJ2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
+                CSA.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
+                CSA3.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                CSA4.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -427,11 +460,11 @@ public class AutoRoutines<IntakeSubsystem> {
                         Commands.sequence(
                                 SBE.resetOdometry(), // Always reset odometry first
                                 SBE.cmd(), // , // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 SBE2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 CSB.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 SBE2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
@@ -451,16 +484,48 @@ public class AutoRoutines<IntakeSubsystem> {
                         Commands.sequence(
                                 SBE.resetOdometry(), // Always reset odometry first
                                 SBE.cmd(), // , // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 SBE2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 CSB.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 SBE2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
                 CSB2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
+                return routine;
+        }
+        public AutoRoutine SBEtoBL1BL2() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-E-L1");
+                final AutoTrajectory SBE = routine.trajectory("SB-E-L1", 0);
+                final AutoTrajectory SBE2 = routine.trajectory("SB-E-L1", 1);
+                final AutoTrajectory CSB = routine.trajectory("CS2-B-L1", 0);
+                final AutoTrajectory CSB2 = routine.trajectory("CS2-B-L1", 1);
+                final AutoTrajectory CSB3 = routine.trajectory("CS2-B", 0);
+                final AutoTrajectory CSB4 = routine.trajectory("CS2-B", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBE.resetOdometry(), // Always reset odometry first
+                                SBE.cmd(), // , // Follow the path
+                                m_drivetrain.stop().withTimeout(1.0),
+                                SBE2.cmd(),
+                                m_drivetrain.stop().withTimeout(1.0),
+                                CSB.cmd(),
+                                m_drivetrain.stop().withTimeout(1.0),
+                                CSB2.cmd(),
+                                m_drivetrain.stop().withTimeout(1.0),
+                                CSB3.cmd(),
+                                m_drivetrain.stop().withTimeout(1.0),
+                                CSB4.cmd()
+                                ));
+                SBE.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                SBE2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(2.0));
+                CSB.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
+                CSB3.atTime("scoreL1").onTrue(m_score.intakeCoralNoSensor().withTimeout(1.0));
+                CSB4.atTime("Load").onTrue(m_score.slowCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -473,7 +538,7 @@ public class AutoRoutines<IntakeSubsystem> {
                         Commands.sequence(
                                 MH.resetOdometry(), // Always reset odometry first
                                 MH.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(1.0),
                                 MH2.cmd()
 
                         ));
