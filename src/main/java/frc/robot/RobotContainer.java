@@ -131,12 +131,12 @@ public class RobotContainer {
         
         // driverController.back().onTrue((/* */));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
+        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
-        // TODO Add a slow reverse Coral for fine tuning
-        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor()); // (-)
-        // Have been trying 25%, bump up to 35% for testing
+        // Slow reverse Coral back in for fine tuning
+        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
+        // Slow mo drive when button held
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         /* 
