@@ -23,6 +23,7 @@ import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 // import frc.robot.subsystems.CoralSensorSubsystem;
@@ -36,6 +37,7 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
+    private final EndEffectorCommands effectorCommands = new EndEffectorCommands(endEffector);
 
     private final WristSubsystem wrist = new WristSubsystem();
     private final WristCommands wristCommands = new WristCommands(wrist);
@@ -46,7 +48,7 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
-    private final CommandGroups commandGroups = new CommandGroups();
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
     
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
@@ -81,8 +83,14 @@ public class RobotContainer {
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
-        autoRoutines = new AutoRoutines(autoFactory, drivetrain, endEffector);
-        
+        autoRoutines = new AutoRoutines(
+            autoFactory,
+            drivetrain,
+            endEffector,
+            elevator,
+            commandGroups,
+            effectorCommands);
+            
         configureBindings();
         configureAutoRoutines();
     }
@@ -94,6 +102,8 @@ public class RobotContainer {
         
        autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
        //autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
+        autoChooser.addRoutine("StartLeft->ScoreAL2", autoRoutines::STAL2);
+
        //autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2", autoRoutines::STJtoAL1AL2);
        autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
        //autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2", autoRoutines::SBEtoBL12);

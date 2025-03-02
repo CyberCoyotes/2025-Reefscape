@@ -2,9 +2,32 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class CommandGroups {
+
+    private final WristCommands wristCommands;
+    private final ElevatorCommands elevatorCommands;
+    private final EndEffectorCommands effectorCommands;
+
+    /**
+     * Creates a new CommandGroups instance with the necessary command factories.
+     * 
+     * @param wristCommands The wrist command factory
+     * @param elevatorCommands The elevator command factory
+     * @param effectorCommands The end effector command factory
+     */
+    public CommandGroups(
+        WristCommands wristCommands, 
+        ElevatorCommands elevatorCommands, 
+        EndEffectorCommands effectorCommands
+    ) {
+        this.wristCommands = wristCommands;
+        this.elevatorCommands = elevatorCommands;
+        this.effectorCommands = effectorCommands;
+    }
+
     public Command releaseKickSetWrist (WristCommands wristCommands, ClimberCommands climbCommands) {
         return Commands.sequence(
             // Moves the wrist out of the way
@@ -102,6 +125,49 @@ public class CommandGroups {
                 elevatorCommands.setScoreAlgaeNoCheck()
 
         ).withName("ScoringAlgaeSequence");
+    }
+
+    /*******************************
+     * Auto Command Groups
+     ******************************/
+
+    public Command autoScoreL2Version1() {
+                return Commands.sequence(
+                        // Move wrist to L2
+                        wristCommands.setL2(),
+                        // Move elevator to L2
+                        elevatorCommands.setL2NoCheck(),
+                        // Score the coral with a timeout 0.75 seconds
+                        effectorCommands.scoreCoralAuto()
+
+                ).withName("AutoScoreL2Sequence");
+    }
+
+
+    /**
+     * Autonomous command sequence for scoring at L2 position.
+     * This is optimized for auto with shorter wait times and timed actions.
+     * 
+     * @return A command sequence for auto scoring at L2
+     */
+    public Command autoScoreL2() {
+        return Commands.sequence(
+            // Move wrist to L2 position for scoring
+            wristCommands.setL2(),
+            
+            // Move elevator to L2 height
+            elevatorCommands.setL2NoCheck(),
+            
+            // Short delay to stabilize
+            Commands.waitSeconds(0.2),
+            
+            // Score the coral with timing appropriate for autonomous
+            effectorCommands.scoreCoralAuto()
+            
+            // Return to stowed position
+            // elevatorCommands.setHomeNoCheck().withTimeout(0.6),
+            // wristCommands.setStowed().withTimeout(0.5)
+        ).withName("AutoScoreL2Sequence");
     }
 
 }
