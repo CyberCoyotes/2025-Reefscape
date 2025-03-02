@@ -63,24 +63,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     private static final double POSITION_TOLERANCE = 0.02;
     private static final double DEADBAND = 0.02;
 
-    private final Slot1Configs safetyGains = new Slot1Configs()
-            .withKP(1.0)
-            .withKI(0.01)
-            .withKD(0.10)
-            .withKS(0.25)
-            .withKV(0.12)
-            .withKG(0.25)
-            .withGravityType(GravityTypeValue.Elevator_Static);
-
-    private final Slot2Configs incrementalGains = new Slot2Configs()
-            .withKP(1.0)
-            .withKI(0.01)
-            .withKD(0.10)
-            .withKS(0.25)
-            .withKV(0.12)
-            .withKG(0.12)
-            .withGravityType(GravityTypeValue.Elevator_Static);
-
     public ElevatorSubsystem() {
         // Initialize motors
         elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID, Constants.kCANBus);
@@ -114,11 +96,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.kG = ElevatorConstants.kG;
 
         // Configure motion magic
-        // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY; 
-        // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
-        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
 
         // Configure soft limits
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
@@ -166,7 +146,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         double increment = up ? INCREMENT : -INCREMENT;
 
         // Use slot 2 for incremental movement
-        motionMagicRequest = motionMagicRequest.withSlot(2);
+        // motionMagicRequest = motionMagicRequest.withSlot(2);
 
         // TODO Make sure limits are respected in motor configs
         double newTarget = (currentPos + increment);
@@ -174,7 +154,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         setPosition(newTarget);
 
         // Reset back to current mode's slot for next movement
-        motionMagicRequest = motionMagicRequest.withSlot(0);
+        // motionMagicRequest = motionMagicRequest.withSlot(0);
     }
 
     // This is required for the incremental command 
