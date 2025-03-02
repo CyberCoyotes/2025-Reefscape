@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class CommandGroups {
@@ -104,4 +105,18 @@ public class CommandGroups {
         ).withName("ScoringAlgaeSequence");
     }
 
+    /*******************************
+     * Auto Command Groups
+     ******************************/
+
+    public Command autoScoreL2CommandGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands, EndEffectorCommands endEffectorCommands) {
+                return Commands.sequence(
+                        // Move wrist to L2
+                        wristCommands.setL2(),
+                        // Move elevator to L2
+                        elevatorCommands.setL2NoCheck(),
+                        // Score the coral with a timeout 0.75 seconds
+                        endEffectorCommands.scoreCoralAuto()
+                ).withName("AutoScoreL2Sequence");
+    }
 }
