@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ElevatorSubsystem extends SubsystemBase {
+    
     // Subsystem Modes
     public enum ElevatorMode {
         PERFORMANCE, // High-speed, competition mode
@@ -47,7 +48,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     // Hardware
     private final TalonFX elevatorLeader;
     private final TalonFX elevatorFollower;
-
+    public static final double GEAR_RATIO = 9.0;
+    
     // Control Requests
     private MotionMagicVoltage motionMagicRequest;
 
@@ -58,11 +60,16 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     // Increment Settings
     public static final double INCREMENT = 0.02; // Small adjustments
+    
+    // Soft Limits (in rotations)
+    public static final double FORWARD_LIMIT = 4.67; // Updated 2-24-25
+    public static final double REVERSE_LIMIT = 0;
 
     // Tolerance/Deadband Settings
     private static final double POSITION_TOLERANCE = 0.02;
     private static final double DEADBAND = 0.02;
 
+    // Safety Gains
     private final Slot1Configs safetyGains = new Slot1Configs()
             .withKP(1.0)
             .withKI(0.01)
@@ -72,6 +79,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             .withKG(0.25)
             .withGravityType(GravityTypeValue.Elevator_Static);
 
+    // Incremental
     private final Slot2Configs incrementalGains = new Slot2Configs()
             .withKP(1.0)
             .withKI(0.01)
@@ -106,29 +114,27 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
         // Configure leader motor
-        leadConfig.Slot0.kP = ElevatorConstants.kP;
-        leadConfig.Slot0.kI = ElevatorConstants.kI;
-        leadConfig.Slot0.kD = ElevatorConstants.kD;
-        leadConfig.Slot0.kV = ElevatorConstants.kV;
-        leadConfig.Slot0.kS = ElevatorConstants.kS;
-        leadConfig.Slot0.kG = ElevatorConstants.kG;
+        leadConfig.Slot0.kP = 4.00;
+        leadConfig.Slot0.kI = 0.01;
+        leadConfig.Slot0.kD = 0.10;
+        leadConfig.Slot0.kV = 0.12;
+        leadConfig.Slot0.kS = 0.50;
+        leadConfig.Slot0.kG = 0.50;
 
         // Configure motion magic
-        // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY; 
-        // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
-        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.EventMode.CRUISE_VELOCITY; 
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.EventMode.ACCELERATION;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.EventMode.JERK; // TODO Change to performance mode
 
         // Configure soft limits
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-        leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.FORWARD_LIMIT;
+        leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 4.67;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
+        leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.00;
 
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
         leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
+        leadConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
@@ -168,7 +174,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Use slot 2 for incremental movement
         motionMagicRequest = motionMagicRequest.withSlot(2);
 
-        // TODO Make sure limits are respected in motor configs
         double newTarget = (currentPos + increment);
 
         setPosition(newTarget);
@@ -199,8 +204,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     /*********************************
      * Command Factories
      ********************************/
-
-    // TODO Test these original commands
     public Command setPositionCommand(double position) {
         return run(() -> setPosition(position))
                 .withName("SetElevatorPosition");
@@ -219,6 +222,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // Mode and State Information
+        /*
         Logger.recordOutput("Elevator/Mode", currentMode.toString());
         Logger.recordOutput("Elevator/Position/Current", getPosition());
         Logger.recordOutput("Elevator/Position/Target", targetPosition);
@@ -240,5 +244,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // Log the target position for debugging
         // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
+         */
+
     }
 }

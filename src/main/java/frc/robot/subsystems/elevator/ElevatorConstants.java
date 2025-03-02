@@ -3,40 +3,28 @@ package frc.robot.subsystems.elevator;
 public final class ElevatorConstants {
     
     public static final double GEAR_RATIO = 9.0;
-    // Motion Magic
-    public static final double CRUISE_VELOCITY = 160; // Rotations per second
-    public static final double ACCELERATION = 160; // Rotations per second^2
-    public static final double JERK = 500; // Rotations per second^3
     
-    // PID Values
-    public static final double kP = 4.00;
-    public static final double kI = 0.01;
-    public static final double kD = 0.10;
-    public static final double kS = 0.50;
-    public static final double kV = 0.12;
-    public static final double kG = 0.50;
+    /* 
+    |   Vel |   Acc |   Jer |   Notes
+    |-------|-------|-------|-----------------------
+    |   160 |   160 |   500 |   Performance Mode
+    |   20  |   20  |   100 |   Safety Mode
+    */ 
+    
 
+    // Motion Magic
+    public class EventMode {
+        public static final double CRUISE_VELOCITY = 40; // Rotations per second
+        public static final double ACCELERATION = 40; // Rotations per second^2
+        public static final double JERK = 300; // Rotations per second^3
+    }
     
-    // Soft Limits (in rotations)
-    public static final double FORWARD_LIMIT = 4.67; // Updated 2-24-25
-    public static final double REVERSE_LIMIT = 0;
-    
-  
-    
-    //
-        // Motion Magic
+    // Motion Magic
     public class TestMode {
         public static final double CRUISE_VELOCITY = 20; // Rotations per second
         public static final double ACCELERATION = 20; // Rotations per second^2
-        public static final double JERK = 100; // Rotations per second^3
+        public static final double JERK = 200; // Rotations per second^3
         
-        // PID Values
-        public static final double kP = 1.0;
-        public static final double kI = 0.01;
-        public static final double kD = 0.10;
-        public static final double kS = 0.50;
-        public static final double kV = 0.12;
-        public static final double kG = 0.50;
     }
 
     // Control Parameters
