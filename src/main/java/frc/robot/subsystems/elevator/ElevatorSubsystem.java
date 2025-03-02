@@ -114,11 +114,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.kG = ElevatorConstants.kG;
 
         // Configure motion magic
-        // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY; 
-        // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION;
-        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
 
         // Configure soft limits
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
