@@ -57,7 +57,7 @@ public class CommandGroups {
                 wristCommands.setL2(),
                 // Move the elevator to L4
                 elevatorCommands.setL4NoCheck(),
-                // TODO check this position
+                // TODO Check this position
                 wristCommands.setL4()
         ).withName("MoveToL4Sequence");
     }
