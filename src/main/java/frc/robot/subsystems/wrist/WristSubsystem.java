@@ -43,9 +43,12 @@ public class WristSubsystem extends SubsystemBase {
     private static final double kS = 0.0;
     private static final double kG = 0.05;
 
-    // Motion Profile Constraints (from config file)
-    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second // TODO Bump up?
-    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared // TODO Bump up?
+    // Motion Profile Constraints
+    private static final double MOTION_MAGIC_VELOCITY_SAFE = 80.0; // rotations per second
+    private static final double MOTION_MAGIC_VELOCITY = 120.0; // rotations per second
+    private static final double MOTION_MAGIC_ACCELERATION_SAFE = 80.0; // rotations per second squared
+    private static final double MOTION_MAGIC_ACCELERATION = 120.0; // rotations per second squared
+    private static final double MOTION_MAGIC_JERK_SAFE = 300.0; // rotations per second cubed
     private static final double MOTION_MAGIC_JERK = 300.0; // rotations per second cubed
 
     private double targetPosition = 0.0;
@@ -71,6 +74,7 @@ public class WristSubsystem extends SubsystemBase {
         config.Slot0.kG = kG;
         config.Slot0.GravityType = com.ctre.phoenix6.signals.GravityTypeValue.Arm_Cosine;
 
+        // Event Settings
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
@@ -82,8 +86,9 @@ public class WristSubsystem extends SubsystemBase {
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_LIMIT;
 
         // Configure current limits
-        config.CurrentLimits.SupplyCurrentLimit = 40;
         config.CurrentLimits.SupplyCurrentLimitEnable = false;
+        config.CurrentLimits.SupplyCurrentLimit = 40;
+
 
         // Set brake mode
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
