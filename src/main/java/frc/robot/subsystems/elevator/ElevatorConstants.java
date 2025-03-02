@@ -1,5 +1,9 @@
 package frc.robot.subsystems.elevator;
 
+import com.ctre.phoenix6.configs.Slot1Configs;
+import com.ctre.phoenix6.configs.Slot2Configs;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+
 public final class ElevatorConstants {
     
     public static final double GEAR_RATIO = 9.0;
@@ -47,4 +51,22 @@ public final class ElevatorConstants {
         public static final double JERK = 200; // Rotations per second^3
     }
 
+     private final Slot1Configs safetyGains = new Slot1Configs()
+            .withKP(1.0)
+            .withKI(0.01)
+            .withKD(0.10)
+            .withKS(0.25)
+            .withKV(0.12)
+            .withKG(0.25)
+            .withGravityType(GravityTypeValue.Elevator_Static);
+
+    private final Slot2Configs incrementalGains = new Slot2Configs()
+            .withKP(1.0)
+            .withKI(0.01)
+            .withKD(0.10)
+            .withKS(0.25)
+            .withKV(0.12)
+            .withKG(0.12)
+            .withGravityType(GravityTypeValue.Elevator_Static);
+            
 }
