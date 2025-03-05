@@ -26,11 +26,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        ScoreAlgae(0.50), // TODO Test
+        ScoreAlgae(0.50),
         L2(0.90),
-        Algae2(1.1), // TODO Test
+        Algae2(1.1),
         L3(2.27),
-        Algae3(2.45), // TODO Test
+        Algae3(2.45),
         L4( 4.66);
 
         private final double position;
@@ -148,7 +148,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Use slot 2 for incremental movement
         // motionMagicRequest = motionMagicRequest.withSlot(2);
 
-        // TODO Make sure limits are respected in motor configs
         double newTarget = (currentPos + increment);
 
         setPosition(newTarget);
@@ -179,8 +178,6 @@ public class ElevatorSubsystem extends SubsystemBase {
     /*********************************
      * Command Factories
      ********************************/
-
-    // TODO Test these original commands
     public Command setPositionCommand(double position) {
         return run(() -> setPosition(position))
                 .withName("SetElevatorPosition");

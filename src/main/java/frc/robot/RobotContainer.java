@@ -17,7 +17,6 @@ import frc.robot.auto.AutoRoutines;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.auto.AutoRoutines;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
@@ -26,8 +25,6 @@ import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-// import frc.robot.subsystems.CoralSensorSubsystem;
-// import frc.robot.subsystems.ElevatorLaserSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -97,8 +94,6 @@ public class RobotContainer {
 
 
     private void configureAutoRoutines() {
-
-        // TODO Create user friendly names for the Drive Team
         
        autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
        //autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
@@ -144,7 +139,6 @@ public class RobotContainer {
         driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
         driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
 
-        // TODO Add a slow reverse Coral for fine tuning
         driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor()); // (-)
         // Have been trying 25%, bump up to 35% for testing
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
@@ -188,8 +182,8 @@ public class RobotContainer {
 
         operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
-        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); // TODO Test before using
-        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); // TODO Test before using
+        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); //
+        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); //
         
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());

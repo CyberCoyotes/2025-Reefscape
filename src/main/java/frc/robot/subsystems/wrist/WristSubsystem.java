@@ -3,12 +3,9 @@ package frc.robot.subsystems.wrist;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class WristSubsystem extends SubsystemBase {
@@ -33,7 +30,7 @@ public class WristSubsystem extends SubsystemBase {
     1.00 better
 
      */ // 0.5 rotations per button press
-    private static final double POSE_TOLERANCE = 0.02; // TODO Implement 0.02 rotations tolerance
+    private static final double POSE_TOLERANCE = 0.02;
 
     // Motion Magic Constants (from config file)
     private static final double kP = 8.0;
@@ -44,8 +41,8 @@ public class WristSubsystem extends SubsystemBase {
     private static final double kG = 0.05;
 
     // Motion Profile Constraints (from config file)
-    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second // TODO Bump up?
-    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared // TODO Bump up?
+    private static final double MOTION_MAGIC_VELOCITY = 80.0; // rotations per second
+    private static final double MOTION_MAGIC_ACCELERATION = 80.0; // rotations per second squared
     private static final double MOTION_MAGIC_JERK = 300.0; // rotations per second cubed
 
     private double targetPosition = 0.0;

@@ -18,10 +18,8 @@ public class ClimberCommands {
     public Command incrementUp() {
         return Commands.run(
             () -> climber.climbUp())
-        // TODO Consider adding a wrist set position command here
-        
-        // TODO Add a "max" climb position
-        // .until()(() -> climber.getWristPosition() > 0.5)
+
+            // .until()(() -> climber.getWristPosition() > 0.5)
         
         // When command ends, stop the motor by setting 0 V:
         .finallyDo((boolean interrupted) -> climber.stopClimb())

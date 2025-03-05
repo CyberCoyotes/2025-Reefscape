@@ -1,12 +1,9 @@
 package frc.robot.auto;
 
-import javax.swing.GroupLayout.Group;
-
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -50,7 +47,7 @@ private final AutoFactory m_factory;
                                 STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0)); // FIXME?
+                STA.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
                 STA.atTime("Load").onTrue(m_effector.intakeCoralNoSensor().withTimeout(2.0));
                 return routine;
         }
@@ -65,10 +62,10 @@ private final AutoFactory m_factory;
 
                 routine.active().onTrue(
                         Commands.sequence(
-                                STA.resetOdometry(), // Always reset odometry first
-                                STA.cmd(), //
-                                m_drivetrain.stop().withTimeout(2.0)
-                                // STA2.cmd() // Taking out for testing
+                                STA.resetOdometry(),
+                                STA.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                STA2.cmd()
 
                         ));
                 STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL2());
