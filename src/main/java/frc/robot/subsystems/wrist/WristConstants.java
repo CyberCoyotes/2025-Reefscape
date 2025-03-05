@@ -14,7 +14,7 @@ public final class WristConstants {
 
     // public static final double MAGNET_ENCODER_OFFSET = 0.16064453125; // From Phoenix Tuner X
 
-    // public static final double GEAR_RATIO = 5.0; // TODO Determine the actual gear ratio; suggested 75.0 // 50
+    // public static final double GEAR_RATIO = 5.0; // Determine the actual gear ratio; // 50
     // public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; 
     
     // Current limits

@@ -49,9 +49,9 @@ public class ClimberSubsystem extends SubsystemBase {
         public void configureClimberMotor() {
             
             SoftwareLimitSwitchConfigs softLimitConfig = new SoftwareLimitSwitchConfigs();
-            softLimitConfig.ForwardSoftLimitEnable = false; // TODO Test before using
+            softLimitConfig.ForwardSoftLimitEnable = false;
             // softLimitConfig.ForwardSoftLimitThreshold = ClimbConstants.FORWARD_SOFT_LIMIT;
-            softLimitConfig.ReverseSoftLimitEnable = false; // TODO Test before using
+            softLimitConfig.ReverseSoftLimitEnable = false;
             // softLimitConfig.ReverseSoftLimitThreshold = ClimbConstants.REVERSE_SOFT_LIMIT;
             climbMotor.getConfigurator().apply(softLimitConfig);
         }

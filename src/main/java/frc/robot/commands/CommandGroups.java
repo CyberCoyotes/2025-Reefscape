@@ -2,8 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 
 public class CommandGroups {
 
@@ -42,9 +40,6 @@ public class CommandGroups {
                 wristCommands.setL2(),
                 // Move the elevator to home position
                 elevatorCommands.setHomeNoCheck(),
-                // TODO Add as a check that elevator has completed its command AND reached its target
-                // Removed a wait command here <--. Hopefully this will allow wrist to move to stow
-
                 // Stow the elevator
                 wristCommands.setStowed()
 
@@ -80,7 +75,7 @@ public class CommandGroups {
                 wristCommands.setL2(),
                 // Move the elevator to L4
                 elevatorCommands.setL4NoCheck(),
-                // TODO check this position
+                // Set wrist to L4
                 wristCommands.setL4()
         ).withName("MoveToL4Sequence");
     }
@@ -119,7 +114,6 @@ public class CommandGroups {
                 
                 // Move the elevator to the algae scoring position;
                 /*
-                 * TODO Position needs to be verified
                  * Previously this was set to L2, based on observation at practice field it should be less than L2
                  */
                 elevatorCommands.setScoreAlgaeNoCheck()
