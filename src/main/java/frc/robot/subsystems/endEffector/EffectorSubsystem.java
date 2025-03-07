@@ -19,11 +19,11 @@ import frc.robot.Constants;
 public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
     
-    private TimeOfFlight coralSensor = new TimeOfFlight(42);
+    private TimeOfFlight coralSensor = new TimeOfFlight(Constants.CORAL_SENSOR_ID);
 
     private int coralDetectionDistance = 80; // mm 
 
-        // NetworkTable entries for more reliable data publishing
+    // NetworkTable entries for more reliable data publishing
     private final NetworkTable sensorTable;
     private final NetworkTableEntry distanceEntry;
     private final NetworkTableEntry isLoadedEntry;
