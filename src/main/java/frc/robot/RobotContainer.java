@@ -166,8 +166,8 @@ public class RobotContainer {
 
         // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
-        driverController.povLeft().whileTrue(wristCommands.setStowed());
-        // driverController.povRight().whileTrue(wristCommands.incrementOut());
+        driverController.povLeft().onTrue(vision.createAlignToTagCommand());
+        driverController.povRight().onTrue(vision.createFullAlignToTagCommand());
 
         /***********************************************
          ** Operator Controls **
