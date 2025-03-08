@@ -62,9 +62,16 @@ public class VisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         updateVisionState();
+
+        SmartDashboard.putString("Vision/State", currentState.toString());
+        SmartDashboard.putNumber("Vision/TagID", tid.getDouble(0));
+        SmartDashboard.putNumber("Vision/TX", tx.getDouble(0));
+        SmartDashboard.putNumber("Vision/TY", ty.getDouble(0));
+        SmartDashboard.putNumber("Vision/TA", ta.getDouble(0));
+    
+
         // updateLEDs();
-        logData();
-    }
+     }
 
     private void updateVisionState() {
         boolean hasTarget = tv.getDouble(0.0) > 0.5;
@@ -104,14 +111,7 @@ public class VisionSubsystem extends SubsystemBase {
     } 
     */
 
-    private void logData() {
-        SmartDashboard.putString("Vision/State", currentState.toString());
-        SmartDashboard.putNumber("Vision/TagID", tid.getDouble(0));
-        SmartDashboard.putNumber("Vision/TX", tx.getDouble(0));
-        SmartDashboard.putNumber("Vision/TY", ty.getDouble(0));
-        SmartDashboard.putNumber("Vision/TA", ta.getDouble(0));
-    }
-
+    
     // Getter methods for use in commands
     public VisionState getState() {
         return currentState;
