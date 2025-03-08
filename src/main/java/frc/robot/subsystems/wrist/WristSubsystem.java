@@ -20,11 +20,11 @@ public class WristSubsystem extends SubsystemBase {
     private static final double FORWARD_LIMIT = 20.0; // In rotations
     private static final double INCREMENT = 1.00;
     private static final double TOLERANCE = 0.02; // Position Tolerance in rotations
-    private static final double VELOCITY = 80.0; // Motion Magic rotations per second
-    private static final double ACCELERATION = 80.0; // Motion Magic rotations per second squared
+    private static final double VELOCITY = 120.0; // Motion Magic rotations per second
+    private static final double ACCELERATION = 120.0; // Motion Magic rotations per second squared
     private static final double JERK = 300.0; // Motion Magic rotations per second cubed
 
-    private static final double kP = 8.0;
+    private static final double kP = 10.0;
     private static final double kI = 0.0;
     private static final double kD = 0.0;
     private static final double kV = 0.0;
@@ -81,9 +81,9 @@ public class WristSubsystem extends SubsystemBase {
     public static enum WristPositions {
         START(0.0), // Stowed position from config
         STOWED(0.0), // FIXME Stowed position from config
-        L2(2.15), // FIXME L2 scoring position from your value
-        L3(2.15), // FIXME L3 scoring position from your value
-        L4(14.0), // FIXME Estimated
+        L2(1.7), // FIXME L2 scoring position from your value
+        L3(1.7), // FIXME L3 scoring position from your value
+        L4(6.0), // FIXME Estimated
         PICK_ALGAE(14.0), // FIXME Estimated 8 which was about horitzontal
         SCORE_ALGAE(18.0); // FIXME Estimated about 19 max with Phoenix Tuner
 
