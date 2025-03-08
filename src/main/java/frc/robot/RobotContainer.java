@@ -156,10 +156,10 @@ public class RobotContainer {
         // Add a slow motion command for the driver to use when button held
         // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
-        // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
+        driverController.povUp().onTrue(wristCommands.setL4());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
-        driverController.povLeft().whileTrue(wristCommands.setStowed());
-        // driverController.povRight().whileTrue(wristCommands.incrementOut());
+        driverController.povLeft().onTrue(wristCommands.setStowed());
+        driverController.povRight().onTrue(wristCommands.setL2());
 
         /***********************************************
          ** Operator Controls **

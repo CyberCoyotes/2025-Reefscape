@@ -3,18 +3,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.wrist.WristConstants;
 
 // Command Factory methods
 public class WristCommands {
     private final WristSubsystem subsystem;
-    private static final double DEFAULT_TOLERANCE = 0.05; // 0.05 rotations tolerance
 
     public WristCommands(WristSubsystem subsystem) {
         this.subsystem = subsystem;
     }
 
     public Command moveToPosition(double targetRotations) {
-        return moveToPosition(targetRotations, DEFAULT_TOLERANCE);
+        return moveToPosition(targetRotations, WristConstants.TOLERANCE);
     }
 
     public Command moveToPosition(double targetRotations, double toleranceRotations) {
