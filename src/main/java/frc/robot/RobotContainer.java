@@ -17,6 +17,7 @@ import frc.robot.auto.AutoRoutines;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
@@ -154,7 +155,7 @@ public class RobotContainer {
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // Add a slow motion command for the driver to use when button held
-        // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
+        driverController.b().onTrue(new AlignToReefTagRelative(true, drivetrain));
 
         // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
