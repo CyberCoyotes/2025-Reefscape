@@ -2,6 +2,10 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// REFERENCES
+// https://claude.ai/chat/63cd46e4-43a0-4c47-a3bb-63f6300f5ae7
+// Team Wavelength
+
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -23,13 +27,16 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
+import frc.robot.commands.TagAlignmentCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.vision.CameraSubsystem;
+import frc.robot.subsystems.vision.VisionFactory;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 public class RobotContainer {
 
@@ -77,6 +84,8 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private final LimelightVisionSubsystem visionSubsystem;
+
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
@@ -87,7 +96,10 @@ public class RobotContainer {
             elevator,
             commandGroups,
             effectorCommands);
-            
+
+        // Initialize vision subsystem
+        visionSubsystem = VisionFactory.createLimelightVisionSubsystem("limelight", drivetrain);
+
         configureBindings();
         configureAutoRoutines();
     }
@@ -139,22 +151,42 @@ public class RobotContainer {
         driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
         driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
 
-        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor()); // (-)
-        // Have been trying 25%, bump up to 35% for testing
-        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
-
-        /* 
-                                                **Y**  
-                                          **X**      **B**
-                                                **A**
-        */
+        // Vision alignment commands using triggers
+        driverController.leftTrigger().whileTrue(
+            TagAlignmentCommands.alignToTagLeftSide(
+                drivetrain,
+                visionSubsystem,
+                () -> -driverController.getLeftY() * MaxSpeed,
+                () -> -driverController.getLeftX() * MaxSpeed,
+                () -> -driverController.getRightX() * MaxAngularRate
+            )
+        );
+        
+        driverController.rightTrigger().whileTrue(
+            TagAlignmentCommands.alignToTagRightSide(
+                drivetrain,
+                visionSubsystem,
+                () -> -driverController.getLeftY() * MaxSpeed,
+                () -> -driverController.getLeftX() * MaxSpeed,
+                () -> -driverController.getRightX() * MaxAngularRate
+            )
+        );
 
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
-        // Add a slow motion command for the driver to use when button held
-        // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
+        
+        // Button B for center alignment on AprilTag
+        driverController.b().whileTrue(
+            TagAlignmentCommands.centerOnTag(
+                drivetrain,
+                visionSubsystem,
+                () -> -driverController.getLeftY() * MaxSpeed,
+                () -> -driverController.getLeftX() * MaxSpeed,
+                () -> -driverController.getRightX() * MaxAngularRate
+            )
+        );
 
         // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
@@ -178,7 +210,8 @@ public class RobotContainer {
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
 
         operatorController.a().onTrue(commandGroups.moveToScoreAlgaeGroup(wristCommands, elevatorCommands));
-        // operatorController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+        // Toggle Limelight LEDs
+        operatorController.b().onTrue(VisionFactory.createToggleLEDsCommand(visionSubsystem));
 
         operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
@@ -187,6 +220,10 @@ public class RobotContainer {
         
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());
+
+        // Display vision status on SmartDashboard
+        SmartDashboard.putBoolean("Vision Enabled", true);
+        SmartDashboard.putString("Current Tag", "None");
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
