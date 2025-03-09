@@ -54,12 +54,12 @@ public class RobotContainer {
    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
 //    private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
-
+private final double SPEED_LIMIT = 0.65;
 
     // kSpeedAt12Volts desired top speed
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)* SPEED_LIMIT; // 3 meters per second max speed
     // 3/4 of a rotation per second max angular velocity
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); 
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond) * SPEED_LIMIT; 
     
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
