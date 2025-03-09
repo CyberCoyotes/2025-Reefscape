@@ -10,6 +10,8 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.EndEffectorCommands;
 
+@SuppressWarnings("unused")
+
 public class AutoRoutines<IntakeSubsystem> {
 private final AutoFactory m_factory;
     private final CommandSwerveDrivetrain m_drivetrain;

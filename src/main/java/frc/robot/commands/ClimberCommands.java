@@ -60,9 +60,6 @@ public class ClimberCommands {
     public Command toggleServo() {
         return climber.runOnce(() -> climber.rotateServoRange())
             .withName("ToggleServo");
-    /* TODO Set the wrist to out position if the servo is in or moving to the release state
-        If servo is in the lock state, then wrist remains in its last position.
-    */
 
     }
 
