@@ -79,13 +79,34 @@ public class WristSubsystem extends SubsystemBase {
 
     // Preset positions enum
     public static enum WristPositions {
-        START(0.0), // Stowed position from config
-        STOWED(0.0), // FIXME Stowed position from config
-        L2(1.7), // FIXME L2 scoring position from your value
-        L3(1.7), // FIXME L3 scoring position from your value
-        L4(6.0), // FIXME Estimated
-        PICK_ALGAE(14.0), // FIXME Estimated 8 which was about horitzontal
-        SCORE_ALGAE(18.0); // FIXME Estimated about 19 max with Phoenix Tuner
+        /* 
+        * Physically the end effector of the wrist should be resting against the elevator at the start of the match (START)
+        * This position should not be used during a match after the start.
+        * The STOWED position is currently not in use, but could be used to stow the wrist for transport as it was with previous configiaration
+        * L1 is not a position currently in use, but could be used with testing differet scoring heights
+        * L2 was set to 2.15 with the previous configuration
+        * TODO The new L2 is approx 1.75; needs to be confirmed with a reef test
+        * L3 should be the same as L2
+        * L4 Approximately 6.0 and found to be near vertical in classroom
+        * TODO Confirm L4 scoring pose with a Reef test
+        * INTAKE CORAL is a new pose and estimate between L4 and PICK ALGAE 10.0
+        * TODO Confirm new INTAKE CORAL pose with a Reef test
+        * PICK ALGAE was previously 14.0 
+        * TODO Confirm new PICK ALGAE pose with a Reef test
+        * SCORE ALGAE was previously 19.0
+        * TODO Confirm new SCORE ALGAE pose with a Reef test
+        
+        */
+
+        START(0.0), 
+        STOWED(0.0),
+        L1(0.5),
+        L2(1.75), 
+        L3(1.75),
+        L4(6.0),
+        INTAKE_CORAL(10.0),
+        PICK_ALGAE(14.0),
+        SCORE_ALGAE(18.0);
 
         private final double rotations;
 
