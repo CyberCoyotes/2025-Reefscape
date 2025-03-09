@@ -82,12 +82,12 @@ public class WristSubsystem extends SubsystemBase {
     // Preset positions enum
     public static enum WristPositions {
         START(0.0), // Stowed position from config
-        STOWED(0.0), // FIXME Stowed position from config
-        L2(1.7), // FIXME L2 scoring position from your value
-        L3(1.7), // FIXME L3 scoring position from your value
-        L4(6.0), // FIXME Estimated
-        PICK_ALGAE(14.0), // FIXME Estimated 8 which was about horitzontal
-        SCORE_ALGAE(18.0); // FIXME Estimated about 19 max with Phoenix Tuner
+        STOWED(0.0), //  Stowed position from config
+        L2(1.7), //  L2 scoring position from your value
+        L3(1.7), //  L3 scoring position from your value
+        L4(6.0), //  Estimated
+        PICK_ALGAE(14.0), //  Estimated 8 which was about horitzontal
+        SCORE_ALGAE(18.0); //  Estimated about 19 max with Phoenix Tuner
 
         private final double rotations;
 
