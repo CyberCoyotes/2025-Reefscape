@@ -18,7 +18,7 @@ public class WristSubsystem extends SubsystemBase {
     private static final double GEAR_RATIO = 80.0;
     private static final double REVERSE_LIMIT = 0.0; // In rotations
     private static final double FORWARD_LIMIT = 20.0; // In rotations
-    private static final double INCREMENT = 1.00;
+    private static final double INCREMENT = 0.50;
     private static final double TOLERANCE = 0.02; // Position Tolerance in rotations
     private static final double VELOCITY = 120.0; // Motion Magic rotations per second
     private static final double ACCELERATION = 120.0; // Motion Magic rotations per second squared
@@ -103,7 +103,7 @@ public class WristSubsystem extends SubsystemBase {
         L1(0.5),
         L2(1.75), 
         L3(1.75),
-        L4(6.0),
+        L4(4.2), // Verified
         INTAKE_CORAL(10.0),
         PICK_ALGAE(14.0),
         SCORE_ALGAE(18.0);
