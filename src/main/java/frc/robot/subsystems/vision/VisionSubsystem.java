@@ -9,6 +9,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 // import frc.robot.subsystems.led.LEDState;
 // import frc.robot.subsystems.led.LEDSubsystem;
 
+@SuppressWarnings("unused")
 
 public class VisionSubsystem extends SubsystemBase {
     private final String tableName;

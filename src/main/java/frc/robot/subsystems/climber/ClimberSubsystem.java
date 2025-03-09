@@ -13,6 +13,8 @@ import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 
+@SuppressWarnings("unused")
+
 public class ClimberSubsystem extends SubsystemBase {
 
     // Motor & control request object

@@ -31,6 +31,8 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
+@SuppressWarnings("unused")
+
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
