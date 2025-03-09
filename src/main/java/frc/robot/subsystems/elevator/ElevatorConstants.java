@@ -4,6 +4,8 @@ import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.Slot2Configs;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
+@SuppressWarnings("unused")
+
 public final class ElevatorConstants {
     
     public static final double GEAR_RATIO = 9.0;

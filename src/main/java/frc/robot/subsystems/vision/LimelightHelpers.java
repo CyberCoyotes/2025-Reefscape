@@ -3,6 +3,8 @@
  * LimelightHelpers v1.9 (REQUIRES 2024.9.1)
 */
 
+
+
 package frc.robot.subsystems.vision;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.errorprone.annotations.SuppressPackageLocation;
 
 import edu.wpi.first.networktables.DoubleArrayEntry;
 import edu.wpi.first.networktables.NetworkTable;
@@ -32,6 +35,8 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
+
+@SuppressWarnings("unused")
 
 public class LimelightHelpers {
 
