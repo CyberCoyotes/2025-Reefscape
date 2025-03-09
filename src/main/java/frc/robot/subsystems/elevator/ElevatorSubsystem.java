@@ -12,6 +12,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -29,11 +31,11 @@ public class ElevatorSubsystem extends SubsystemBase {
         HOME(0.00),
         L1(0.00),
         ScoreAlgae(0.50),
-        L2(0.90),
+        L2(0.45), // was 0.90
         Algae2(1.1),
-        L3(2.27),
+        L3(1.85), // was 2.27
         Algae3(2.45),
-        L4( 4.66);
+        L4( 4.7);
 
         private final double position;
 
@@ -105,14 +107,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure soft limits
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.FORWARD_LIMIT;
-        leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
 
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
-        leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
         leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
 
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        followerConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply configurations
@@ -122,7 +124,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        elevatorFollower.getConfigurator().apply(followerConfig);
+        elevatorFollower.getConfigurator().apply(leadConfig);
 
         // Set up follower to follow leader with opposite direction
         elevatorFollower.setControl(new Follower(Constants.ELEVATOR_LEAD_ID, true));
@@ -197,11 +199,13 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+
         // Mode and State Information
         Logger.recordOutput("Elevator/Mode", currentMode.toString());
-        Logger.recordOutput("Elevator/Position/Current", getPosition());
-        Logger.recordOutput("Elevator/Position/Target", targetPosition);
-        Logger.recordOutput("Elevator/AtTarget", isAtPosition(targetPosition));
+        SmartDashboard.putNumber("Elevator/Position/Current", getPosition());
+        SmartDashboard.putNumber("Elevator/Position/Target", targetPosition);
+        SmartDashboard.putBoolean("Elevator/AtTarget", isAtPosition(targetPosition));
         // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wrist.inSafePosition());
         // Motor Telemetry
         Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
