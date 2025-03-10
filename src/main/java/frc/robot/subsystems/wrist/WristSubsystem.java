@@ -87,17 +87,14 @@ public class WristSubsystem extends SubsystemBase {
         * The STOWED position is currently not in use, but could be used to stow the wrist for transport as it was with previous configiaration
         * L1 is not a position currently in use, but could be used with testing differet scoring heights
         * L2 was set to 2.15 with the previous configuration
-        * TODO The new L2 is approx 1.75; needs to be confirmed with a reef test
         * L3 should be the same as L2
         * L4 Approximately 6.0 and found to be near vertical in classroom
-        * TODO Confirm L4 scoring pose with a Reef test
         * INTAKE CORAL is a new pose and estimate between L4 and PICK ALGAE 10.0
         * TODO Confirm new INTAKE CORAL pose with a Reef test
         * PICK ALGAE was previously 14.0 
         * TODO Confirm new PICK ALGAE pose with a Reef test
         * SCORE ALGAE was previously 19.0
-        * TODO Confirm new SCORE ALGAE pose with a Reef test
-        
+        * TODO Confirm new SCORE ALGAE pose with a Reef test        
         */
 
         START(0.0), 
