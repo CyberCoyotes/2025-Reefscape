@@ -148,11 +148,10 @@ private final double SPEED_LIMIT = 0.65;
 
         // driverController.back().onTrue((/* */));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
+        // driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
+        // driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
 
         driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor()); // (-)
-        // Have been trying 25%, bump up to 35% for testing
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         /* 
@@ -168,12 +167,10 @@ private final double SPEED_LIMIT = 0.65;
         // Add a slow motion command for the driver to use when button held
         // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
-        // Use the .b() button AND the .povLeft() button
-        driverController.b().and
-            (driverController.leftBumper()).whileTrue(vision.createAlignToTagCommand());
+        // Use the .b() button AND the .bumper() button
+        driverController.leftBumper().whileTrue(vision.createAlignToTagCommand());
         
-        driverController.b().and
-            (driverController.rightBumper()).whileTrue(vision.createFullAlignToTagCommand());
+        driverController.rightBumper().whileTrue(vision.createFullAlignToTagCommand());
 
         driverController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         driverController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem

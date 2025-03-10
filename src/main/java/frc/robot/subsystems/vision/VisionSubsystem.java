@@ -28,7 +28,7 @@ public class VisionSubsystem extends SubsystemBase {
     private static final double VALID_TARGET_AREA = 0.1; // % of image
     
     private VisionState currentState = VisionState.NO_TARGET;
-    private boolean ledsEnabled = false;
+    private boolean ledsEnabled = true;
 
     /**
      * Constants for vision alignment PID controllers and targets
@@ -56,7 +56,7 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         // Target values
-        public static final double TARGET_DISTANCE = 1.0; // meters
+        public static final double TARGET_DISTANCE = -0.5; // meters
         public static final double MAX_SPEED = 1.0; // maximum speed for alignment
         public static final double MAX_ANGULAR_SPEED = 1.0; // maximum angular speed
         
