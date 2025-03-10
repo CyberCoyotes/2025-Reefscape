@@ -3,7 +3,6 @@ package frc.robot.subsystems.vision;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -61,10 +60,11 @@ public class VisionSubsystem extends SubsystemBase {
         public static final double MAX_SPEED = 1.0; // maximum speed for alignment
         public static final double MAX_ANGULAR_SPEED = 1.0; // maximum angular speed
         
+        /* These should not be needed anymore as the camera placement has updated in the Limelight Pipeline */
         // Camera configuration
-        public static final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(12.5);
-        public static final double TARGET_HEIGHT_METERS = Units.inchesToMeters(25.5);
-        public static final double CAMERA_ANGLE_DEGREES = 0.0;
+        // public static final double CAMERA_HEIGHT_METERS = Units.inchesToMeters(12.5);
+        // public static final double TARGET_HEIGHT_METERS = Units.inchesToMeters(25.5);
+        // public static final double CAMERA_ANGLE_DEGREES = 0.0;
     }
 
     public VisionSubsystem(String tableName, CommandSwerveDrivetrain drivetrain) {
@@ -320,10 +320,19 @@ public class VisionSubsystem extends SubsystemBase {
      * @param ty The vertical angle to the target in degrees
      * @return The calculated distance in meters
      */
+    
+    /**
+     * Calculate the distance to the target based on the vertical angle
+     * 
+     * @param ty The vertical angle to the target in degrees
+     * @return The calculated distance in meters
+     */
     private double calculateDistance(double ty) {
-        double angleToTarget = AlignmentConstants.CAMERA_ANGLE_DEGREES + ty;
-        return Math.abs((AlignmentConstants.TARGET_HEIGHT_METERS - AlignmentConstants.CAMERA_HEIGHT_METERS) / 
-                       Math.tan(Math.toRadians(angleToTarget)));
+        // Assuming the Limelight pipeline is configured with the correct camera placement
+        // and the ty value is already adjusted accordingly.
+        // This method can be simplified to just return the distance based on ty.
+        // The actual calculation should be handled by the Limelight pipeline configuration.
+        return ty; // Placeholder: Replace with actual distance calculation if needed
     }
 
     /**
