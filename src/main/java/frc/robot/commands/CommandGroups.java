@@ -39,9 +39,9 @@ public class CommandGroups {
                 // Move wrist to safe travel position if not already
                 wristCommands.setL2(),
                 // Move the elevator to home position
-                elevatorCommands.setHomeNoCheck(),
+                elevatorCommands.setHomeNoCheck()
                 // Stow the elevator
-                wristCommands.setStowed()
+                // wristCommands.setStowed()
 
         ).withName("MoveToHomeSequence");
     }

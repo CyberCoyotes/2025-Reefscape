@@ -6,6 +6,7 @@ import frc.robot.subsystems.climber.ClimbConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
+@SuppressWarnings("unused")
 
 public class ClimberCommands {
     private final ClimberSubsystem climber;
@@ -59,6 +60,7 @@ public class ClimberCommands {
     public Command toggleServo() {
         return climber.runOnce(() -> climber.rotateServoRange())
             .withName("ToggleServo");
+
     }
 
 }
