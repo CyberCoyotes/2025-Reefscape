@@ -58,6 +58,10 @@ public class WristCommands {
         return moveToPosition(WristSubsystem.WristPositions.L4.getRotations());
     }
 
+    public Command setIntakeCoral() {
+        return moveToPosition(WristSubsystem.WristPositions.INTAKE_CORAL.getRotations());
+    }
+
     public Command pickAlgae() {
         return moveToPosition(WristSubsystem.WristPositions.PICK_ALGAE.getRotations());
     }
