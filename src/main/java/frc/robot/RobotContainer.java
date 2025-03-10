@@ -25,6 +25,7 @@ import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -50,6 +51,8 @@ public class RobotContainer {
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
     
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
+
+    private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
@@ -156,8 +159,11 @@ private final double SPEED_LIMIT = 0.65;
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
-        // Add a slow motion command for the driver to use when button held
-        // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
+        // Proper AND button logic
+        driverController.b().and(driverController.x())
+            .onTrue(wristCommands.setIntakeCoral()); // TODO
+        driverController.b().and(driverController.y())
+            .onTrue(elevatorCommands.setIntakeCoral()); // TODO
 
         // driverController.povUp().onTrue(wristCommands.setL4());
         // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
