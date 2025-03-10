@@ -169,8 +169,11 @@ private final double SPEED_LIMIT = 0.65;
         // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
         // Use the .b() button AND the .povLeft() button
-        driverController.povLeft().onTrue(vision.createAlignToTagCommand());
-        driverController.povRight().onTrue(vision.createFullAlignToTagCommand());
+        driverController.b().and
+            (driverController.leftBumper()).whileTrue(vision.createAlignToTagCommand());
+        
+        driverController.b().and
+            (driverController.rightBumper()).whileTrue(vision.createFullAlignToTagCommand());
 
         driverController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         driverController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
