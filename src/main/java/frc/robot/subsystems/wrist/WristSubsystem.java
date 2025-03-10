@@ -90,11 +90,8 @@ public class WristSubsystem extends SubsystemBase {
         * L3 should be the same as L2
         * L4 Approximately 6.0 and found to be near vertical in classroom
         * INTAKE CORAL is a new pose and estimate between L4 and PICK ALGAE 10.0
-        * TODO Confirm new INTAKE CORAL pose with a Reef test
         * PICK ALGAE was previously 14.0 
-        * TODO Confirm new PICK ALGAE pose with a Reef test
         * SCORE ALGAE was previously 19.0
-        * TODO Confirm new SCORE ALGAE pose with a Reef test        
         */
 
         START(0.0), 
