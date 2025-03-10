@@ -2,9 +2,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.climber.ClimbConstants;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
+@SuppressWarnings("unused")
 
 public class ClimberCommands {
     private final ClimberSubsystem climber;
@@ -17,10 +19,8 @@ public class ClimberCommands {
     public Command incrementUp() {
         return Commands.run(
             () -> climber.climbUp())
-        // TODO Consider adding a wrist set position command here
-        
-        // TODO Add a "max" climb position
-        // .until()(() -> climber.getWristPosition() > 0.5)
+
+            // .until()(() -> climber.getWristPosition() > 0.5)
         
         // When command ends, stop the motor by setting 0 V:
         .finallyDo((boolean interrupted) -> climber.stopClimb())
@@ -46,6 +46,21 @@ public class ClimberCommands {
         return Commands.runOnce(
             () -> climber.stopClimb()
         ).withName("StopClimb");
+    }
+
+    
+    // Command to set servo to specific angle
+    public Command setServoAngle() {
+        return Commands.runOnce(
+            () -> climber.setServoAngle(ClimbConstants.SERVO_ANGLE)
+        ).withName("SetServoAngle");
+    }
+    
+    // Servo commands
+    public Command toggleServo() {
+        return climber.runOnce(() -> climber.rotateServoRange())
+            .withName("ToggleServo");
+
     }
 
 }

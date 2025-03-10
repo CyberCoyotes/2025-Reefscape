@@ -12,42 +12,48 @@ This means that when the encoder reads "0", the actual position of the mechanism
 public final class WristConstants {
     // CAN ID and hardware config
 
-    // public static final double MAGNET_ENCODER_OFFSET = 0.16064453125; // From Phoenix Tuner X
+    // public static final double MAGNET_ENCODER_OFFSET = 0.16064453125; // From
+    // Phoenix Tuner X
 
-    // public static final double GEAR_RATIO = 5.0; // TODO Determine the actual gear ratio; suggested 75.0 // 50
-    // public static final double ENCODER_TO_MECHANISM_RATIO = 1.0; 
-    
+    // public static final double GEAR_RATIO = 5.0; // Determine the actual gear
+    // ratio; // 50
+    // public static final double ENCODER_TO_MECHANISM_RATIO = 1.0;
+
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 40.0;
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
 
-    public static final double POSE_TOLERANCE = 0.02;
-
-    // Constants 
-    public static final double MOTION_MAGIC_VELOCITY = 40.0; // rotations per second
-    public static final double MOTION_MAGIC_ACCELERATION = 40.0; // rotations per second^2
-    public static final double MOTION_MAGIC_JERK = 100.0; // rotations per second^3
     public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
-    
-    public static final double REVERSE_LIMIT = 0.00;
-    public static final double FORWARD_LIMIT = 0.50;  // 90 degrees
-        
+
+    // Configuration constants
+    public static final double GEAR_RATIO = 80.0;
+    public static final double REVERSE_LIMIT = 0.0; // In rotations
+    public static final double FORWARD_LIMIT = 20.0; // In rotations
+    public static final double INCREMENT = 1.00;
+    public static final double TOLERANCE = 0.02; // Position Tolerance in rotations
+    public static final double VELOCITY = 80.0; // Motion Magic rotations per second
+    public static final double ACCELERATION = 80.0; // Motion Magic rotations per second squared
+    public static final double JERK = 300.0; // Motion Magic rotations per second cubed
+
+    public static final class Slot0 {
+    public static final double kP = 8.0;
+    public static final double kI = 0.0;
+    public static final double kD = 0.0;
+    public static final double kV = 0.0;
+    public static final double kS = 0.0;
+    public static final double kG = 0.05;
+    }
+
     // PID and FF Gains
-    public static final class Gains {
+    public static final class Slot1 {
         public static final double kP = 5.0;
         public static final double kI = 0.0;
         public static final double kD = 0.01;
         public static final double kG = 0.30;
-        /* 0.15 better than 0, not enough
-         * 0.30 too much, wouldn't comeback
-         * 0.20 not enough
-         */
         public static final double kV = 0.12;
         public static final double kS = 0.25;
         public static final double kA = 0.01;
     }
-
-
 
     // Named Motor positions
     public static final class Positions {
@@ -72,3 +78,14 @@ public final class WristConstants {
         public static final double L4 = 0.40;
     }
 }
+
+/*
+ * L2 is the 12 lowest level BRANCHES and are angled up at 35°. 
+ * The highest point of the L2 BRANCH is 2 ft. 7⅞ in. (~81 cm) from the carpet and is inset 1⅝ in. 
+ * (~41 mm) from the REEF base. 
+ * L3 is the 12 mid-level BRANCHES and are angled up at 35°.
+ * The highest point of the L3 BRANCH is 3 ft. 11⅝ in. (~121 cm) from the carpet and is inset 1⅝ in. 
+ * (~41 mm) from the REEF base. L4 is the 12 highest-level BRANCHES and they are vertical.
+ * The highest point of the L4 BRANCH is 6 ft. 
+ * (~183 cm) from the carpet and is inset 1⅛ in. (~29 mm) from the REEF base.   
+ */

@@ -12,11 +12,13 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.subsystems.wrist.WristSubsystem;
+
+@SuppressWarnings("unused")
 
 public class ElevatorSubsystem extends SubsystemBase {
     // Subsystem Modes
@@ -28,11 +30,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        L2(0.95), // was .89
-        L3(2.27),
-        L4( 4.66), // Updated 2-24-25
+        ScoreAlgae(0.50),
+        L2(0.45), // was 0.90
         Algae2(1.1),
-        Algae3(1.0);
+        L3(1.85), // was 2.27
+        Algae3(2.45),
+        L4( 4.7);
 
         private final double position;
 
@@ -45,7 +48,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
     }
 
-  // Hardware
+    // Hardware
     private final TalonFX elevatorLeader;
     private final TalonFX elevatorFollower;
 
@@ -57,37 +60,17 @@ public class ElevatorSubsystem extends SubsystemBase {
     private double targetPosition = 0.0;
     // public WristSubsystem wristSub;
 
-    
     // Increment Settings
-    private static final double INCREMENT = 0.02; // Small adjustments
-    
+    public static final double INCREMENT = 0.02; // Small adjustments
+
     // Tolerance/Deadband Settings
     private static final double POSITION_TOLERANCE = 0.02;
     private static final double DEADBAND = 0.02;
 
-
-    private final Slot1Configs safetyGains = new Slot1Configs()
-            .withKP(1.0)
-            .withKI(0.01)
-            .withKD(0.10)
-            .withKS(0.25)
-            .withKV(0.12)
-            .withKG(0.25)
-            .withGravityType(GravityTypeValue.Elevator_Static);
-
-    private final Slot2Configs incrementalGains = new Slot2Configs()
-            .withKP(1.0)
-            .withKI(0.01)
-            .withKD(0.10)
-            .withKS(0.25)
-            .withKV(0.12)
-            .withKG(0.12)
-            .withGravityType(GravityTypeValue.Elevator_Static);
-
     public ElevatorSubsystem() {
         // Initialize motors
-        elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID);
-        elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID);
+        elevatorLeader = new TalonFX(Constants.ELEVATOR_LEAD_ID, Constants.kCANBus);
+        elevatorFollower = new TalonFX(Constants.ELEVATOR_FOLLOW_ID, Constants.kCANBus);
         // this.wristSub = wristSub;
 
         // Initialize control requests
@@ -117,21 +100,21 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.Slot0.kG = ElevatorConstants.kG;
 
         // Configure motion magic
-        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.TestMode.CRUISE_VELOCITY; // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.TestMode.ACCELERATION; // TODO Change to performance mode
-        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.TestMode.JERK; // TODO Change to performance mode
+        leadConfig.MotionMagic.MotionMagicCruiseVelocity = ElevatorConstants.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicAcceleration = ElevatorConstants.CRUISE_VELOCITY;
+        leadConfig.MotionMagic.MotionMagicJerk = ElevatorConstants.JERK;
 
         // Configure soft limits
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
         leadConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ElevatorConstants.FORWARD_LIMIT;
-        leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        leadConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
 
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
-        leadConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
         leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
 
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        followerConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply configurations
@@ -140,8 +123,8 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure follower motor to oppose the leader
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-     
-        elevatorFollower.getConfigurator().apply(followerConfig);
+
+        elevatorFollower.getConfigurator().apply(leadConfig);
 
         // Set up follower to follow leader with opposite direction
         elevatorFollower.setControl(new Follower(Constants.ELEVATOR_LEAD_ID, true));
@@ -151,26 +134,9 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader.setPosition(0);
     }
 
-    public void incrementPosition(boolean up) {
-        double currentPos = getPosition();
-        double increment = up ? INCREMENT : -INCREMENT;
-        
-        // Use slot 2 for incremental movement
-        motionMagicRequest = motionMagicRequest.withSlot(2);
-        
-        // TODO Make sure limits are respected in motor configs
-        double newTarget = (currentPos + increment);
-    
-        setPosition(newTarget);
-        
-        // Reset back to current mode's slot for next movement
-        motionMagicRequest = motionMagicRequest.withSlot(0);
-    }
-
     public void setPosition(double positionRotations) {
-        // TODO Make sure limits are respected in motor configs first! Then remove
         targetPosition = positionRotations;
-        
+
         // Only move if change is larger than deadband
         if (Math.abs(targetPosition - getPosition()) > DEADBAND) {
             elevatorLeader.setControl(motionMagicRequest.withPosition(targetPosition * ElevatorConstants.GEAR_RATIO));
@@ -179,13 +145,27 @@ public class ElevatorSubsystem extends SubsystemBase {
         elevatorLeader.setControl(motionMagicRequest.withPosition(positionRotations * ElevatorConstants.GEAR_RATIO));
     }
 
+    public void incrementPosition(boolean up) {
+        double currentPos = getPosition();
+        double increment = up ? INCREMENT : -INCREMENT;
 
+        // Use slot 2 for incremental movement
+        // motionMagicRequest = motionMagicRequest.withSlot(2);
 
+        double newTarget = (currentPos + increment);
+
+        setPosition(newTarget);
+
+        // Reset back to current mode's slot for next movement
+        // motionMagicRequest = motionMagicRequest.withSlot(0);
+    }
+
+    // This is required for the incremental command 
     public void incrementPosition(double increment) {
         double currentPos = getPosition();
         double newPos = currentPos + increment;
         setPosition(newPos);
-    }   
+    }
 
     public double getPosition() {
         return elevatorLeader.getPosition().getValueAsDouble() / ElevatorConstants.GEAR_RATIO;
@@ -199,19 +179,39 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE;
     }
 
+    /*********************************
+     * Command Factories
+     ********************************/
+    public Command setPositionCommand(double position) {
+        return run(() -> setPosition(position))
+                .withName("SetElevatorPosition");
+    }
+
+    public Command incrementUp() {
+        return run(() -> incrementPosition(INCREMENT))
+                .withName("IncrementElevatorUp");
+    }
+
+    public Command incrementDown() {
+        return run(() -> incrementPosition(-INCREMENT))
+                .withName("IncrementElevatorDown");
+    }
 
     @Override
     public void periodic() {
+
+
         // Mode and State Information
         Logger.recordOutput("Elevator/Mode", currentMode.toString());
-        Logger.recordOutput("Elevator/Position/Current", getPosition());
-        Logger.recordOutput("Elevator/Position/Target", targetPosition);
-        Logger.recordOutput("Elevator/AtTarget", isAtPosition(targetPosition));
+        SmartDashboard.putNumber("Elevator/Position/Current", getPosition());
+        SmartDashboard.putNumber("Elevator/Position/Target", targetPosition);
+        SmartDashboard.putBoolean("Elevator/AtTarget", isAtPosition(targetPosition));
         // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wrist.inSafePosition());
         // Motor Telemetry
         Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
         Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Elevator/Velocity", elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
+        Logger.recordOutput("Elevator/Velocity",
+                elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
 
         // Log the applied motor voltage
         Logger.recordOutput("Elevator/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
@@ -225,21 +225,3 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
     }
 }
-
-
-/* TODO Test if these are needed and then delete
- * public Command incrementUpCommand() {
-        return run(() -> incrementPosition(0.02))
-                .withName("IncrementElevatorUp");
-    }
-
-    public Command decrementDownCommand() {
-        return run(() -> incrementPosition(-0.02))
-                .withName("IncrementElevatorDown");
-    }
-
-        public Command setPositionCommand(double position) {
-        return run(() -> setPosition(position))
-                .withName("SetElevatorPosition");
-    }
- */

@@ -3,8 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.elevator.ElevatorConstants;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPosition;
 import frc.robot.subsystems.wrist.WristSubsystem;
@@ -24,7 +22,14 @@ public class ElevatorCommands {
      * Creates a command to increment elevator up with fine control
      */
     public Command incrementUpNoCheck() {
-        return elevator.runOnce(() -> elevator.incrementPosition(true))
+        return elevator.runOnce(() -> elevator.incrementPosition(true)) 
+        // This was probably called the wrong `incrementPosition` method 
+            .withName("ElevatorIncrement(up)");
+    }
+
+    public Command incrementUpVersion2() {
+        return elevator.runOnce(() -> elevator.incrementPosition(ElevatorSubsystem.INCREMENT)) 
+        // This was probably called the wrong `incrementPosition` method 
             .withName("ElevatorIncrement(up)");
     }
 
@@ -33,7 +38,14 @@ public class ElevatorCommands {
      */
     public Command incrementDownNoCheck() {
         return elevator.runOnce(() -> elevator.incrementPosition(false))
+        // This was probably called the wrong `incrementPosition` method
             .withName("ElevatorIncrement(down)");
+    }
+
+    public Command incrementDownVersion2() {
+        return elevator.runOnce(() -> elevator.incrementPosition(-ElevatorSubsystem.INCREMENT)) 
+        // This was probably called the wrong `incrementPosition` method 
+            .withName("ElevatorIncrement(up)");
     }
 
     /**
@@ -117,6 +129,9 @@ public class ElevatorCommands {
         return setPositionNoCheck(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
     }
 
+    public Command setScoreAlgaeNoCheck() {
+        return setPositionNoCheck(ElevatorPosition.ScoreAlgae.getPosition()).withName("SafeMoveElevatorToScoreAlgaePose");
+    }
 
     // Preset position commands - safe movement
     public Command setHome() {
