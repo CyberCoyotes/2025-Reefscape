@@ -1,13 +1,13 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.vision.LimelightHelpers;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import com.ctre.phoenix6.swerve.SwerveRequest;
+import frc.robot.subsystems.vision.LimelightHelpers;
 
 public class AlignToReefTagRelative extends Command {
     private PIDController xController, yController, rotController;
@@ -18,10 +18,23 @@ public class AlignToReefTagRelative extends Command {
     // Create SwerveRequest for robot-centric control
     private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric();
 
-    private double X_REEF_ALIGNMENT_P = 0.1;
+    // TODO: Tune these values
+    /** 
+     * represent proportional control constants for the X, Y, and rotational axes, respectively. 
+     * These constants are used in proportional control algorithms to adjust the system's position 
+     * and orientation based on the error between the current state 
+     * and the desired setpoint. */
+    private double X_REEF_ALIGNMENT_P = 0.1; 
     private double Y_REEF_ALIGNMENT_P = 0.1;
     private double ROT_REEF_ALIGNMENT_P = 0.1;
-    private double X_SETPOINT_REEF_ALIGNMENT = 0.0;
+
+    /**
+     * Define the desired setpoints for the X, Y, and rotational axes. 
+     * These setpoints represent the target positions and 
+     * orientation that the system aims to achieve during the alignment process.
+     */
+    // TODO: Test these values
+    private double X_SETPOINT_REEF_ALIGNMENT = 1.0; // One meter away from the target?
     private double Y_SETPOINT_REEF_ALIGNMENT = 0.0;
     private double ROT_SETPOINT_REEF_ALIGNMENT = 0.0;
     private double X_TOLERANCE_REEF_ALIGNMENT = 0.1;

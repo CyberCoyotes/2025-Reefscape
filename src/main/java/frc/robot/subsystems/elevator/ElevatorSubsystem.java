@@ -111,10 +111,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
 
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
-        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
+        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
 
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
+        followerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply configurations

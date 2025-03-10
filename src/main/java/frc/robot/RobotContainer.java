@@ -157,11 +157,15 @@ private final double SPEED_LIMIT = 0.65;
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
 
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
-        // Add a slow motion command for the driver to use when button held
-        driverController.b().onTrue(new AlignToReefTagRelative(true, drivetrain));
-
-        // driverController.povUp().onTrue(wristCommands.setL4());
-        // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
+        
+        // TODO Test Left alignment to reef relative
+        driverController.b().and
+            (driverController.leftBumper()).whileTrue(new AlignToReefTagRelative(false, drivetrain));
+        
+        // TODO Test Right alignment to reef relative
+        driverController.b().and
+            (driverController.rightBumper()).whileTrue(new AlignToReefTagRelative(true, drivetrain)); 
+            
         driverController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
         driverController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
         driverController.povLeft().whileTrue(wristCommands.incrementOut());
