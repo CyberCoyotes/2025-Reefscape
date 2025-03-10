@@ -37,6 +37,8 @@ import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
+@SuppressWarnings("unused")
+
 public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -61,12 +63,13 @@ public class RobotContainer {
 
    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
-    // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
+//    private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
+private final double SPEED_LIMIT = 0.65;
 
     // kSpeedAt12Volts desired top speed
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); 
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)* SPEED_LIMIT; // 3 meters per second max speed
     // 3/4 of a rotation per second max angular velocity
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); 
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond) * SPEED_LIMIT; 
     
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
@@ -141,7 +144,8 @@ public class RobotContainer {
 
         // Resets the gyro
          driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); 
-        
+        driverController.back().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+
         // driverController.back().onTrue((/* */));
 
         driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
@@ -164,10 +168,14 @@ public class RobotContainer {
         // Add a slow motion command for the driver to use when button held
         // driverController.b().onTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.35));
 
-        // driverController.povUp().whileTrue(elevatorCommands.incrementUpCommand());
-        // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
+        // Use the .b() button AND the .povLeft() button
         driverController.povLeft().onTrue(vision.createAlignToTagCommand());
         driverController.povRight().onTrue(vision.createFullAlignToTagCommand());
+
+        driverController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
+        driverController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
+        driverController.povLeft().whileTrue(wristCommands.incrementOut());
+        driverController.povRight().whileTrue(wristCommands.incrementIn());
 
         /***********************************************
          ** Operator Controls **
@@ -175,6 +183,8 @@ public class RobotContainer {
 
          // Rotates the servo to a specific angle when the start button is pressed
         operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
+        operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
+
 
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
