@@ -2,10 +2,6 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-// REFERENCES
-// https://claude.ai/chat/63cd46e4-43a0-4c47-a3bb-63f6300f5ae7
-// Team Wavelength
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -27,16 +23,14 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
-import frc.robot.commands.TagAlignmentCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.vision.CameraSubsystem;
-import frc.robot.subsystems.vision.VisionFactory;
 import frc.robot.subsystems.wrist.WristSubsystem;
-import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 @SuppressWarnings("unused")
 
@@ -55,19 +49,22 @@ public class RobotContainer {
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
-    
+
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
-   private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+    private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
-//    private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
-private final double SPEED_LIMIT = 0.65;
+    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+
+    // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
+    private final double SPEED_LIMIT = 0.65;
 
     // kSpeedAt12Volts desired top speed
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond)* SPEED_LIMIT; // 3 meters per second max speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * SPEED_LIMIT; // 3 meters per second
+                                                                                                // max speed
     // 3/4 of a rotation per second max angular velocity
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond) * SPEED_LIMIT; 
-    
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond) * SPEED_LIMIT;
+
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
@@ -86,43 +83,40 @@ private final double SPEED_LIMIT = 0.65;
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final LimelightVisionSubsystem visionSubsystem;
-
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(
-            autoFactory,
-            drivetrain,
-            endEffector,
-            elevator,
-            commandGroups,
-            effectorCommands);
-
-        // Initialize vision subsystem
-        visionSubsystem = VisionFactory.createLimelightVisionSubsystem("limelight", drivetrain);
+                autoFactory,
+                drivetrain,
+                endEffector,
+                elevator,
+                commandGroups,
+                effectorCommands);
 
         configureBindings();
         configureAutoRoutines();
     }
 
-
     private void configureAutoRoutines() {
-        
-       autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
-       //autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
+
+        autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
+        // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         autoChooser.addRoutine("StartLeft->ScoreAL2", autoRoutines::STAL2);
 
-       //autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2", autoRoutines::STJtoAL1AL2);
-       autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
-       //autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2", autoRoutines::SBEtoBL12);
-       //autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2", autoRoutines::SBEtoBL1BL2);
-       autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
+        // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
+        // autoRoutines::STJtoAL1AL2);
+        autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
+        // autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2",
+        // autoRoutines::SBEtoBL12);
+        // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
+        // autoRoutines::SBEtoBL1BL2);
+        autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
 
-       //autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-      // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
-      // autoChooser.addRoutine("STJ-L1", autoRoutines::STJL1);
-       SmartDashboard.putData("Autonomous", autoChooser);
+        // autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
+        // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
+        // autoChooser.addRoutine("STJ-L1", autoRoutines::STJL1);
+        SmartDashboard.putData("Autonomous", autoChooser);
 
     }
 
@@ -144,57 +138,37 @@ private final double SPEED_LIMIT = 0.65;
         /***********************************************
          ** Driver Controls **
          ***********************************************/
-
-        // Resets the gyro
-         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric())); 
+        // Testing purposes
         driverController.back().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        // driverController.back().onTrue((/* */));
+        // Resets the gyro
+        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor()); // (+)
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral()); //(+)
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
+        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
-        // Vision alignment commands using triggers
-        driverController.leftTrigger().whileTrue(
-            TagAlignmentCommands.alignToTagLeftSide(
-                drivetrain,
-                visionSubsystem,
-                () -> -driverController.getLeftY() * MaxSpeed,
-                () -> -driverController.getLeftX() * MaxSpeed,
-                () -> -driverController.getRightX() * MaxAngularRate
-            )
-        );
-        
-        driverController.rightTrigger().whileTrue(
-            TagAlignmentCommands.alignToTagRightSide(
-                drivetrain,
-                visionSubsystem,
-                () -> -driverController.getLeftY() * MaxSpeed,
-                () -> -driverController.getLeftX() * MaxSpeed,
-                () -> -driverController.getRightX() * MaxAngularRate
-            )
-        );
+        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
+        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+
+        /*
+         ** Y**
+         ** X** **B**
+         ** A**
+         */
 
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
-
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
-        
-        // Button B for center alignment on AprilTag
-        driverController.b().whileTrue(
-            TagAlignmentCommands.centerOnTag(
-                drivetrain,
-                visionSubsystem,
-                () -> -driverController.getLeftY() * MaxSpeed,
-                () -> -driverController.getLeftX() * MaxSpeed,
-                () -> -driverController.getRightX() * MaxAngularRate
-            )
-        );
+        // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        // driverController.povUp().onTrue(wristCommands.setL4());
-        // driverController.povDown().whileTrue(elevatorCommands.decrementDownCommand());
-        driverController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
-        driverController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
+        // Proper AND button logic
+        driverController.b().and(driverController.x())
+                .onTrue(wristCommands.setIntakeCoral());
+        driverController.b().and(driverController.y())
+                .onTrue(elevatorCommands.setIntakeCoral());
+
+        driverController.povUp().whileTrue(elevatorCommands.incrementUp());
+        driverController.povDown().whileTrue(elevatorCommands.incrementDown());
         driverController.povLeft().whileTrue(wristCommands.incrementOut());
         driverController.povRight().whileTrue(wristCommands.incrementIn());
 
@@ -202,35 +176,28 @@ private final double SPEED_LIMIT = 0.65;
          ** Operator Controls **
          ***********************************************/
 
-         // Rotates the servo to a specific angle when the start button is pressed
+        // Rotates the servo to a specific angle when the start button is pressed
         operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
         operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
-
 
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
         operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
         operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
-        
+
+        // Algae Commands
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
-
         operatorController.a().onTrue(commandGroups.moveToScoreAlgaeGroup(wristCommands, elevatorCommands));
-        // Toggle Limelight LEDs
-        operatorController.b().onTrue(VisionFactory.createToggleLEDsCommand(visionSubsystem));
 
-        operatorController.povUp().whileTrue(elevator.incrementUp()); // Directly from the subsystem
-        operatorController.povDown().whileTrue(elevator.incrementDown()); // Directly from the subsystem
-        // operatorController.povUp().whileTrue(elevatorCommands.incrementUpVersion2()); //
-        // operatorController.povDown().whileTrue(elevatorCommands.incrementDownVersion2()); //
-        
+        // Manual Elevator Commands
+        operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
+        operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
+
+        // Manual Wrist Commands
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());
-
-        // Display vision status on SmartDashboard
-        SmartDashboard.putBoolean("Vision Enabled", true);
-        SmartDashboard.putString("Current Tag", "None");
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -240,6 +207,5 @@ private final double SPEED_LIMIT = 0.65;
         return autoChooser.selectedCommand();
 
     } // End of getAutonomousCommand
-
 
 } // End of RobotContainer
