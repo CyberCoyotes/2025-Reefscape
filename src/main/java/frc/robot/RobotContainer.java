@@ -159,18 +159,17 @@ public class RobotContainer {
         driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-        /*
-         ** Y**
-         ** X** **B**
-         ** A**
-         */
-
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        // Proper AND button logic
+        driverController.b().and(driverController.leftBumper())
+                .whileTrue(vision.createAlignToTagCommand());
+        
+        driverController.b().and(driverController.rightBumper())
+                .whileTrue(vision.createFullAlignToTagCommand());
+
         driverController.b().and(driverController.x())
                 .onTrue(wristCommands.setIntakeCoral());
         driverController.b().and(driverController.y())
