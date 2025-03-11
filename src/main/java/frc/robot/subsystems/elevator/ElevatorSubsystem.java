@@ -31,10 +31,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         HOME(0.00),
         L1(0.00),
         SCORE_ALGAE(0.50),
-        L2(0.45), // was 0.90
+        L2(0.45),
         ALGAE2(1.1),
-        L3(1.85), // was 2.27
-        INTAKE_CORAL(1.93),
+        L3(1.85),
+        INTAKE_CORAL(1.92),
         ALGAE3(2.45),
         L4( 4.7);
 
@@ -112,10 +112,10 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
 
         // Inside configureMotors() method, add to both leadConfig and followerConfig:
-        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
         leadConfig.CurrentLimits.StatorCurrentLimit = 40; // Adjust value based on
 
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = false;
+        followerConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXME Adjust and set to TRUE later
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply configurations
@@ -180,49 +180,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE;
     }
 
-    /*********************************
-     * Command Factories
-     ********************************/
-    public Command setPositionCommand(double position) {
-        return run(() -> setPosition(position))
-                .withName("SetElevatorPosition");
-    }
-
-    public Command incrementUp() {
-        return run(() -> incrementPosition(INCREMENT))
-                .withName("IncrementElevatorUp");
-    }
-
-    public Command incrementDown() {
-        return run(() -> incrementPosition(-INCREMENT))
-                .withName("IncrementElevatorDown");
-    }
-
     @Override
     public void periodic() {
 
-
         // Mode and State Information
-        Logger.recordOutput("Elevator/Mode", currentMode.toString());
         SmartDashboard.putNumber("Elevator/Position/Current", getPosition());
         SmartDashboard.putNumber("Elevator/Position/Target", targetPosition);
         SmartDashboard.putBoolean("Elevator/AtTarget", isAtPosition(targetPosition));
-        // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wrist.inSafePosition());
-        // Motor Telemetry
-        Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Elevator/Velocity",
-                elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
-
-        // Log the applied motor voltage
-        Logger.recordOutput("Elevator/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
-
-        // Log the motor current draw
-        Logger.recordOutput("Elevator/MotorCurrent", elevatorLeader.getSupplyCurrent().getValueAsDouble());
-
-        Logger.recordOutput("Elevator/StatorCurrent", elevatorLeader.getStatorCurrent().getValueAsDouble());
-
-        // Log the target position for debugging
-        // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
+    
     }
 }
