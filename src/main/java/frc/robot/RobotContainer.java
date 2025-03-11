@@ -8,6 +8,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -21,6 +23,7 @@ import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
+import frc.robot.commands.TagAlignmentCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.generated.TunerConstants;
@@ -31,6 +34,7 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.vision.LimelightVisionSubsystem;
 
 @SuppressWarnings("unused")
 
@@ -50,13 +54,16 @@ public class RobotContainer {
 
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
 
-    // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
+    private final TagAlignmentCommands alignCommands = new TagAlignmentCommands();
 
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
     private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
-    // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private final LimelightVisionSubsystem vision = new LimelightVisionSubsystem("limelight", drivetrain);
+
     private final double SPEED_LIMIT = 0.65;
 
     // kSpeedAt12Volts desired top speed
@@ -80,8 +87,6 @@ public class RobotContainer {
 
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
-
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
 
@@ -134,6 +139,13 @@ public class RobotContainer {
                         .withRotationalRate(-driverController.getRightX() * MaxAngularRate)
 
                 ));
+        
+        // Suppliers for driver inputs - these are used by the alignment commands
+        // while allowing manual override
+        DoubleSupplier xSpeedSupplier = () -> -driverController.getLeftY();
+        DoubleSupplier ySpeedSupplier = () -> -driverController.getLeftX();
+        DoubleSupplier rotationSupplier = () -> -driverController.getRightX();
+        
 
         /***********************************************
          ** Driver Controls **
@@ -161,7 +173,11 @@ public class RobotContainer {
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        // Proper AND button logic
+        driverController.b().and(driverController.leftBumper())
+                .onTrue(alignCommands.alignToTagLeftSide(drivetrain, vision, xSpeedSupplier, ySpeedSupplier, rotationSupplier));
+        driverController.b().and(driverController.rightBumper())
+                .onTrue(alignCommands.alignToTagRightSide(drivetrain, vision, xSpeedSupplier, ySpeedSupplier, rotationSupplier));
+
         driverController.b().and(driverController.x())
                 .onTrue(wristCommands.setIntakeCoral());
         driverController.b().and(driverController.y())
