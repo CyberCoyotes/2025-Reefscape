@@ -49,8 +49,9 @@ private final AutoFactory m_factory;
                                 STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                STA.atTime("Load").onTrue(m_effector.intakeCoralNoSensor().withTimeout(2.0));
+                // TODO Confirm. Previously was using Subsystem method-commands
+                STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0)); // TODO check
+                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
 
@@ -73,7 +74,7 @@ private final AutoFactory m_factory;
                 STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL2());
                 STA.atTime("scoreL2").onTrue(m_groupCommand.autoScoreL2());
 
-                STA.atTime("Load").onTrue(m_effector.intakeCoralNoSensor().withTimeout(2.0));
+                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
 
@@ -149,7 +150,7 @@ private final AutoFactory m_factory;
                                 STJ2.cmd()
 
                         ));
-                STJ.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -166,7 +167,7 @@ private final AutoFactory m_factory;
                                 STK2.cmd()
 
                         ));
-                STK.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
+                STK.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -183,7 +184,7 @@ private final AutoFactory m_factory;
                                 STL2.cmd()
 
                         ));
-                STL.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
+                STL.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -239,7 +240,7 @@ private final AutoFactory m_factory;
                                 SBC2.cmd()
 
                         ));
-                SBC.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
+                SBC.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -256,7 +257,7 @@ private final AutoFactory m_factory;
                                 SBD2.cmd()
 
                         ));
-                SBD.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
+                SBD.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -342,7 +343,7 @@ private final AutoFactory m_factory;
 
                         ));
 
-                TwoMetersT.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
+                TwoMetersT.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -421,10 +422,10 @@ private final AutoFactory m_factory;
                                         CSA.cmd(),
                                         m_drivetrain.stop().withTimeout(1.0),
                                         CSA2.cmd()));
-                STJ.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                STJ2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
-                CSA.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSA2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -447,10 +448,10 @@ private final AutoFactory m_factory;
                                         CSA2.cmd()
 
                                 ));
-                STJ.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                STJ2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
-                CSA.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSA2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine STJtoAL1AL2() {
@@ -478,12 +479,12 @@ private final AutoFactory m_factory;
                                         CSA4.cmd()
 
                                 ));
-                STJ.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                STJ2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
-                CSA.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSA2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
-                CSA3.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSA4.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSA3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSA4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -504,10 +505,10 @@ private final AutoFactory m_factory;
                                 CSB.cmd(),
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
-                SBE.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                SBE2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
-                CSB.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSB2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
+                SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -528,10 +529,10 @@ private final AutoFactory m_factory;
                                 CSB.cmd(),
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
-                SBE.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                SBE2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
-                CSB.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSB2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
+                SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine SBEtoBL1BL2() {
@@ -558,12 +559,12 @@ private final AutoFactory m_factory;
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB4.cmd()
                                 ));
-                SBE.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                SBE2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
-                CSB.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSB2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
-                CSB3.atTime("scoreL1").onTrue(m_effector.intakeCoralNoSensor().withTimeout(1.0));
-                CSB4.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(1.0));
+                SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSB3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                CSB4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
 
@@ -580,8 +581,8 @@ private final AutoFactory m_factory;
                                 MH2.cmd()
 
                         ));
-                MH.atTime("scoreL1").onTrue(m_effector.scoreCoral().withTimeout(1.0));
-                MH2.atTime("Load").onTrue(m_effector.slowCoral().withTimeout(2.0));
+                MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 return routine;
         }
 }
