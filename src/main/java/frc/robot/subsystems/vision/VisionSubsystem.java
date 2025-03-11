@@ -1,28 +1,18 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-// import frc.robot.subsystems.led.LEDState;
-// import frc.robot.subsystems.led.LEDSubsystem;
-
-@SuppressWarnings("unused")
 
 public class VisionSubsystem extends SubsystemBase {
     private final String tableName;
     private final NetworkTable limelightTable;
     private final CommandSwerveDrivetrain drivetrain;
-    // private final LEDSubsystem leds;
-    
-    // NetworkTable entries
-    private final NetworkTableEntry tv; // Whether there are valid targets
-    private final NetworkTableEntry tx; // Horizontal offset
-    private final NetworkTableEntry ty; // Vertical offset
-    private final NetworkTableEntry ta; // Target area
-    private final NetworkTableEntry tid; // AprilTag ID
     
     // Vision processing constants
     private static final double TARGET_LOCK_THRESHOLD = 2.0; // Degrees
@@ -30,47 +20,50 @@ public class VisionSubsystem extends SubsystemBase {
     
     private VisionState currentState = VisionState.NO_TARGET;
     private boolean ledsEnabled = false;
+    
+    // Constants for tag alignment
+    private static final double TAG_LATERAL_OFFSET = 0.20; // 20 cm in meters
+    
+    // New members to track target information
+    private double[] botpose_targetspace = new double[6];
+    private double[] targetpose_robotspace = new double[6];
+    private double distanceToTarget = 0.0;
+    private int lastTagId = -1;
+    
+    // LimelightHelpers instance
+    private LimelightHelpers.PoseEstimate lastPoseEstimate;
 
-    public VisionSubsystem(String tableName, CommandSwerveDrivetrain drivetrain/* , LEDSubsystem leds*/) {
+    public VisionSubsystem(String tableName, CommandSwerveDrivetrain drivetrain) {
         this.tableName = tableName;
         this.drivetrain = drivetrain;
-        // this.leds = leds;
         
         // Initialize NetworkTable
         limelightTable = NetworkTableInstance.getDefault().getTable(tableName);
-        tv = limelightTable.getEntry("tv");
-        tx = limelightTable.getEntry("tx");
-        ty = limelightTable.getEntry("ty");
-        ta = limelightTable.getEntry("ta");
-        tid = limelightTable.getEntry("tid");
         
         // Configure Limelight
         configureLimelight();
-        // setLeds(false);
-        // ledsEnabled = false;
+        setLeds(true);
+        ledsEnabled = true;
     }
 
     private void configureLimelight() {
         // Set to AprilTag pipeline
-        limelightTable.getEntry("pipeline").setNumber(0);
-        setLeds(true); // Turn off LEDs if false
-        ledsEnabled = true;
-
-        // NetworkTableInstance.getDefault().flush();
-
+        LimelightHelpers.setPipelineIndex(tableName, 0);
+        // Only use AprilTags for localization
+        //LimelightHelpers.setLeds(tableName, true);
     }
 
     @Override
     public void periodic() {
         updateVisionState();
-        // updateLEDs();
+        updateTargetInfo();
         logData();
     }
 
     private void updateVisionState() {
-        boolean hasTarget = tv.getDouble(0.0) > 0.5;
-        double horizontalOffset = tx.getDouble(0.0);
-        double area = ta.getDouble(0.0);
+        boolean hasTarget = LimelightHelpers.getTV(tableName);
+        double horizontalOffset = LimelightHelpers.getTX(tableName);
+        double area = LimelightHelpers.getTA(tableName);
 
         if (!hasTarget || area < VALID_TARGET_AREA) {
             currentState = VisionState.NO_TARGET;
@@ -80,37 +73,49 @@ public class VisionSubsystem extends SubsystemBase {
             currentState = VisionState.TARGET_VISIBLE;
         }
     }
+    
+    private void updateTargetInfo() {
+        if (hasTarget()) {
+            // Get the current tag ID
+            lastTagId = (int) LimelightHelpers.getFiducialID(tableName);
+            
+            // Get the pose of the robot relative to the target
+            botpose_targetspace = LimelightHelpers.getBotPose_TargetSpace(tableName);
+            
+            // Get the pose of the target relative to the robot
+            targetpose_robotspace = LimelightHelpers.getTargetPose_RobotSpace(tableName);
+            
+            // Calculate distance to target (using Pythagorean theorem on x and z values)
+            if (targetpose_robotspace.length >= 3) {
+                distanceToTarget = Math.sqrt(
+                    Math.pow(targetpose_robotspace[0], 2) + 
+                    Math.pow(targetpose_robotspace[2], 2)
+                );
+            }
+            
+            // Get the latest pose estimate
+            lastPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(tableName);
+        }
+    }
 
     public void setLeds(boolean enabled) {
         ledsEnabled = enabled;
-        limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1); // 3=force on, 1=force off
+        LimelightHelpers.setLEDMode_ForceOn(tableName);
     }
-
-    /*
-    private void updateLEDs() {
-        if (leds != null) {
-            switch (currentState) {
-                case TARGET_LOCKED:
-                    leds.setState(LEDState.TARGET_LOCKED);
-                    break;
-                case TARGET_VISIBLE:
-                    leds.setState(LEDState.TARGET_VISIBLE);
-                    break;
-                case NO_TARGET:
-                default:
-                    leds.setState(LEDState.NO_TARGET);
-                    break;
-            }
-        }
-    } 
-    */
 
     private void logData() {
         SmartDashboard.putString("Vision/State", currentState.toString());
-        SmartDashboard.putNumber("Vision/TagID", tid.getDouble(0));
-        SmartDashboard.putNumber("Vision/TX", tx.getDouble(0));
-        SmartDashboard.putNumber("Vision/TY", ty.getDouble(0));
-        SmartDashboard.putNumber("Vision/TA", ta.getDouble(0));
+        SmartDashboard.putNumber("Vision/TagID", getTagId());
+        SmartDashboard.putNumber("Vision/TX", LimelightHelpers.getTX(tableName));
+        SmartDashboard.putNumber("Vision/TY", LimelightHelpers.getTY(tableName));
+        SmartDashboard.putNumber("Vision/TA", LimelightHelpers.getTA(tableName));
+        SmartDashboard.putNumber("Vision/DistanceToTarget", distanceToTarget);
+        
+        // Log more detailed pose information
+        if (hasTarget()) {
+            SmartDashboard.putNumberArray("Vision/BotPose_TargetSpace", botpose_targetspace);
+            SmartDashboard.putNumberArray("Vision/TargetPose_RobotSpace", targetpose_robotspace);
+        }
     }
 
     // Getter methods for use in commands
@@ -119,19 +124,79 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     public boolean hasTarget() {
-        return currentState != VisionState.NO_TARGET;
+        return LimelightHelpers.getTV(tableName);
     }
 
     public double getHorizontalOffset() {
-        return tx.getDouble(0.0);
+        return LimelightHelpers.getTX(tableName);
     }
 
     public double getVerticalOffset() {
-        return ty.getDouble(0.0);
+        return LimelightHelpers.getTY(tableName);
     }
 
     public int getTagId() {
-        return (int) tid.getDouble(0);
+        return (int) LimelightHelpers.getFiducialID(tableName);
     }
-
+    
+    public double getDistanceToTarget() {
+        return distanceToTarget;
+    }
+    
+    /**
+     * Calculates a target pose offset for alignment with the current AprilTag
+     * @param isRightSide If true, offsets to the right of the tag. If false, offsets to the left.
+     * @return Transform2d representing the offset to apply to the target pose
+     */
+    public Transform2d calculateTagAlignment(boolean isRightSide) {
+        double offsetX = 0;
+        double offsetY = isRightSide ? TAG_LATERAL_OFFSET : -TAG_LATERAL_OFFSET;
+        
+        return new Transform2d(new Translation2d(offsetX, offsetY), drivetrain.getState().Pose.getRotation());
+    }
+    
+    /**
+     * Returns the current pose of the robot in field coordinates
+     * @return The robot's current pose
+     */
+    public Pose2d getRobotPose() {
+        return drivetrain.getState().Pose;
+    }
+    
+    /**
+     * Gets the pose of the most recently detected AprilTag in field coordinates
+     * @return Pose2d of the tag, or null if no tag is detected
+     */
+    public Pose2d getTagPose() {
+        if (!hasTarget() || lastPoseEstimate == null) {
+            return null;
+        }
+        
+        // Use the pose from the Limelight's PoseEstimate
+        Pose2d robotPose = lastPoseEstimate.pose;
+        
+        // Construct the tag pose by adding the target position relative to the robot
+        // to the robot's position in field space
+        Translation2d tagTranslation = robotPose.getTranslation().plus(
+            new Translation2d(targetpose_robotspace[0], targetpose_robotspace[1])
+                .rotateBy(robotPose.getRotation())
+        );
+        
+        return new Pose2d(tagTranslation, robotPose.getRotation());
+    }
+    
+    /**
+     * Updates the robot's odometry using the AprilTag vision data
+     */
+    public void updateOdometryWithVision() {
+        if (hasTarget() && lastPoseEstimate != null && lastPoseEstimate.tagCount > 0) {
+            // Only update if we have a reliable pose estimate (more than one tag is better)
+            if (lastPoseEstimate.pose != null) {
+                drivetrain.addVisionMeasurement(
+                    lastPoseEstimate.pose,
+                    lastPoseEstimate.timestampSeconds
+                );
+            }
+        }
+    }
 }
