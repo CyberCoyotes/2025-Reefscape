@@ -100,7 +100,7 @@ public class WristSubsystem extends SubsystemBase {
         L2(1.75), 
         L3(1.75),
         L4(4.2), // Verified
-        INTAKE_CORAL(10.0),
+        INTAKE_CORAL(12.25),
         PICK_ALGAE(14.0),
         SCORE_ALGAE(18.0);
 

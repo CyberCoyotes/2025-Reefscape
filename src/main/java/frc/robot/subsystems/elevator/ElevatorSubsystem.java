@@ -30,11 +30,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        ScoreAlgae(0.50),
-        L2(0.45), // was 0.90
-        Algae2(1.1),
-        L3(1.85), // was 2.27
-        Algae3(2.45),
+        SCORE_ALGAE(0.50),
+        L2(0.45),
+        ALGAE2(1.1),
+        L3(1.85),
+        INTAKE_CORAL(1.92),
+        ALGAE3(2.45),
         L4( 4.7);
 
         private final double position;
@@ -179,49 +180,13 @@ public class ElevatorSubsystem extends SubsystemBase {
         return Math.abs(getPosition() - targetPosition) < POSITION_TOLERANCE;
     }
 
-    /*********************************
-     * Command Factories
-     ********************************/
-    public Command setPositionCommand(double position) {
-        return run(() -> setPosition(position))
-                .withName("SetElevatorPosition");
-    }
-
-    public Command incrementUp() {
-        return run(() -> incrementPosition(INCREMENT))
-                .withName("IncrementElevatorUp");
-    }
-
-    public Command incrementDown() {
-        return run(() -> incrementPosition(-INCREMENT))
-                .withName("IncrementElevatorDown");
-    }
-
     @Override
     public void periodic() {
 
-
         // Mode and State Information
-        Logger.recordOutput("Elevator/Mode", currentMode.toString());
         SmartDashboard.putNumber("Elevator/Position/Current", getPosition());
         SmartDashboard.putNumber("Elevator/Position/Target", targetPosition);
         SmartDashboard.putBoolean("Elevator/AtTarget", isAtPosition(targetPosition));
-        // Logger.recordOutput("Elevator/Wrist/SafePose", ()-> wrist.inSafePosition());
-        // Motor Telemetry
-        Logger.recordOutput("Elevator/Voltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
-        Logger.recordOutput("Elevator/Current", elevatorLeader.getStatorCurrent().getValueAsDouble());
-        Logger.recordOutput("Elevator/Velocity",
-                elevatorLeader.getVelocity().getValueAsDouble() / ElevatorConstants.GEAR_RATIO);
-
-        // Log the applied motor voltage
-        Logger.recordOutput("Elevator/AppliedVoltage", elevatorLeader.getMotorVoltage().getValueAsDouble());
-
-        // Log the motor current draw
-        Logger.recordOutput("Elevator/MotorCurrent", elevatorLeader.getSupplyCurrent().getValueAsDouble());
-
-        Logger.recordOutput("Elevator/StatorCurrent", elevatorLeader.getStatorCurrent().getValueAsDouble());
-
-        // Log the target position for debugging
-        // Logger.recordOutput("Elevator/TargetPosition", isAtPosition();
+    
     }
 }
