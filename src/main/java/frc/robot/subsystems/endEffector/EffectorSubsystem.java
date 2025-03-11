@@ -119,6 +119,8 @@ public class EffectorSubsystem extends SubsystemBase {
      * Command Factories
      ******************************/
 
+     /* TODO Testing removal */
+     /*
     public Command intakeCoralBasic() {
         return run(() -> {
             setEffectorOutput(EffectorConstants.INTAKE_CORAL);
@@ -135,7 +137,7 @@ public class EffectorSubsystem extends SubsystemBase {
             }
         };
     }
-    
+     */
     /**
      * Creates a command that runs the effector motor until a coral is detected by
      * the sensor.
@@ -143,6 +145,7 @@ public class EffectorSubsystem extends SubsystemBase {
      *
      * @return A command that runs the effector motor with sensor feedback.
      */
+    /*
     public Command intakeCoralWithSensor() {
 
         return new RunCommand(() -> {
@@ -216,7 +219,7 @@ public class EffectorSubsystem extends SubsystemBase {
             }
         };
     }
-
+    */
     @Override
     public void periodic() {
         // stopIfDetected();

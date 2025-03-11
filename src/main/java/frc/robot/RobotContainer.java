@@ -29,6 +29,7 @@ import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -37,7 +38,7 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 public class RobotContainer {
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
-    private final EndEffectorCommands effectorCommands = new EndEffectorCommands(endEffector);
+    private final EndEffectorCommands endEffectorCommands = new EndEffectorCommands(endEffector);
 
     private final WristSubsystem wrist = new WristSubsystem();
     private final WristCommands wristCommands = new WristCommands(wrist);
@@ -48,7 +49,7 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
-    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffectorCommands);
 
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
@@ -92,7 +93,7 @@ public class RobotContainer {
                 endEffector,
                 elevator,
                 commandGroups,
-                effectorCommands);
+                endEffectorCommands);
 
         configureBindings();
         configureAutoRoutines();
@@ -144,10 +145,10 @@ public class RobotContainer {
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral());
+        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral());
 
-        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
+        driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         /*
@@ -183,8 +184,8 @@ public class RobotContainer {
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
-        operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
-        operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
+        operatorController.leftTrigger().whileTrue(endEffectorCommands.intakeAlgae());
+        operatorController.rightTrigger().whileTrue(endEffectorCommands.scoreAlgae());
 
         // Algae Commands
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
