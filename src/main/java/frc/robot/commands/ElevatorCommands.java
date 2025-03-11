@@ -7,7 +7,6 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPosition;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
-
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
     private final WristSubsystem wrist;
@@ -17,19 +16,11 @@ public class ElevatorCommands {
         this.wrist = wrist;
     }
 
-   
     /**
      * Creates a command to increment elevator up with fine control
      */
     public Command incrementUpNoCheck() {
-        return elevator.runOnce(() -> elevator.incrementPosition(true)) 
-        // This was probably called the wrong `incrementPosition` method 
-            .withName("ElevatorIncrement(up)");
-    }
-
-    public Command incrementUpVersion2() {
-        return elevator.runOnce(() -> elevator.incrementPosition(ElevatorSubsystem.INCREMENT)) 
-        // This was probably called the wrong `incrementPosition` method 
+        return elevator.runOnce(() -> elevator.incrementPosition(true))
             .withName("ElevatorIncrement(up)");
     }
 
@@ -38,14 +29,7 @@ public class ElevatorCommands {
      */
     public Command incrementDownNoCheck() {
         return elevator.runOnce(() -> elevator.incrementPosition(false))
-        // This was probably called the wrong `incrementPosition` method
             .withName("ElevatorIncrement(down)");
-    }
-
-    public Command incrementDownVersion2() {
-        return elevator.runOnce(() -> elevator.incrementPosition(-ElevatorSubsystem.INCREMENT)) 
-        // This was probably called the wrong `incrementPosition` method 
-            .withName("ElevatorIncrement(up)");
     }
 
     /**
@@ -71,17 +55,27 @@ public class ElevatorCommands {
 
     public Command decrementDownCommand() {
         return elevator.run(() -> elevator.incrementPosition(-increment))
-                .withName("IncrementElevatorDown");
+            .withName("IncrementElevatorDown");
     }
 
     /**
      * Creates a command that moves the elevator to a target position
+     * This version does not check wrist position
      */
-    private Command setPositionNoCheck(double targetPosition) {
+    public Command setPositionNoCheck(double targetPosition) {
         return new FunctionalCommand(
-            () -> {},  // No initialization
+            () -> {
+                // Log that we're starting the elevator movement
+                System.out.println("Starting elevator movement to " + targetPosition);
+            },
             () -> elevator.setPosition(targetPosition),
-            interrupted -> {},  // No end behavior needed
+            interrupted -> {
+                if (interrupted) {
+                    System.out.println("Elevator movement interrupted");
+                } else {
+                    System.out.println("Elevator reached position " + targetPosition);
+                }
+            },
             () -> elevator.isAtPosition(targetPosition),
             elevator
         ).withName("MoveElevatorTo(" + targetPosition + ")");
@@ -89,14 +83,14 @@ public class ElevatorCommands {
 
     /**
      * Creates a command that safely moves the elevator to a target position
+     * This improved version will wait for the wrist to move to a safe position
      */
-    // setPosition
-    // 
-    private Command setPosition(double targetPosition) {
-        return Commands.either(
-            setPositionNoCheck(targetPosition),
-            Commands.none(),
-            () -> wrist.inSafePosition()  // Use wrist subsystem's method
+    public Command setPosition(double targetPosition) {
+        return Commands.sequence(
+            // First wait until the wrist is in a safe position
+            Commands.waitUntil(() -> wrist.inSafePosition()),
+            // Then move the elevator
+            setPositionNoCheck(targetPosition)
         ).withName("SafeMoveElevatorTo(" + targetPosition + ")");
     }
 
@@ -118,19 +112,19 @@ public class ElevatorCommands {
     }
 
     public Command setL4NoCheck() {
-        return setPositionNoCheck(ElevatorPosition.L4.getPosition()).withName("MoveElevatorToL3Pose");
+        return setPositionNoCheck(ElevatorPosition.L4.getPosition()).withName("MoveElevatorToL4Pose");
     }
 
     public Command setAlgae2NoCheck() {
-        return setPositionNoCheck(ElevatorPosition.Algae2.getPosition()).withName("SafeMoveElevatorToL5Pose");
+        return setPositionNoCheck(ElevatorPosition.ALGAE2.getPosition()).withName("MoveElevatorToAlgae2Pose");
     }
 
     public Command setAlgae3NoCheck() {
-        return setPositionNoCheck(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
+        return setPositionNoCheck(ElevatorPosition.ALGAE3.getPosition()).withName("MoveElevatorToAlgae3Pose");
     }
 
     public Command setScoreAlgaeNoCheck() {
-        return setPositionNoCheck(ElevatorPosition.ScoreAlgae.getPosition()).withName("SafeMoveElevatorToScoreAlgaePose");
+        return setPositionNoCheck(ElevatorPosition.SCORE_ALGAE.getPosition()).withName("MoveElevatorToScoreAlgaePose");
     }
 
     // Preset position commands - safe movement
@@ -155,11 +149,18 @@ public class ElevatorCommands {
     }
 
     public Command setAlgae2() {
-        return setPositionNoCheck(ElevatorPosition.Algae2.getPosition()).withName("SafeMoveElevatorToL5Pose");
+        return setPosition(ElevatorPosition.ALGAE2.getPosition()).withName("SafeMoveElevatorToAlgae2Pose");
     }
 
     public Command setAlgae3() {
-        return setPositionNoCheck(ElevatorPosition.Algae3.getPosition()).withName("SafeMoveElevatorToL5Pose");
+        return setPosition(ElevatorPosition.ALGAE3.getPosition()).withName("SafeMoveElevatorToAlgae3Pose");
     }
 
+    public Command setScoreAlgae() {
+        return setPosition(ElevatorPosition.SCORE_ALGAE.getPosition()).withName("SafeMoveElevatorToScoreAlgaePose");
+    }
+
+    public Command setIntakeCoral() {
+        return setPosition(ElevatorPosition.INTAKE_CORAL.getPosition()).withName("SafeMoveElevatorToIntakeCoralPose");
+    }   
 }
