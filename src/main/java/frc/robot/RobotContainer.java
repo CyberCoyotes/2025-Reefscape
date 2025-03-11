@@ -2,6 +2,11 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+/*
+ * Reference
+ * https://claude.ai/chat/c551fdd1-0a01-43ef-b372-399e1d7403a8
+ * Adapted from Baby Taz
+ */
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -30,11 +35,14 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.vision.CameraSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 @SuppressWarnings("unused")
 
 public class RobotContainer {
+
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
     private final EndEffectorCommands effectorCommands = new EndEffectorCommands(endEffector);
@@ -47,6 +55,8 @@ public class RobotContainer {
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
+
+    private final VisionSubsystem vision = new VisionSubsystem("limelight", drivetrain);
 
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
 
@@ -81,7 +91,6 @@ public class RobotContainer {
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     public RobotContainer() {
 
@@ -150,18 +159,17 @@ public class RobotContainer {
         driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-        /*
-         ** Y**
-         ** X** **B**
-         ** A**
-         */
-
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        // Proper AND button logic
+        driverController.b().and(driverController.leftBumper())
+                .whileTrue(vision.createAlignToTagCommand());
+        
+        driverController.b().and(driverController.rightBumper())
+                .whileTrue(vision.createFullAlignToTagCommand());
+
         driverController.b().and(driverController.x())
                 .onTrue(wristCommands.setIntakeCoral());
         driverController.b().and(driverController.y())
