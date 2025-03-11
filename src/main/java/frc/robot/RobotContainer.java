@@ -155,12 +155,6 @@ public class RobotContainer {
                 driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
                 driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-                /*
-                 ** Y**
-                 ** X** **B**
-                 ** A**
-                 */
-
                 driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
                 driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
                 driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
