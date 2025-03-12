@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -199,24 +198,24 @@ public Command intakeCoralBasic() {
             effectorCommands.scoreCoralAuto()
         ).withName("AutoScoreL2Sequence");
     }
-    public Command autoScoreL4Group() {
+    public Command autoScoreL4() {
         return Commands.sequence(
             // Set the wrist to L2, i.e. a safe position
             wristCommands.setL2(),//.withTimeout(1.5), // Add timeout to prevent hanging
             // Add small delay to ensure wrist command has started
-            new WaitCommand(0.1),
+            // new WaitCommand(0.1),
             // Move the elevator to L4
             elevatorCommands.setL4NoCheck(),//.withTimeout(2.0),
             // Set wrist to L4
             wristCommands.setL4(),
             // Short delay to stabilize
-            Commands.waitSeconds(0.2),
+            Commands.waitSeconds(0.05), // Changed from 0.2 to 0.05
             // Score the coral with timing appropriate for autonomous
             effectorCommands.scoreCoralAuto(),
             // Move wrist to safe travel position if not already
             wristCommands.setL2(),//.withTimeout(1.5), // Add timeout to prevent hanging
             // Add small delay to ensure wrist command has started
-            Commands.waitSeconds(0.1),
+            // Commands.waitSeconds(0.1),
             // Move the elevator to home position
             elevatorCommands.setHomeNoCheck()
         ).withName("scoreL4Sequence");

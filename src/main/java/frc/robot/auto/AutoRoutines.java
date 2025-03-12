@@ -44,12 +44,11 @@ private final AutoFactory m_factory;
                 routine.active().onTrue(
                         Commands.sequence(
                                 STA.resetOdometry(), // Always reset odometry first
-                                STA.cmd(), // , // Follow the path
+                                STA.cmd(), // Follow the path
                                 m_drivetrain.stop().withTimeout(2.0),
                                 STA2.cmd()
 
                         ));
-                // TODO Confirm. Previously was using Subsystem method-commands
                 STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0)); // TODO check
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
@@ -598,8 +597,9 @@ private final AutoFactory m_factory;
                                 //STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4Group());
+                STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
 
+                // Consider using `m_effectorCommands.intakeSmartCoral().withTimeout(1.0)` after more testing
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
