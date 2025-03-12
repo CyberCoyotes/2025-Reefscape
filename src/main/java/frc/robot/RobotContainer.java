@@ -166,6 +166,7 @@ public class RobotContainer {
                 // TODO Test Right alignment to reef relative
                 driverController.b().and(driverController.rightBumper())
                                 .whileTrue(new AlignToReefTagRelative(true, drivetrain));
+                                
                 driverController.b().and(driverController.x())
                                 .onTrue(wristCommands.setIntakeCoral());
                 driverController.b().and(driverController.y())
