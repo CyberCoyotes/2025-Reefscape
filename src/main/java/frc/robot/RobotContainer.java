@@ -140,7 +140,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
         // Testing purposes
-        driverController.back().onTrue(commandGroups.autoScoreL4Group());
+        driverController.back().onTrue(commandGroups.autoScoreL4());
 
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
