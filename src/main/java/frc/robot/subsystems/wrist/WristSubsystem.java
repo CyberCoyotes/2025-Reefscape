@@ -16,25 +16,6 @@ public class WristSubsystem extends SubsystemBase {
     private final TalonFX wristMotor;
     private final MotionMagicVoltage motionMagic;
 
-    // Configuration constants
-    private static final double GEAR_RATIO = 80.0;
-    private static final double REVERSE_LIMIT = 0.0; // In rotations
-    private static final double FORWARD_LIMIT = 20.0; // In rotations
-    private static final double INCREMENT = 0.50;
-    private static final double TOLERANCE = 0.02; // Position Tolerance in rotations
-    private static final double VELOCITY = 120.0; // Motion Magic rotations per second
-    private static final double ACCELERATION = 120.0; // Motion Magic rotations per second squared
-    private static final double JERK = 300.0; // Motion Magic rotations per second cubed
-
-    private static final double kP = 10.0;
-    private static final double kI = 0.0;
-    private static final double kD = 0.0;
-    private static final double kV = 0.0;
-    private static final double kS = 0.0;
-    private static final double kG = 0.05;
-
-    // END of Configuration constants
-
     private double targetPosition = 0.0;
     private boolean hasBeenReset = false;
 
@@ -49,28 +30,28 @@ public class WristSubsystem extends SubsystemBase {
     private void configureMotor() {
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        // Configure Motion Magic and PID
-        config.Slot0.kP = kP;
-        config.Slot0.kI = kI;
-        config.Slot0.kD = kD;
-        config.Slot0.kV = kV;
-        config.Slot0.kS = kS;
-        config.Slot0.kG = kG;
+        // Configure Motion Magic and PID using constants
+        config.Slot0.kP = WristConstants.Slot0.kP;
+        config.Slot0.kI = WristConstants.Slot0.kI;
+        config.Slot0.kD = WristConstants.Slot0.kD;
+        config.Slot0.kV = WristConstants.Slot0.kV;
+        config.Slot0.kS = WristConstants.Slot0.kS;
+        config.Slot0.kG = WristConstants.Slot0.kG;
         config.Slot0.GravityType = com.ctre.phoenix6.signals.GravityTypeValue.Arm_Cosine;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = VELOCITY;
-        config.MotionMagic.MotionMagicAcceleration = ACCELERATION;
-        config.MotionMagic.MotionMagicJerk = JERK;
+        config.MotionMagic.MotionMagicCruiseVelocity = WristConstants.VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = WristConstants.ACCELERATION;
+        config.MotionMagic.MotionMagicJerk = WristConstants.JERK;
 
         // Configure soft limits
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_LIMIT;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = WristConstants.FORWARD_LIMIT;
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_LIMIT;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = WristConstants.REVERSE_LIMIT;
 
         // Configure current limits
-        config.CurrentLimits.SupplyCurrentLimit = 40;
-        config.CurrentLimits.SupplyCurrentLimitEnable = false;
+        config.CurrentLimits.SupplyCurrentLimit = WristConstants.SUPPLY_CURRENT_LIMIT;
+        config.CurrentLimits.SupplyCurrentLimitEnable = WristConstants.ENABLE_CURRENT_LIMIT;
 
         // Set brake mode
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -94,15 +75,15 @@ public class WristSubsystem extends SubsystemBase {
         * SCORE ALGAE was previously 19.0
         */
 
-        START(0.0), 
-        STOWED(0.0),
-        L1(0.5),
-        L2(1.75), 
-        L3(1.75),
-        L4(4.2), // Verified
-        INTAKE_CORAL(12.25),
-        PICK_ALGAE(14.0),
-        SCORE_ALGAE(18.0);
+        START(WristConstants.Positions.START), 
+        STOWED(WristConstants.Positions.STOWED),
+        L1(WristConstants.Positions.L1),
+        L2(WristConstants.Positions.L2), 
+        L3(WristConstants.Positions.L3),
+        L4(WristConstants.Positions.L4),
+        INTAKE_CORAL(WristConstants.Positions.INTAKE_CORAL),
+        PICK_ALGAE(WristConstants.Positions.PICK_ALGAE),
+        SCORE_ALGAE(WristConstants.Positions.SCORE_ALGAE);
 
         private final double rotations;
 
@@ -114,7 +95,6 @@ public class WristSubsystem extends SubsystemBase {
             return rotations;
         }
     }
-
 
     public void resetWrist() {
         wristMotor.setPosition(0.0);
@@ -133,12 +113,12 @@ public class WristSubsystem extends SubsystemBase {
 
     public void incrementOut() {
         // Using CTRE Forward Limits already
-        setPosition(getPosition() + INCREMENT);
+        setPosition(getPosition() + WristConstants.INCREMENT);
     }
 
     public void incrementIn() {
         // Using CTRE Reverse Limits already
-        setPosition(getPosition() - INCREMENT);
+        setPosition(getPosition() - WristConstants.INCREMENT);
     }
 
     public boolean atPosition(double targetRotations, double toleranceRotations) {
@@ -149,7 +129,6 @@ public class WristSubsystem extends SubsystemBase {
     public boolean inSafePosition() {
         return getPosition() >= WristPositions.L2.getRotations();
     }
-
 
     @Override
     public void periodic() {
@@ -162,30 +141,18 @@ public class WristSubsystem extends SubsystemBase {
         SmartDashboard.putBoolean("Wrist/Reset Status", hasBeenReset);
         SmartDashboard.putNumber("Wrist/Error (rot)", Math.abs(getPosition() - targetPosition));
 
-        // For Tuning
-        SmartDashboard.putNumber("Wrist/kP", kP);
-        SmartDashboard.putNumber("Wrist/kI", kI);
-        SmartDashboard.putNumber("Wrist/kD", kD);
-        SmartDashboard.putNumber("Wrist/kV", kV);
-        SmartDashboard.putNumber("Wrist/kS", kS);
-        SmartDashboard.putNumber("Wrist/kG", kG);
-        SmartDashboard.putNumber("Wrist/Motion Magic Velocity", VELOCITY);
-        SmartDashboard.putNumber("Wrist/Motion Magic Acceleration", ACCELERATION);
-        SmartDashboard.putNumber("Wrist/Motion Magic Jerk", JERK);
-        SmartDashboard.putNumber("Wrist/ForwardLimit", FORWARD_LIMIT);
-        SmartDashboard.putNumber("Wrist/Increment", INCREMENT);
+        // For Tuning - Now referencing the constants
+        SmartDashboard.putNumber("Wrist/kP", WristConstants.Slot0.kP);
+        SmartDashboard.putNumber("Wrist/kI", WristConstants.Slot0.kI);
+        SmartDashboard.putNumber("Wrist/kD", WristConstants.Slot0.kD);
+        SmartDashboard.putNumber("Wrist/kV", WristConstants.Slot0.kV);
+        SmartDashboard.putNumber("Wrist/kS", WristConstants.Slot0.kS);
+        SmartDashboard.putNumber("Wrist/kG", WristConstants.Slot0.kG);
+        SmartDashboard.putNumber("Wrist/Motion Magic Velocity", WristConstants.VELOCITY);
+        SmartDashboard.putNumber("Wrist/Motion Magic Acceleration", WristConstants.ACCELERATION);
+        SmartDashboard.putNumber("Wrist/Motion Magic Jerk", WristConstants.JERK);
+        SmartDashboard.putNumber("Wrist/ForwardLimit", WristConstants.FORWARD_LIMIT);
+        SmartDashboard.putNumber("Wrist/Increment", WristConstants.INCREMENT);
 
-        /* 
-        // For Telemetry logging
-        Logger.recordOutput("Wrist/Position", getPosition());
-        Logger.recordOutput("Wrist/Target", targetPosition);
-        Logger.recordOutput("Wrist/Reset", hasBeenReset);
-        Logger.recordOutput("Wrist Error (deg)", Math.abs(getPosition() - targetPosition));
-        Logger.recordOutput("Wrist/Voltage", wristMotor.getMotorVoltage().getValue());
-        Logger.recordOutput("Wrist/Position", wristMotor.getPosition().getValue());
-        Logger.recordOutput("Wrist/Stator Current", wristMotor.getStatorCurrent().getValue());
-        Logger.recordOutput("Wrist/Safe for Elevator",safeForElevator);
-         */
     }
-
 }

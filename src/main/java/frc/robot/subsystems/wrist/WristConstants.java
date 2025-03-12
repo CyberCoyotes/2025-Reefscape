@@ -11,40 +11,41 @@ This means that when the encoder reads "0", the actual position of the mechanism
  */
 public final class WristConstants {
     // CAN ID and hardware config
-
-    // public static final double MAGNET_ENCODER_OFFSET = 0.16064453125; // From
-    // Phoenix Tuner X
-
-    // public static final double GEAR_RATIO = 5.0; // Determine the actual gear
-    // ratio; // 50
-    // public static final double ENCODER_TO_MECHANISM_RATIO = 1.0;
+    // If you need to add CAN ID here, uncomment and set value
+    // public static final int WRIST_MOTOR_CAN_ID = 0; 
 
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 40.0;
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
-
-    public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
+    public static final boolean ENABLE_CURRENT_LIMIT = false;
 
     // Configuration constants
     public static final double GEAR_RATIO = 80.0;
     public static final double REVERSE_LIMIT = 0.0; // In rotations
     public static final double FORWARD_LIMIT = 20.0; // In rotations
-    public static final double INCREMENT = 1.00;
+    public static final double INCREMENT = 0.50; // Using the value from subsystem as it's likely more tested
     public static final double TOLERANCE = 0.02; // Position Tolerance in rotations
-    public static final double VELOCITY = 80.0; // Motion Magic rotations per second
-    public static final double ACCELERATION = 80.0; // Motion Magic rotations per second squared
+
+    // Motion Magic parameters
+    public static final double VELOCITY = 150.0; // TODO Increased from 120.0 rotations per second
+    public static final double ACCELERATION = 200.0; // TODO Increased from 120.0 rotations per second squared
     public static final double JERK = 300.0; // Motion Magic rotations per second cubed
 
+    // Gravity compensation
+    public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
+
+    // PID and FF Gains for primary use (Slot0)
     public static final class Slot0 {
-    public static final double kP = 8.0;
-    public static final double kI = 0.0;
-    public static final double kD = 0.0;
-    public static final double kV = 0.0;
-    public static final double kS = 0.0;
-    public static final double kG = 0.05;
+        public static final double kP = 10.0; // Using the higher value from subsystem
+        public static final double kI = 0.0;
+        public static final double kD = 0.0;
+        public static final double kV = 0.12; // TODO Added from Slot1 for better feedforward
+        public static final double kS = 0.25; // TODO Added from Slot1 for better static friction compensation
+        public static final double kG = 0.30; // TODO Increased from 0.05 based on Slot1 value
+        public static final double kA = 0.01; // TODO Added from Slot1 for better acceleration feedforward
     }
 
-    // PID and FF Gains
+    // Alternative PID and FF Gains (Slot1) - Keeping for reference or alternative tuning
     public static final class Slot1 {
         public static final double kP = 5.0;
         public static final double kI = 0.0;
@@ -57,25 +58,31 @@ public final class WristConstants {
 
     // Named Motor positions
     public static final class Positions {
-
+        /* 
+        * Physically the end effector of the wrist should be resting against the elevator at the start of the match (START)
+        * This position should not be used during a match after the start.
+        * The STOWED position is currently not in use, but could be used to stow the wrist for transport as it was with previous configiaration
+        * L1 is not a position currently in use, but could be used with testing differet scoring heights
+        * L2 was set to 2.15 with the previous configuration
+        * L3 should be the same as L2
+        * L4 Approximately 6.0 and found to be near vertical in classroom
+        * INTAKE CORAL is a new pose and estimate between L4 and PICK ALGAE 10.0
+        * PICK ALGAE was previously 14.0 
+        * SCORE ALGAE was previously 19.0
+        */
+        
+        public static final double START = 0.0;
+        public static final double STOWED = 0.0;
         public static final double SAFE = 0.26;
         public static final double LOAD_CORAL = 0.0;
+        public static final double L1 = 0.5; // From WristPositions in subsystem
+        public static final double L2 = 1.75; // From WristPositions in subsystem
+        public static final double L3 = 1.75; // From WristPositions in subsystem
+        public static final double L4 = 4.2; // From WristPositions in subsystem
         public static final double GRAB_ALGAE = 0.40;
-        public static final double L1 = 0.05;
-        public static final double L2 = 0.10; // 0.20
-        public static final double L3 = 0.30;
-        public static final double L4 = 0.40;
-
-    }
-
-    public static final class EncoderPose {
-        public static final double SAFE = 0.26;
-        public static final double LOAD_CORAL = 0.0;
-        public static final double GRAB_ALGAE = 0.40;
-        public static final double L1 = 0.05;
-        public static final double L2 = 0.20;
-        public static final double L3 = 0.30;
-        public static final double L4 = 0.40;
+        public static final double INTAKE_CORAL = 12.25; // From WristPositions in subsystem
+        public static final double PICK_ALGAE = 14.0; // From WristPositions in subsystem
+        public static final double SCORE_ALGAE = 18.0; // From WristPositions in subsystem
     }
 }
 
