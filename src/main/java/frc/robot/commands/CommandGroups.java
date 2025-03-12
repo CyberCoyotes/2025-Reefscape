@@ -147,7 +147,7 @@ public class CommandGroups {
     }
 
     // FIXME: Test Implement this method
-    public Command intakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
+    public Command moveToIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
         return Commands.sequence(
 
         // First check if wrist needs to be moved to safe position

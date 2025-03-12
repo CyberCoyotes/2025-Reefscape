@@ -140,7 +140,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
         // Testing purposes
-        driverController.back().onTrue(commandGroups.autoScoreL4());
+        driverController.back().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
 
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -158,8 +158,8 @@ public class RobotContainer {
 
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
-        driverController.povLeft().whileTrue(wristCommands.incrementOut());
-        driverController.povRight().whileTrue(wristCommands.incrementIn());
+        driverController.povRight().whileTrue(wristCommands.incrementOut());
+        driverController.povLeft().whileTrue(wristCommands.incrementIn());
 
         /***********************************************
          ** Operator Controls **
@@ -178,16 +178,16 @@ public class RobotContainer {
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
         operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.b().onTrue(commandGroups.intakeCoral(wristCommands, elevatorCommands, wrist));
-        operatorController.b().onTrue(commandGroups.intakeBasicCoral(wristCommands, elevatorCommands));
+        operatorController.b().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
+        // operatorController.b().onTrue(commandGroups.intakeBasicCoral(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
         operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
 
         // Manual Wrist Commands
-        operatorController.povLeft().whileTrue(wristCommands.incrementIn());
         operatorController.povRight().whileTrue(wristCommands.incrementOut());
+        operatorController.povLeft().whileTrue(wristCommands.incrementIn());
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
