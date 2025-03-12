@@ -72,12 +72,12 @@ private final AutoFactory m_factory;
 
                         ));
                 STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL2());
-                STA.atTime("scoreL2").onTrue(m_groupCommand.autoScoreL2());
 
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
-
+        
+        
 
         public AutoRoutine STAtoL() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-A");
@@ -583,6 +583,24 @@ private final AutoFactory m_factory;
                         ));
                 MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                return routine;
+        }
+        public AutoRoutine STAL4() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-A");
+                final AutoTrajectory STA = routine.trajectory("ST-A", 0);
+                final AutoTrajectory STA2 = routine.trajectory("ST-A", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STA.resetOdometry(),
+                                STA.cmd(),
+                                m_drivetrain.stop().withTimeout(2.0),
+                                STA2.cmd()
+
+                        ));
+                STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4Group());
+
+                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
 }

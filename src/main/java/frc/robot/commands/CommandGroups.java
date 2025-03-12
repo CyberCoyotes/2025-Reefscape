@@ -172,4 +172,26 @@ public Command intakeCoralGroup(WristCommands wristCommands, ElevatorCommands el
             effectorCommands.scoreCoralAuto()
         ).withName("AutoScoreL2Sequence");
     }
+    public Command autoScoreL4Group() {
+        return Commands.sequence(
+            // Set the wrist to L2, i.e. a safe position
+            wristCommands.setL2(),//.withTimeout(1.5), // Add timeout to prevent hanging
+            // Add small delay to ensure wrist command has started
+            new WaitCommand(0.1),
+            // Move the elevator to L4
+            elevatorCommands.setL4NoCheck(),//.withTimeout(2.0),
+            // Set wrist to L4
+            wristCommands.setL4(),
+            // Short delay to stabilize
+            Commands.waitSeconds(0.2),
+            // Score the coral with timing appropriate for autonomous
+            effectorCommands.scoreCoralAuto(),
+            // Move wrist to safe travel position if not already
+            wristCommands.setL2(),//.withTimeout(1.5), // Add timeout to prevent hanging
+            // Add small delay to ensure wrist command has started
+            Commands.waitSeconds(0.1),
+            // Move the elevator to home position
+            elevatorCommands.setHomeNoCheck()
+        ).withName("scoreL4Sequence");
+    }
 }
