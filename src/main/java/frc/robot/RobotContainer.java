@@ -103,7 +103,7 @@ public class RobotContainer {
 
         autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
-        autoChooser.addRoutine("StartLeft->ScoreAL2", autoRoutines::STAL2);
+        autoChooser.addRoutine("StartLeft->ScoreAL4", autoRoutines::STAL4);
 
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
         // autoRoutines::STJtoAL1AL2);
