@@ -48,7 +48,7 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Move the elevator to home position
-            elevatorCommands.setHomeNoCheck()
+            elevatorCommands.setHome()
         ).withName("MoveToHomeSequence");
     }
 
@@ -59,7 +59,7 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Then move elevator - this will wait for the wrist
-            elevatorCommands.setL2NoCheck() 
+            elevatorCommands.setL2() 
         ).withName("MoveToL2Sequence");
     }
 
@@ -70,7 +70,7 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Move the elevator to L3
-            elevatorCommands.setL3NoCheck()
+            elevatorCommands.setL3()
         ).withName("MoveToL3Sequence");
     }
 
@@ -81,7 +81,7 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Move the elevator to L4
-            elevatorCommands.setL4NoCheck(),
+            elevatorCommands.setL4(),
             // Set wrist to L4
             wristCommands.setL4()
         ).withName("MoveToL4Sequence");
@@ -94,9 +94,9 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Move elevator up to L2 position
-            elevatorCommands.setL2NoCheck(),
+            elevatorCommands.setL2(),
             // Move elevator up to algae position
-            elevatorCommands.setAlgae2NoCheck(),
+            elevatorCommands.setAlgae2(),
             // Move the wrist to the picking position
             wristCommands.pickAlgae()
         ).withName("MoveToAlgae2Sequence");
@@ -109,7 +109,7 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Move elevator up to algae position
-            elevatorCommands.setAlgae3NoCheck(),
+            elevatorCommands.setAlgae3(),
             // Move the wrist to the picking position
             wristCommands.pickAlgae()
         ).withName("MoveToAlgae3Sequence");
@@ -122,7 +122,7 @@ public class CommandGroups {
             // Add small delay to ensure wrist command has started
             // new WaitCommand(0.1),
             // Then move the elevator to the algae scoring position
-            elevatorCommands.setScoreAlgaeNoCheck()
+            elevatorCommands.setScoreAlgae()
         ).withName("ScoringAlgaeSequence");
     }
 
@@ -181,7 +181,7 @@ public class CommandGroups {
         wristCommands.setL2(),
 
         // Move the elevator back to L2 position
-        elevatorCommands.setL2NoCheck()
+        elevatorCommands.setL2()
 
     ).withName("IntakeCoralSequence");
 }
@@ -198,13 +198,13 @@ public class CommandGroups {
             // new WaitCommand(0.1),
             
             // Move elevator to L2 height
-            elevatorCommands.setL2NoCheck(),
+            elevatorCommands.setL2(),
             
             // Short delay to stabilize
             Commands.waitSeconds(0.2),
             
             // Score the coral with timing appropriate for autonomous
-            effectorCommands.scoreCoralAuto()
+            effectorCommands.autoScoreCoral()
         ).withName("AutoScoreL2Sequence");
     }
 
@@ -212,18 +212,15 @@ public class CommandGroups {
         return Commands.sequence(
             // Move wrist to L2 position for scoring
             wristCommands.setL2(),
-            
-            // Add small delay to ensure wrist command has started
-            // new WaitCommand(0.1),
-            
+                    
             // Move elevator to L2 height
-            elevatorCommands.setL2NoCheck(),
+            elevatorCommands.setL2(),
             
             // Short delay to stabilize
             Commands.waitSeconds(0.2),
             
             // Score the coral with timing appropriate for autonomous
-            effectorCommands.scoreCoralAuto()
+            effectorCommands.autoScoreCoral()
         ).withName("AutoScoreL2Sequence");
     }
 
@@ -231,22 +228,19 @@ public class CommandGroups {
         return Commands.sequence(
             // Set the wrist to L2, i.e. a safe position
             wristCommands.setL2(),//.withTimeout(1.5), // Add timeout to prevent hanging
-            // Add small delay to ensure wrist command has started
-            // new WaitCommand(0.1),
             // Move the elevator to L4
-            elevatorCommands.setL4NoCheck(),//.withTimeout(2.0),
+            elevatorCommands.setL4(),//.withTimeout(2.0),
             // Set wrist to L4
             wristCommands.setL4(),
             // Short delay to stabilize
             Commands.waitSeconds(0.05), // Changed from 0.2 to 0.05
             // Score the coral with timing appropriate for autonomous
-            effectorCommands.scoreCoralAuto(),
+            effectorCommands.autoScoreCoral(),
             // Move wrist to safe travel position if not already
             wristCommands.setL2(),//.withTimeout(1.5), // Add timeout to prevent hanging
-            // Add small delay to ensure wrist command has started
-            // Commands.waitSeconds(0.1),
             // Move the elevator to home position
-            elevatorCommands.setHomeNoCheck()
+            elevatorCommands.setHome()
         ).withName("scoreL4Sequence");
     }
+
 }
