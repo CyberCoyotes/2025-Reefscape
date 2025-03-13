@@ -58,6 +58,10 @@ public class WristCommands {
         return moveToPosition(WristSubsystem.WristPositions.L4.getRotations());
     }
 
+    public Command setIntakeCoral() {
+        return moveToPosition(WristSubsystem.WristPositions.INTAKE_CORAL.getRotations());
+    }
+
     public Command pickAlgae() {
         return moveToPosition(WristSubsystem.WristPositions.PICK_ALGAE.getRotations());
     }
@@ -65,6 +69,7 @@ public class WristCommands {
     public Command scoreAlgae() {
         return moveToPosition(WristSubsystem.WristPositions.SCORE_ALGAE.getRotations());
     }
+    
     public Command resetWrist() {
         return this.subsystem.runOnce(() -> this.subsystem.resetWrist());
     }

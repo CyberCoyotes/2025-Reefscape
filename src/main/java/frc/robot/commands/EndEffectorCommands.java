@@ -69,6 +69,26 @@ public class EndEffectorCommands {
         .withName("IntakeCoralWithSensor");
     }
 
+        /**
+     * Creates a command that runs the intake until a coral is detected by the sensor.
+     * When a coral is detected, the motor will automatically stop.
+     * 
+     * @return A command to intake coral with sensor feedback
+     */
+    public Command intakeCoral() {
+        return new RunCommand(() -> {
+            // Check coral sensor
+            if (effector.isCoralLoaded()) {
+                effector.stopMotor();
+            } else {
+                // No coral detected, run the intake as normal
+                effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+            }
+        }, effector)
+        .finallyDo((interrupted) -> effector.stopMotor())
+        .withName("IntakeCoralWithSensor");
+    }
+
     /**
      * Creates a command to slowly reverse the coral out of the mechanism.
      * 
