@@ -35,7 +35,7 @@ public class AlignToReefTagRelative extends Command {
      */
     // TODO: Test these values
     private double X_SETPOINT_REEF_ALIGNMENT = 0.0; // One meter away from the target?
-    private double Y_SETPOINT_REEF_ALIGNMENT = 0.25;
+    private double Y_SETPOINT_REEF_ALIGNMENT = 0.0;
     private double ROT_SETPOINT_REEF_ALIGNMENT = 0.0;
     private double X_TOLERANCE_REEF_ALIGNMENT = 0.1;
     private double Y_TOLERANCE_REEF_ALIGNMENT = 0.1;
