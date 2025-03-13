@@ -151,10 +151,10 @@ public class RobotContainer {
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-        driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
-        driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
-        driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
-        driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
+        driverController.x().onTrue(wristCommands.setL2()); // FIXME See if wrist moves faster as separate command vs command group
+        driverController.y().onTrue(wristCommands.setL4()); // FIXM
+        driverController.a().onTrue(wristCommands.setStowed()); // FIXME
+        driverController.b().onTrue(wristCommands.setIntakeCoral()); // FIXME
 
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
@@ -175,9 +175,9 @@ public class RobotContainer {
         operatorController.rightTrigger().whileTrue(endEffectorCommands.scoreAlgae());
 
         // Algae Commands
-        operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
+        operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands)); 
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands)); 
         operatorController.b().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
         // operatorController.b().onTrue(commandGroups.intakeBasicCoral(wristCommands, elevatorCommands));
 
