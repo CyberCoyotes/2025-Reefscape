@@ -243,4 +243,39 @@ public class CommandGroups {
         ).withName("scoreL4Sequence");
     }
 
-}
+    public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
+        return Commands.sequence(
+
+            wristCommands.setL2(),
+        // Move elevator to intake position
+        elevatorCommands.setIntakeCoral(),
+    
+         /* TODO Check the ToF distance from the loading station as a safety check
+         * If the ToF distance is between within a certain range (LOADING_RANGE 720 - 730 mm), continue to set wrist position
+         * ELSE move the robot away from the station -or- just do nothing until condition is met
+         */
+        // Print the current ToF distance to the console
+        // Commands.runOnce(() -> System.out.println("ToF Distance: " + frontToF.getDistance())),
+    
+        // Move wrist to intake position
+        wristCommands.setIntakeCoral(),
+        
+        // Activate the intake end effector
+        effectorCommands.intakeCoralWithSensor(),
+    
+        // TODO The wrist and elevator should stay here **until** the coral is detected
+        // Activate the intake end effector and wait until coral is loaded
+        // effectorCommands.intakeCoralWithSensor().until(() -> effectorCommands.isCoralLoaded()),
+
+        // Move the wrist back to L2 position
+        wristCommands.setL2(),
+    
+        // Move the elevator back to L2 position
+        elevatorCommands.setL2()
+    
+    ).withName("IntakeCoralSequence");
+
+    }
+
+
+} // End of CommandGroups class
