@@ -265,7 +265,7 @@ public class CommandGroups {
     
         // TODO The wrist and elevator should stay here **until** the coral is detected
         // Activate the intake end effector and wait until coral is loaded
-        // effectorCommands.intakeCoralWithSensor().until(() -> effectorCommands.isCoralLoaded()),
+        // Commands.run(() -> effectorCommands.intakeCoralWithSensor()).until(() -> effectorCommands.isCoralLoaded()),
 
         // Move the wrist back to L2 position
         wristCommands.setL2(),
