@@ -17,26 +17,26 @@ public final class WristConstants {
     // Current limits
     public static final double STATOR_CURRENT_LIMIT = 40.0;
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
-    public static final boolean ENABLE_CURRENT_LIMIT = true;
+    public static final boolean ENABLE_CURRENT_LIMIT = false;
 
     // Configuration constants
     public static final double GEAR_RATIO = 80.0;
     public static final double REVERSE_LIMIT = 0.0; // In rotations
-    public static final double FORWARD_LIMIT = 20.0; // In rotations
+    public static final double FORWARD_LIMIT = 22.0; // In rotations
     public static final double INCREMENT = 0.50; // Using the value from subsystem as it's likely more tested
     public static final double TOLERANCE = 0.04; // Increased from 0.02 -> 0.04 Position Tolerance in rotations
 
     // Motion Magic parameters
     public static final double VELOCITY = 300.0; // TODO Increased from 120.0 rotations per second
     public static final double ACCELERATION = 300.0; // TODO Increased from 120.0 rotations per second squared
-    public static final double JERK = 450.0; // Motion Magic rotations per second cubed
+    public static final double JERK = 600.0; // Motion Magic rotations per second cubed
 
     // Gravity compensation
     public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
 
     // PID and FF Gains for primary use (Slot0)
     public static final class Slot0 {
-        public static final double kP = 14.0; // Using the higher value from subsystem
+        public static final double kP = 16.0; // Using the higher value from subsystem
         public static final double kI = 0.0;
         public static final double kD = 0.0;
         public static final double kV = 0.12; // TODO Added from Slot1 for better feedforward
@@ -88,11 +88,11 @@ public final class WristConstants {
 
 /*
  * L2 is the 12 lowest level BRANCHES and are angled up at 35°. 
- * The highest point of the L2 BRANCH is 2 ft. 7⅞ in. (~81 cm) from the carpet and is inset 1⅝ in. 
- * (~41 mm) from the REEF base. 
+ * The highest point of the L2 BRANCH is 2 ft. 7 7/8 in. (~81 cm) from the carpet and is inset 1 5/8 in. 
+ * (41 mm) from the REEF base. 
  * L3 is the 12 mid-level BRANCHES and are angled up at 35°.
- * The highest point of the L3 BRANCH is 3 ft. 11⅝ in. (~121 cm) from the carpet and is inset 1⅝ in. 
+ * The highest point of the L3 BRANCH is 3 ft. 11 5/8 in. (~121 cm) from the carpet and is inset 1 5/8in. 
  * (~41 mm) from the REEF base. L4 is the 12 highest-level BRANCHES and they are vertical.
  * The highest point of the L4 BRANCH is 6 ft. 
- * (~183 cm) from the carpet and is inset 1⅛ in. (~29 mm) from the REEF base.   
+ * (~183 cm) from the carpet and is inset 1 1/8 in. (~29 mm) from the REEF base.   
  */
