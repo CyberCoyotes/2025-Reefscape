@@ -88,11 +88,11 @@ public final class WristConstants {
 
 /*
  * L2 is the 12 lowest level BRANCHES and are angled up at 35°. 
- * The highest point of the L2 BRANCH is 2 ft. 7⅞ in. (~81 cm) from the carpet and is inset 1⅝ in. 
- * (~41 mm) from the REEF base. 
+ * The highest point of the L2 BRANCH is 2 ft. 7 7/8 in. (~81 cm) from the carpet and is inset 1 5/8 in. 
+ * (41 mm) from the REEF base. 
  * L3 is the 12 mid-level BRANCHES and are angled up at 35°.
- * The highest point of the L3 BRANCH is 3 ft. 11⅝ in. (~121 cm) from the carpet and is inset 1⅝ in. 
+ * The highest point of the L3 BRANCH is 3 ft. 11 5/8 in. (~121 cm) from the carpet and is inset 1 5/8in. 
  * (~41 mm) from the REEF base. L4 is the 12 highest-level BRANCHES and they are vertical.
  * The highest point of the L4 BRANCH is 6 ft. 
- * (~183 cm) from the carpet and is inset 1⅛ in. (~29 mm) from the REEF base.   
+ * (~183 cm) from the carpet and is inset 1 1/8 in. (~29 mm) from the REEF base.   
  */
