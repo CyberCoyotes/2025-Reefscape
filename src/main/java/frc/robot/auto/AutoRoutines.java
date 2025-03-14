@@ -49,7 +49,7 @@ private final AutoFactory m_factory;
                                 STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0)); // TODO check
+                STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
@@ -623,9 +623,9 @@ private final AutoFactory m_factory;
                                         ));
         
                 STJ.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
-                STJ2.atTime("Load").onTrue(m_groupCommand.intakeCoralAuto());
+                STJ2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral());
                 CSA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
-                CSA2.atTime("Load").onTrue(m_groupCommand.intakeCoralAuto());
+                CSA2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral());
                 return routine;
         }
 }

@@ -119,7 +119,7 @@ public class EffectorSubsystem extends SubsystemBase {
      * Command Factories
      ******************************/
 
-     /* TODO Testing removal */
+     /* Testing removal */
      /*
     public Command intakeCoralBasic() {
         return run(() -> {

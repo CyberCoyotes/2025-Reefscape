@@ -6,6 +6,8 @@ import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
 
+@SuppressWarnings("unused") // Suppress warnings for unused imports and methods
+
 public class CommandGroups {
 
     private final WristCommands wristCommands;
@@ -146,7 +148,7 @@ public class CommandGroups {
         ).withName("IntakeCoralSequence");
     }
 
-    // FIXME: Test Implement this method
+    // Test Implement this method
     public Command moveToIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
         return Commands.sequence(
 
@@ -163,7 +165,7 @@ public class CommandGroups {
         // Move elevator to intake position
         elevatorCommands.setIntakeCoral(),
 
-         /* TODO Check the ToF distance from the loading station as a safety check
+         /* Check the ToF distance from the loading station as a safety check
          * If the ToF distance is between within a certain range (LOADING_RANGE 720 - 730 mm), continue to set wrist position
          * ELSE move the robot away from the station -or- just do nothing until condition is met
          */
@@ -176,7 +178,7 @@ public class CommandGroups {
         // Activate the intake end effector
         effectorCommands.intakeCoralWithSensor(),
 
-        // TODO The wrist and elevator should stay here **until** the coral is detected
+        // The wrist and elevator should stay here **until** the coral is detected
         // Move the wrist back to L2 position
         wristCommands.setL2(),
 
@@ -244,7 +246,7 @@ public class CommandGroups {
     }
 
   // Untestest version
-    public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
+    public Command autoIntakeCoralVersion2(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
         return Commands.sequence(
 
          // Move wrist to L2 position
@@ -253,7 +255,7 @@ public class CommandGroups {
         // Move elevator to intake position
         elevatorCommands.setIntakeCoral(),
     
-         /* TODO Check the ToF distance from the loading station as a safety check
+         /* Check the ToF distance from the loading station as a safety check
          * If the ToF distance is between within a certain range (LOADING_RANGE 720 - 730 mm), continue to set wrist position
          * ELSE move the robot away from the station -or- just do nothing until condition is met
          */
@@ -266,7 +268,7 @@ public class CommandGroups {
         // Activate the intake end effector
         effectorCommands.intakeCoralWithSensor(),
     
-        // TODO The wrist and elevator should stay here **until** the coral is detected
+        // The wrist and elevator should stay here **until** the coral is detected
         // Activate the intake end effector and wait until coral is loaded
         // Commands.run(() -> effectorCommands.intakeCoralWithSensor()).until(() -> effectorCommands.isCoralLoaded()),
 
@@ -281,7 +283,7 @@ public class CommandGroups {
     }
 
   // Version from Choreo branch
-  public Command intakeCoralAuto() {
+  public Command autoIntakeCoral() {
     return Commands.sequence(
         // Move wrist to L2 position
         wristCommands.setL2(),

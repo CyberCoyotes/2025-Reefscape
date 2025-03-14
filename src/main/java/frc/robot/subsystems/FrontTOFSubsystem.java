@@ -10,6 +10,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+@SuppressWarnings("unused") // Suppress warnings for unused imports and methods
+
 /**
  * Subsystem class to primarily use a Time of Flight sensor from 'Playing with Fusion'.
  * It reads the distance from the sensor to the 'note' and determines if the note is in a load position.
