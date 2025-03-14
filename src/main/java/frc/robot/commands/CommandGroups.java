@@ -233,7 +233,7 @@ public class CommandGroups {
             // Set wrist to L4
             wristCommands.setL4(),
             // Short delay to stabilize
-            Commands.waitSeconds(0.05), // Changed from 0.2 to 0.05
+            Commands.waitSeconds(0.05), // was 0.2
             // Score the coral with timing appropriate for autonomous
             effectorCommands.autoScoreCoral(),
             // Move wrist to safe travel position if not already
@@ -243,10 +243,13 @@ public class CommandGroups {
         ).withName("scoreL4Sequence");
     }
 
+  // Untestest version
     public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, WristSubsystem wrist) {
         return Commands.sequence(
 
-            wristCommands.setL2(),
+         // Move wrist to L2 position
+        wristCommands.setL2(),
+          
         // Move elevator to intake position
         elevatorCommands.setIntakeCoral(),
     
@@ -276,6 +279,29 @@ public class CommandGroups {
     ).withName("IntakeCoralSequence");
 
     }
+
+  // Version from Choreo branch
+  public Command intakeCoralAuto() {
+    return Commands.sequence(
+        // Move wrist to L2 position
+        wristCommands.setL2(),
+        
+        // Move elevator to intake position
+        elevatorCommands.setIntakeCoral(),
+        
+        // After elevator is at positioned, move wrist to intake position
+        wristCommands.setIntakeCoral(),
+        
+        // Finally activate the intake
+        effectorCommands.intakeCoralWithSensor(),
+
+        Commands.waitSeconds(0.2),
+
+        wristCommands.setL2(),
+        
+        elevatorCommands.setHomeNoCheck()
+    ).withName("IntakeCoralSequence");
+}
 
 
 } // End of CommandGroups class
