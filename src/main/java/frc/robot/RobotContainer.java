@@ -151,9 +151,9 @@ public class RobotContainer {
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-        driverController.x().onTrue(wristCommands.setL2()); // FIXME See if wrist moves faster as separate command vs command group
-        driverController.y().onTrue(wristCommands.setL4()); // FIXM
-        driverController.a().onTrue(wristCommands.setStowed()); // FIXME
+        driverController.x().onTrue(wristCommands.moveToPosition(WristSubsystem.WristPositions.L2.getRotations())); // FIXME See if wrist moves faster as separate command vs command group
+        driverController.y().onTrue(wristCommands.moveToPosition(WristSubsystem.WristPositions.L4.getRotations())); // FIXM
+        driverController.a().onTrue(wristCommands.moveToPosition(WristSubsystem.WristPositions.STOWED.getRotations())); // FIXME
         driverController.b().onTrue(wristCommands.setIntakeCoral()); // FIXME
 
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
