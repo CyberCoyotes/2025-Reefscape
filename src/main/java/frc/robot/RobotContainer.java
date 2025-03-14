@@ -140,24 +140,29 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
         // Testing purposes
-        driverController.back().onTrue(commandGroups.autoScoreL4());
+        // driverController.back().onTrue(commandGroups.autoScoreL4());
 
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral());
-        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral());
+        // Handle End Effector Commands for Coral
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Auto sensor stop
+        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-        driverController.x().onTrue(wristCommands.moveToPosition(WristSubsystem.WristPositions.L2.getRotations())); // FIXME See if wrist moves faster as separate command vs command group
-        driverController.y().onTrue(wristCommands.moveToPosition(WristSubsystem.WristPositions.L4.getRotations())); // FIXM
-        driverController.a().onTrue(wristCommands.moveToPosition(WristSubsystem.WristPositions.STOWED.getRotations())); // FIXME
-        driverController.b().onTrue(wristCommands.setIntakeCoral()); // FIXME
+        // Groups commands for wrist and elevator to move to specific positions
+        driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
+        driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
+        driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
+        driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
+        // Manual Elevator Commands
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
+
+        // Manual Wrist Commands
         driverController.povRight().whileTrue(wristCommands.incrementOut());
         driverController.povLeft().whileTrue(wristCommands.incrementIn());
 
@@ -175,9 +180,9 @@ public class RobotContainer {
         operatorController.rightTrigger().whileTrue(endEffectorCommands.scoreAlgae());
 
         // Algae Commands
-        operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands)); 
+        operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands)); 
+        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
         operatorController.b().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
         // operatorController.b().onTrue(commandGroups.intakeBasicCoral(wristCommands, elevatorCommands));
 

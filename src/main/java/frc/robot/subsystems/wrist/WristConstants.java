@@ -27,22 +27,22 @@ public final class WristConstants {
     public static final double TOLERANCE = 0.04; // Increased from 0.02 -> 0.04 Position Tolerance in rotations
 
     // Motion Magic parameters
-    public static final double VELOCITY = 300.0; // TODO Increased from 120.0 rotations per second
-    public static final double ACCELERATION = 300.0; // TODO Increased from 120.0 rotations per second squared
-    public static final double JERK = 600.0; // Motion Magic rotations per second cubed
+    public static final double VELOCITY = 300.0;
+    public static final double ACCELERATION = 300.0;
+    public static final double JERK = 600.0;
 
     // Gravity compensation
     public static final double VOLTAGE_FEEDFORWARD = 0.0; // Volts to add to overcome gravity
 
     // PID and FF Gains for primary use (Slot0)
     public static final class Slot0 {
-        public static final double kP = 16.0; // Using the higher value from subsystem
+        public static final double kP = 16.0;
         public static final double kI = 0.0;
         public static final double kD = 0.0;
-        public static final double kV = 0.12; // TODO Added from Slot1 for better feedforward
-        public static final double kS = 0.25; // TODO Added from Slot1 for better static friction compensation
-        public static final double kG = 0.30; // TODO Increased from 0.05 based on Slot1 value
-        public static final double kA = 0.01; // TODO Added from Slot1 for better acceleration feedforward
+        public static final double kV = 0.12;
+        public static final double kS = 0.25;
+        public static final double kG = 0.30;
+        public static final double kA = 0.01;
     }
 
     // Alternative PID and FF Gains (Slot1) - Keeping for reference or alternative tuning
@@ -74,25 +74,15 @@ public final class WristConstants {
         public static final double START = 0.0;
         public static final double STOWED = 0.0;
         public static final double SAFE = 0.26;
-        public static final double LOAD_CORAL = 0.0;
-        public static final double L1 = 0.5; // From WristPositions in subsystem
-        public static final double L2 = 1.75; // From WristPositions in subsystem
-        public static final double L3 = 1.75; // From WristPositions in subsystem
-        public static final double L4 = 4.2; // From WristPositions in subsystem
+        // public static final double LOAD_CORAL = 0.0;
+        public static final double L1 = 0.5;
+        public static final double L2 = 1.75;
+        public static final double L3 = 1.75;
+        public static final double L4 = 4.2;
         public static final double GRAB_ALGAE = 0.40;
-        public static final double INTAKE_CORAL = 12.25; // From WristPositions in subsystem
-        public static final double PICK_ALGAE = 14.0; // From WristPositions in subsystem
-        public static final double SCORE_ALGAE = 18.0; // From WristPositions in subsystem
+        public static final double INTAKE_CORAL = 12.25;
+        public static final double PICK_ALGAE = 14.0;
+        public static final double SCORE_ALGAE = 18.0;
     }
-}
-
-/*
- * L2 is the 12 lowest level BRANCHES and are angled up at 35°. 
- * The highest point of the L2 BRANCH is 2 ft. 7 7/8 in. (~81 cm) from the carpet and is inset 1 5/8 in. 
- * (41 mm) from the REEF base. 
- * L3 is the 12 mid-level BRANCHES and are angled up at 35°.
- * The highest point of the L3 BRANCH is 3 ft. 11 5/8 in. (~121 cm) from the carpet and is inset 1 5/8in. 
- * (~41 mm) from the REEF base. L4 is the 12 highest-level BRANCHES and they are vertical.
- * The highest point of the L4 BRANCH is 6 ft. 
- * (~183 cm) from the carpet and is inset 1 1/8 in. (~29 mm) from the REEF base.   
- */
+    
+} // end WristConstants

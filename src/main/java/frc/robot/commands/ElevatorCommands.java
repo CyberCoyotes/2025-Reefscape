@@ -1,11 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem.ElevatorPosition;
 import frc.robot.subsystems.wrist.WristSubsystem;
+
+@SuppressWarnings("unused") // Suppress warnings for unused imports and methods
+
+/**
+ * Command factory class for the Elevator subsystem.
+ * This class contains methods that create and return commands for the elevator.
+ */
 
 public class ElevatorCommands {
     private final ElevatorSubsystem elevator;
@@ -117,7 +123,7 @@ public class ElevatorCommands {
     }
 
     public Command setIntakeCoral() {
-        // TODO Check as it used the original setPosition method
+        // Check as it used the original setPosition method
         return setPosition(ElevatorPosition.INTAKE_CORAL.getPosition()).withName("SafeMoveElevatorToIntakeCoralPose");
     }
 
@@ -151,7 +157,6 @@ public class ElevatorCommands {
     }
 
     public Command setScoreAlgae() {
-        // TODO Check as it used the original setPosition method
         return setPosition(ElevatorPosition.SCORE_ALGAE.getPosition()).withName("SafeMoveElevatorToScoreAlgaePose");
     }
     */

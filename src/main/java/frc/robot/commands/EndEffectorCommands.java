@@ -137,7 +137,7 @@ public class EndEffectorCommands {
      * 
      * @return A command to score coral that times out after 0.75 seconds
      */
-    public Command autoScoreCoral() { // FIXME
+    public Command autoScoreCoral() {
         return scoreCoralWithTimeout(0.75);
     }
 
