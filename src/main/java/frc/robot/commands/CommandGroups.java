@@ -160,7 +160,7 @@ public class CommandGroups {
     ).withName("IntakeCoralSequence");
 }
 
-public Command intakeCoralBasic() {
+public Command intakeCoralAuto() {
     return Commands.sequence(
         // Move wrist to L2 position
         wristCommands.setL2(),
@@ -172,7 +172,13 @@ public Command intakeCoralBasic() {
         wristCommands.setIntakeCoral(),
         
         // Finally activate the intake
-        effectorCommands.intakeCoral()
+        effectorCommands.intakeCoralWithSensor(),
+
+        Commands.waitSeconds(0.2),
+
+        wristCommands.setL2(),
+        
+        elevatorCommands.setHomeNoCheck()
     ).withName("IntakeCoralSequence");
 }
 
@@ -209,7 +215,7 @@ public Command intakeCoralBasic() {
             // Set wrist to L4
             wristCommands.setL4(),
             // Short delay to stabilize
-            Commands.waitSeconds(0.05), // Changed from 0.2 to 0.05
+            Commands.waitSeconds(0.05), // was 0.2
             // Score the coral with timing appropriate for autonomous
             effectorCommands.scoreCoralAuto(),
             // Move wrist to safe travel position if not already

@@ -593,7 +593,7 @@ private final AutoFactory m_factory;
                         Commands.sequence(
                                 STA.resetOdometry(),
                                 STA.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)//,
+                                m_drivetrain.stop().withTimeout(4.2)//,
                                 //STA2.cmd()
 
                         ));
@@ -601,6 +601,31 @@ private final AutoFactory m_factory;
 
                 // Consider using `m_effectorCommands.intakeSmartCoral().withTimeout(1.0)` after more testing
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
+                return routine;
+        }
+        public AutoRoutine STJ4toAL4() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J");
+                final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
+
+                routine.active().onTrue(
+                                Commands.sequence(
+                                        STJ.resetOdometry(), // Always reset odometry first
+                                        STJ.cmd(), // , // Follow the path
+                                        m_drivetrain.stop().withTimeout(4.2),
+                                        STJ2.cmd(),
+                                        m_drivetrain.stop().withTimeout(3.0),
+                                        CSA.cmd(),
+                                        m_drivetrain.stop().withTimeout(4.2),
+                                        CSA2.cmd()
+                                        ));
+        
+                STJ.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
+                STJ2.atTime("Load").onTrue(m_groupCommand.intakeCoralAuto());
+                CSA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
+                CSA2.atTime("Load").onTrue(m_groupCommand.intakeCoralAuto());
                 return routine;
         }
 }

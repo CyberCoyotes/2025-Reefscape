@@ -104,7 +104,7 @@ public class RobotContainer {
         autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         autoChooser.addRoutine("StartLeft->ScoreAL4", autoRoutines::STAL4);
-
+        autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
         // autoRoutines::STJtoAL1AL2);
         autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
@@ -140,7 +140,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
         // Testing purposes
-        driverController.back().onTrue(commandGroups.autoScoreL4Group());
+        driverController.back().onTrue(commandGroups.autoScoreL4());
 
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
