@@ -18,7 +18,7 @@ public final class ElevatorConstants {
      *  Motion Magic 
      ******************************/ 
     // Tested 160 previously
-    public static final double CRUISE_VELOCITY = 120; // Rotations per second
+    public static final double VELOCITY = 120; // Rotations per second
     // Tested 160 previously
     public static final double ACCELERATION = 120; // Rotations per second^2
     
@@ -37,7 +37,8 @@ public final class ElevatorConstants {
     // Soft Limits (in rotations)
     // This will need updating when new build
     public static final double FORWARD_LIMIT = 4.67;
-    public static final double REVERSE_LIMIT = 0;   
+    public static final double REVERSE_LIMIT = 0;
+
     
     public class TestMode {
         
