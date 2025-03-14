@@ -299,7 +299,7 @@ public class CommandGroups {
 
         wristCommands.setL2(),
         
-        elevatorCommands.setHomeNoCheck()
+        elevatorCommands.setHome()
     ).withName("IntakeCoralSequence");
 }
 
