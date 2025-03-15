@@ -12,7 +12,7 @@ public final class ElevatorConstants {
 
     // Control Parameters
     public static final double DEADBAND = 0.02;
-    public static final double POSITION_TOLERANCE = 0.02;
+    // public static final double POSITION_TOLERANCE = 0.02; // Deprecated?
 
     /******************************
      *  Motion Magic 
@@ -36,7 +36,7 @@ public final class ElevatorConstants {
     
     // Soft Limits (in rotations)
     // This will need updating when new build
-    public static final double FORWARD_LIMIT = 4.67;
+    public static final double FORWARD_LIMIT = 4.75;
     public static final double REVERSE_LIMIT = 0;
 
     
@@ -71,5 +71,13 @@ public final class ElevatorConstants {
             .withKV(0.12)
             .withKG(0.12)
             .withGravityType(GravityTypeValue.Elevator_Static);
-            
+    
+    // Configurable increment speed - adjust this to control how fast manual increments occur
+    /* 
+    * TODO Test these incremental values to find the best speed for manual control
+    Increased INCREMENT from 0.02 to 0.1 rotations per execution
+    */ 
+    public static final double INCREMENT_VALUE = 0.1; // Rotations per execution
+    public static final double MAX_INCREMENT = 2.0; // Maximum increment "speed" in rotations per second
+
 }

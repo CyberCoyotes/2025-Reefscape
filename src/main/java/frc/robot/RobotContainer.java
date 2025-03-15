@@ -44,14 +44,14 @@ public class RobotContainer {
     private final WristCommands wristCommands = new WristCommands(wrist);
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator);
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
-    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffectorCommands, frontToF);
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF);
 
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
@@ -61,8 +61,10 @@ public class RobotContainer {
     // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
     
     // kSpeedAt12Volts desired top speed
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // 3 meters per second
-                                                                                                // max speed
+
+     // 3 meters per second max speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    
     // 3/4 of a rotation per second max angular velocity
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
@@ -87,13 +89,21 @@ public class RobotContainer {
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
+        // Check the AutoRoutines class to ensure the constructor matches this parameter list
+        // If it doesn't, update either this call or the constructor in AutoRoutines class
         autoRoutines = new AutoRoutines(
                 autoFactory,
                 drivetrain,
                 endEffector,
                 elevator,
-                commandGroups,
-                endEffectorCommands);
+                elevatorCommands,
+                commandGroups,                
+                endEffectorCommands,
+                wrist,
+                wristCommands
+                );
+
+        // Alternative approach: Check the AutoRoutines.java file and pass parameters in the correct order
 
         configureBindings();
         configureAutoRoutines();
@@ -104,7 +114,7 @@ public class RobotContainer {
         autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         autoChooser.addRoutine("StartLeft->ScoreAL4", autoRoutines::STAL4);
-
+        autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
         // autoRoutines::STJtoAL1AL2);
         autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
@@ -140,24 +150,29 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
         // Testing purposes
-        driverController.back().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
+        // driverController.back().onTrue(commandGroups.autoScoreL4());
 
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral());
-        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral());
+        // Handle End Effector Commands for Coral
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Auto sensor stop
+        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
+        // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
+        // Manual Elevator Commands
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
+
+        // Manual Wrist Commands
         driverController.povRight().whileTrue(wristCommands.incrementOut());
         driverController.povLeft().whileTrue(wristCommands.incrementIn());
 
@@ -177,9 +192,9 @@ public class RobotContainer {
         // Algae Commands
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.b().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
-        // operatorController.b().onTrue(commandGroups.intakeBasicCoral(wristCommands, elevatorCommands));
+        // operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+        operatorController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands)); // Testing purpose only
+        operatorController.b().onTrue(commandGroups.autoIntakeCoral(wristCommands, elevatorCommands, wrist));
 
         // Manual Elevator Commands
         operatorController.povUp().whileTrue(elevatorCommands.incrementUp());

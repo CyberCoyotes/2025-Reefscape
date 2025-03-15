@@ -4,37 +4,60 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.commands.CommandGroups;
+import frc.robot.commands.ElevatorCommands;
+import frc.robot.commands.EndEffectorCommands;
+import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.commands.CommandGroups;
-import frc.robot.commands.EndEffectorCommands;
+import frc.robot.subsystems.wrist.WristSubsystem;
 
 @SuppressWarnings("unused")
 
-public class AutoRoutines<IntakeSubsystem> {
-private final AutoFactory m_factory;
+public class AutoRoutines {
+    /** 
+     * This class contains all the auto routines for the robot. 
+     * Each routine is defined as a method that returns an AutoRoutine object.
+     * The methods use the AutoFactory to create trajectories and commands for the robot's subsystems.
+     */
+    
+    // Subsystems and command groups used in the auto routines
+
+    private final AutoFactory m_factory;
     private final CommandSwerveDrivetrain m_drivetrain;
     private final EffectorSubsystem m_effector;
     private final ElevatorSubsystem m_elevator;
-    private final CommandGroups m_groupCommand;
+    private final ElevatorCommands m_elevatorCommands;
+    private final CommandGroups m_commandGroups;
     private final EndEffectorCommands m_effectorCommands;
+    private final WristSubsystem m_wrist;
+    private final WristCommands m_wristCommands;
+
+    private final double ELEVATOR_WAIT = 4.2; // Time to wait for the elevator to move
+    private final double LOAD_WAIT = 2.0; // Time to wait for the effector to load coral
+    private final double SCORE_WAIT = 1.0; // Time to wait for the effector to score coral
 
     public AutoRoutines(
-            AutoFactory factory, 
-            CommandSwerveDrivetrain drivetrain, 
-            EffectorSubsystem effector, 
-            ElevatorSubsystem elevator, 
-            CommandGroups groupCommand,
-            EndEffectorCommands effectorCommands) {
-        m_factory = factory;
-        m_drivetrain = drivetrain;
-        m_effector = effector;
-        m_elevator = elevator;
-        m_groupCommand = groupCommand;
-        m_effectorCommands = effectorCommands;
-
-        }
+        AutoFactory autoFactory,
+        CommandSwerveDrivetrain drivetrain,
+        EffectorSubsystem effector,
+        ElevatorSubsystem elevator,
+        ElevatorCommands elevatorCommands,
+        CommandGroups commandGroups,
+        EndEffectorCommands effectorCommands,
+        WristSubsystem wrist,
+        WristCommands wristCommands) {
+            m_factory = autoFactory;
+            m_drivetrain = drivetrain;
+            m_effector = effector;
+            m_elevator = elevator;
+            m_elevatorCommands = elevatorCommands;
+            m_commandGroups = commandGroups;
+            m_effectorCommands = effectorCommands;
+            m_wrist = wrist;
+            m_wristCommands = wristCommands;
+    }
 
         public AutoRoutine STAL1() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-A-L1");
@@ -49,7 +72,9 @@ private final AutoFactory m_factory;
                                 STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0)); // TODO check
+                STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(SCORE_WAIT));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
@@ -70,8 +95,9 @@ private final AutoFactory m_factory;
                                 STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL2());
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL2());
 
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
@@ -149,7 +175,7 @@ private final AutoFactory m_factory;
                                 STJ2.cmd()
 
                         ));
-                STJ.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(SCORE_WAIT));
                 return routine;
         }
 
@@ -166,7 +192,7 @@ private final AutoFactory m_factory;
                                 STK2.cmd()
 
                         ));
-                STK.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                STK.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(SCORE_WAIT));
                 return routine;
         }
 
@@ -183,7 +209,7 @@ private final AutoFactory m_factory;
                                 STL2.cmd()
 
                         ));
-                STL.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                STL.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(SCORE_WAIT));
                 return routine;
         }
 
@@ -239,7 +265,7 @@ private final AutoFactory m_factory;
                                 SBC2.cmd()
 
                         ));
-                SBC.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                SBC.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(SCORE_WAIT));
                 return routine;
         }
 
@@ -256,7 +282,7 @@ private final AutoFactory m_factory;
                                 SBD2.cmd()
 
                         ));
-                SBD.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                SBD.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(SCORE_WAIT));
                 return routine;
         }
 
@@ -342,7 +368,7 @@ private final AutoFactory m_factory;
 
                         ));
 
-                TwoMetersT.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                TwoMetersT.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(SCORE_WAIT));
                 return routine;
         }
 
@@ -417,13 +443,17 @@ private final AutoFactory m_factory;
                                         STJ.cmd(), // , // Follow the path
                                         m_drivetrain.stop().withTimeout(1.5),
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(1.0),
+                                        m_drivetrain.stop().withTimeout(SCORE_WAIT),
                                         CSA.cmd(),
-                                        m_drivetrain.stop().withTimeout(1.0),
+                                        m_drivetrain.stop().withTimeout(SCORE_WAIT),
                                         CSA2.cmd()));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -448,8 +478,12 @@ private final AutoFactory m_factory;
 
                                 ));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -479,10 +513,13 @@ private final AutoFactory m_factory;
 
                                 ));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 CSA3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -505,8 +542,10 @@ private final AutoFactory m_factory;
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -529,8 +568,10 @@ private final AutoFactory m_factory;
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -559,10 +600,16 @@ private final AutoFactory m_factory;
                                 CSB4.cmd()
                                 ));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                
                 SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                
                 CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 CSB3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                
                 CSB4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -581,6 +628,8 @@ private final AutoFactory m_factory;
 
                         ));
                 MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 return routine;
         }
@@ -593,14 +642,40 @@ private final AutoFactory m_factory;
                         Commands.sequence(
                                 STA.resetOdometry(),
                                 STA.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)//,
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT)//,
                                 //STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
 
-                // Consider using `m_effectorCommands.intakeSmartCoral().withTimeout(1.0)` after more testing
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
+                return routine;
+        }
+        public AutoRoutine STJ4toAL4() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J");
+                final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
+
+                routine.active().onTrue(
+                                Commands.sequence(
+                                        STJ.resetOdometry(), // Always reset odometry first
+                                        STJ.cmd(), // , // Follow the path
+                                        m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                        STJ2.cmd(),
+                                        m_drivetrain.stop().withTimeout(3.0),
+                                        CSA.cmd(),
+                                        m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                        CSA2.cmd()
+                                        ));
+        
+                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+                CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+
                 return routine;
         }
 }
