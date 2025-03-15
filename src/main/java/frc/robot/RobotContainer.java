@@ -158,7 +158,7 @@ public class RobotContainer {
         // Handle End Effector Commands for Coral
         driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Auto sensor stop
         // driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
-        driverController.rightBumper().onTrue(endEffectorCommands.autoScoreCoral()); // TODO Test this before using in Auton
+        // driverController.rightBumper().onTrue(endEffectorCommands.autoScoreCoral()); // TODO Test this before using in Auton
         // Create a drive forward until ToF is equal to loading distance
 
 

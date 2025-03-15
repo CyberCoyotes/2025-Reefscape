@@ -623,14 +623,14 @@ public class AutoRoutines {
                         Commands.sequence(
                                 MH.resetOdometry(), // Always reset odometry first
                                 MH.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(1.0),
-                                MH2.cmd()
+                                m_drivetrain.stop().withTimeout(1.0)//,
+                                // MH2.cmd() // FIXME Took out loading for testing
 
                         ));
-                MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                // MH.atTime("scoreL1").onTrue(m_effectorCommands.autoScoreCoral()); // FIXME Test autoScoreCoral() command
                 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                // MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0)); 
                 return routine;
         }
         public AutoRoutine STAL4() {
