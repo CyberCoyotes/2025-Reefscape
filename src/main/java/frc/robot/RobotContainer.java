@@ -89,13 +89,21 @@ public class RobotContainer {
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
+        // Check the AutoRoutines class to ensure the constructor matches this parameter list
+        // If it doesn't, update either this call or the constructor in AutoRoutines class
         autoRoutines = new AutoRoutines(
                 autoFactory,
                 drivetrain,
                 endEffector,
                 elevator,
-                commandGroups,
-                endEffectorCommands);
+                elevatorCommands,
+                commandGroups,                
+                endEffectorCommands,
+                wrist,
+                wristCommands
+                );
+
+        // Alternative approach: Check the AutoRoutines.java file and pass parameters in the correct order
 
         configureBindings();
         configureAutoRoutines();
