@@ -7,8 +7,11 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.CommandGroups;
+import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.EndEffectorCommands;
+import frc.robot.commands.WristCommands;
 
 @SuppressWarnings("unused")
 
@@ -17,23 +20,32 @@ private final AutoFactory m_factory;
     private final CommandSwerveDrivetrain m_drivetrain;
     private final EffectorSubsystem m_effector;
     private final ElevatorSubsystem m_elevator;
+    private final ElevatorCommands m_elevatorCommands;
     private final CommandGroups m_groupCommand;
     private final EndEffectorCommands m_effectorCommands;
+    private final WristSubsystem m_wrist;
+    private final WristCommands m_wristCommands;
 
     public AutoRoutines(
             AutoFactory factory, 
             CommandSwerveDrivetrain drivetrain, 
             EffectorSubsystem effector, 
-            ElevatorSubsystem elevator, 
+            ElevatorSubsystem elevator,
+            ElevatorCommands elevatorCommands, 
             CommandGroups groupCommand,
-            EndEffectorCommands effectorCommands) {
+            EndEffectorCommands effectorCommands,
+            WristSubsystem wrist,
+            WristCommands wristCommands
+            ) {
         m_factory = factory;
         m_drivetrain = drivetrain;
         m_effector = effector;
         m_elevator = elevator;
+        m_elevatorCommands = elevatorCommands;
         m_groupCommand = groupCommand;
         m_effectorCommands = effectorCommands;
-
+        m_wrist = wrist;
+        m_wristCommands = wristCommands;
         }
 
         public AutoRoutine STAL1() {
@@ -623,9 +635,9 @@ private final AutoFactory m_factory;
                                         ));
         
                 STJ.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
-                STJ2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral());
+                STJ2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
                 CSA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
-                CSA2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral());
+                CSA2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
                 return routine;
         }
 }

@@ -69,7 +69,7 @@ public class RobotContainer {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final AutoFactory autoFactory;
-    private final AutoRoutines autoRoutines;
+    private final AutoRoutines<EffectorSubsystem> autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -94,8 +94,13 @@ public class RobotContainer {
                 drivetrain,
                 endEffector,
                 elevator,
+                elevatorCommands,
                 commandGroups,
-                endEffectorCommands);
+                endEffectorCommands,
+                wristCommands,
+                wrist
+                
+                );
 
         configureBindings();
         configureAutoRoutines();
