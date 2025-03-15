@@ -15,14 +15,15 @@ import com.ctre.phoenix.led.TwinkleOffAnimation;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.led.LEDConfig;
+import frc.robot.Constants;
+import frc.robot.subsystems.led.LEDConstants;
 
 public class LEDSubsystem extends SubsystemBase {
     private final CANdle candle;
     private final CANdleConfiguration config = new CANdleConfiguration();
     private Animation activeAnimation = null;
 
-    private static final int LED_COUNT = 0; // Adjust for future LED strips
+    private static final int LED_COUNT = 30; // Adjust for future LED strips
 
     public enum LEDColor {
         RED(255, 0, 0),
@@ -62,7 +63,7 @@ public class LEDSubsystem extends SubsystemBase {
     private AnimationTypes currentAnimation = AnimationTypes.SolidColor;
 
     public LEDSubsystem() {
-        candle = new CANdle(frc.robot.Constants.CANDLE_ID);
+        candle = new CANdle(Constants.CANDLE_ID, "rio");
         configureCANdle();
     }
 
