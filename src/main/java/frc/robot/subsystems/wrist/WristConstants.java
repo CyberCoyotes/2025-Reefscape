@@ -15,9 +15,9 @@ public final class WristConstants {
     // public static final int WRIST_MOTOR_CAN_ID = 0; 
 
     // Current limits
-    public static final double STATOR_CURRENT_LIMIT = 40.0;
+    public static final double STATOR_CURRENT_LIMIT = 70.0;
     public static final double SUPPLY_CURRENT_LIMIT = 40.0;
-    public static final boolean ENABLE_CURRENT_LIMIT = false;
+    public static final boolean ENABLE_CURRENT_LIMIT = true;
 
     // Configuration constants
     public static final double GEAR_RATIO = 80.0;
@@ -27,8 +27,8 @@ public final class WristConstants {
     public static final double TOLERANCE = 0.04; // Increased from 0.02 -> 0.04 Position Tolerance in rotations
 
     // Motion Magic parameters
-    public static final double VELOCITY = 300.0;
-    public static final double ACCELERATION = 300.0;
+    public static final double VELOCITY = 400.0;
+    public static final double ACCELERATION = 100.0;
     public static final double JERK = 600.0;
 
     // Gravity compensation
@@ -36,13 +36,14 @@ public final class WristConstants {
 
     // PID and FF Gains for primary use (Slot0)
     public static final class Slot0 {
-        public static final double kP = 16.0;
-        public static final double kI = 0.0;
-        public static final double kD = 0.0;
-        public static final double kV = 0.12;
-        public static final double kS = 0.25;
+        public static final double kP = 10.0;
+        public static final double kI = 0.00;
+        public static final double kD = 0.20;
+        public static final double kV = 0.00;
+        public static final double kS = 0.00;
+        public static final double kA = 0.00;
         public static final double kG = 0.30;
-        public static final double kA = 0.01;
+
     }
 
     // Alternative PID and FF Gains (Slot1) - Keeping for reference or alternative tuning

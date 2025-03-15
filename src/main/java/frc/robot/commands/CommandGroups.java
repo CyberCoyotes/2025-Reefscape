@@ -94,10 +94,8 @@ public class CommandGroups {
         return Commands.sequence(
                 // Move to safe wrist position first
                 wristCommands.setL2(), // Add timeout to prevent hanging
-                // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Move elevator up to L2 position
-                elevatorCommands.setL2(),
+                // elevatorCommands.setL2(),
                 // Move elevator up to algae position
                 elevatorCommands.setAlgae2(),
                 // Move the wrist to the picking position
@@ -108,8 +106,6 @@ public class CommandGroups {
         return Commands.sequence(
                 // Move to safe wrist position
                 wristCommands.setL3(), // Add timeout to prevent hanging
-                // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Move elevator up to algae position
                 elevatorCommands.setAlgae3(),
                 // Move the wrist to the picking position
