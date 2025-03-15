@@ -133,32 +133,7 @@ return new FunctionalCommand(
          .withName("ScoreCoral");
     }
     
-    /**
-     * Creates a command to score/eject coral with a specified timeout.
-     * Useful for autonomous sequences where precise timing is needed.
-     * 
-     * @param timeoutSeconds The timeout in seconds
-     * @return A command to score coral that times out after specified duration
-     */
-    public Command scoreCoralWithTimeout(double timeoutSeconds) {
-        return new RunCommand(() -> 
-            effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
-            effector
-        ).withTimeout(timeoutSeconds)
-         .finallyDo((interrupted) -> effector.stopMotor())
-         .withName("ScoreCoral(" + timeoutSeconds + "s)");
-    }
-    
-    /**
-     * Creates a command to score/eject coral with a default timeout of 0.75 seconds.
-     * This is particularly useful for autonomous routines.
-     * 
-     * @return A command to score coral that times out after 0.75 seconds
-     */
-    public Command autoScoreCoral() {
-        return scoreCoralWithTimeout(0.75);
-    }
-
+   
     /**
      * Creates a command to score/eject coral at a slower speed.
      * 
@@ -233,5 +208,41 @@ return new FunctionalCommand(
             effector
         ).finallyDo((interrupted) -> effector.stopMotor())
          .withName("RunAtOutput(" + output + ")");
+    }
+
+    /******************************************
+     * Autonomous Commands
+     ******************************************/
+
+     /**
+     * Creates a command to score/eject coral with a specified timeout.
+     * Useful for autonomous sequences where precise timing is needed.
+     * 
+     * @param timeoutSeconds The timeout in seconds
+     * @return A command to score coral that times out after specified duration
+     */
+    // Original Timer based
+     public Command scoreCoralWithTimeout(double timeoutSeconds) {
+        return new RunCommand(() -> 
+            effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            effector
+        ).withTimeout(timeoutSeconds)
+         .finallyDo((interrupted) -> effector.stopMotor())
+         .withName("ScoreCoral(" + timeoutSeconds + "s)");
+    }
+    
+    /**
+     * Creates a command to score/eject coral with a default timeout of 0.75 seconds.
+     * This is particularly useful for autonomous routines.
+     * 
+     * @return A command to score coral that times out after 0.75 seconds
+     */
+    public Command autoScoreCoralWithTimeout() {
+        return scoreCoralWithTimeout(0.75);
+    }
+
+    // Improved version using the sensor // TODO Needs testing
+    public Command autoScoreCoral() {
+        return new AutoScoreCoral(effector);
     }
 }
