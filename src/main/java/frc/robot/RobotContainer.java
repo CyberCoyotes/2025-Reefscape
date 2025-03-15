@@ -44,7 +44,7 @@ public class RobotContainer {
     private final WristCommands wristCommands = new WristCommands(wrist);
 
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator);
 
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
