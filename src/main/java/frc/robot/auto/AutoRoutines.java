@@ -623,9 +623,9 @@ private final AutoFactory m_factory;
                                         ));
         
                 STJ.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
-                STJ2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral());
+                // STJ2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral()); // FIXME
                 CSA.atTime("scoreL1").onTrue(m_groupCommand.autoScoreL4());
-                CSA2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral());
+                // CSA2.atTime("Load").onTrue(m_groupCommand.autoIntakeCoral()); // FIXME
                 return routine;
         }
 }
