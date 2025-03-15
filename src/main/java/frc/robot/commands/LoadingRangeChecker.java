@@ -13,8 +13,8 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 public class LoadingRangeChecker {
     
     // Constants for loading range thresholds in millimeters
-    public static final int LOADING_RANGE_MIN = 720;
-    public static final int LOADING_RANGE_MAX = 760;
+    public static final int LOADING_RANGE_MIN = 700; // TODO Needs to be tested empirically more
+    public static final int LOADING_RANGE_MAX = 780; // TODO Needs to be tested empirically more
     
     private final FrontTOFSubsystem tofSensor;
     
@@ -28,7 +28,8 @@ public class LoadingRangeChecker {
      */
     public boolean isInLoadingRange() {
         double currentDistance = tofSensor.getFrontDistance();
-        return currentDistance >= LOADING_RANGE_MIN && currentDistance <= LOADING_RANGE_MAX;
+        // Ability to check a range, but using a "too close" check for now
+        return currentDistance >= LOADING_RANGE_MIN /*&& currentDistance <= LOADING_RANGE_MAX*/;
     }
     
     /**

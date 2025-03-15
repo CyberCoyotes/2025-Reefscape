@@ -360,7 +360,7 @@ public class CommandGroups {
  * 
  * @return A command that safely intakes coral when properly positioned
  */
-public Command safeAutoIntakeCoral() {
+public Command intakeCoralMinimum() {
         // Create a loading range checker instance
         LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
         
@@ -377,7 +377,7 @@ public Command safeAutoIntakeCoral() {
             wristCommands.setIntakeCoral(),
             
             // Activate the intake end effector
-            effectorCommands.intakeCoralWithSensor(),
+            effectorCommands.intakeCoral(),
             
             // After intaking, move the wrist back to L2 position
             wristCommands.setL2(),
