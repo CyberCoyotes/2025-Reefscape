@@ -246,7 +246,7 @@ public class CommandGroups {
     }
 
     // Untestest version
-    public Command autoIntakeCoralGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands,
+    public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands,
             WristSubsystem wrist) {
  
                 return Commands.sequence(
@@ -287,7 +287,7 @@ public class CommandGroups {
 
 
     // Version from Choreo branch
-    public Command autoIntakeCoral() {
+    public Command autoIntakeCoralChoreo() {
         return Commands.sequence(
                 // Move wrist to L2 position
                 wristCommands.setL2(),
