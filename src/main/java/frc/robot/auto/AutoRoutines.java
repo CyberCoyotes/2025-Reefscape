@@ -649,6 +649,7 @@ public class AutoRoutines {
                 STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
                 CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+
                 return routine;
         }
 }
