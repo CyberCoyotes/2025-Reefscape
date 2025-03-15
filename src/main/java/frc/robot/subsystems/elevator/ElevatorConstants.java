@@ -72,11 +72,6 @@ public final class ElevatorConstants {
             .withKG(0.12)
             .withGravityType(GravityTypeValue.Elevator_Static);
     
-    // Configurable increment speed - adjust this to control how fast manual increments occur
-    /* 
-    * TODO Test these incremental values to find the best speed for manual control
-    Increased INCREMENT from 0.02 to 0.1 rotations per execution
-    */ 
     public static final double INCREMENT_VALUE = 0.1; // Rotations per execution
     public static final double MAX_INCREMENT = 2.0; // Maximum increment "speed" in rotations per second
 
