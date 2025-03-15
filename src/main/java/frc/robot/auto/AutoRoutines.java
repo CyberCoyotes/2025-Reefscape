@@ -4,14 +4,14 @@ import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.elevator.ElevatorSubsystem;
-import frc.robot.subsystems.endEffector.EffectorSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.WristCommands;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.elevator.ElevatorSubsystem;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.subsystems.wrist.WristSubsystem;
 
 @SuppressWarnings("unused")
 
@@ -73,6 +73,8 @@ public class AutoRoutines {
 
                         ));
                 STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(SCORE_WAIT));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
@@ -95,6 +97,7 @@ public class AutoRoutines {
                         ));
                 STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL2());
 
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
@@ -445,8 +448,12 @@ public class AutoRoutines {
                                         m_drivetrain.stop().withTimeout(SCORE_WAIT),
                                         CSA2.cmd()));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -471,8 +478,12 @@ public class AutoRoutines {
 
                                 ));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -502,10 +513,13 @@ public class AutoRoutines {
 
                                 ));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 CSA3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSA4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -528,8 +542,10 @@ public class AutoRoutines {
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -552,8 +568,10 @@ public class AutoRoutines {
                                 m_drivetrain.stop().withTimeout(1.0),
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -582,10 +600,16 @@ public class AutoRoutines {
                                 CSB4.cmd()
                                 ));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                
                 SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                
                 CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 CSB3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                
                 CSB4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
                 return routine;
         }
@@ -604,6 +628,8 @@ public class AutoRoutines {
 
                         ));
                 MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
                 MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
                 return routine;
         }
@@ -622,7 +648,7 @@ public class AutoRoutines {
                         ));
                 STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
 
-                // Consider using `m_effectorCommands.intakeSmartCoral().withTimeout(1.0)` after more testing
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
