@@ -88,23 +88,23 @@ public class EndEffectorCommands {
      * @return A command to intake coral with sensor feedback
      */
     public Command intakeCoral() {
-return new FunctionalCommand(
-        // init
-        () -> {},
-        // execute
-        () -> {
-            if (effector.isCoralLoaded()) {
-                effector.stopMotor();
-            } else {
-                effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-            }
-        },
-        // end
-        (interrupted) -> effector.stopMotor(),
-        // isFinished
-        () -> effector.isCoralLoaded(),
-        effector
-    ).withName("IntakeCoralWithSensor");
+        return new FunctionalCommand(
+                // init
+                () -> {
+                },
+                // execute
+                () -> {
+                    if (effector.isCoralLoaded()) {
+                        effector.stopMotor();
+                    } else {
+                        effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+                    }
+                },
+                // end
+                (interrupted) -> effector.stopMotor(),
+                // isFinished
+                () -> effector.isCoralLoaded(),
+                effector).withName("IntakeCoralWithSensor");
     }
 
     /**

@@ -192,9 +192,8 @@ public class RobotContainer {
         // Algae Commands
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
-        // operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands)); // Testing purpose only
-        operatorController.b().onTrue(commandGroups.autoIntakeCoral(wristCommands, elevatorCommands, wrist));
+        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+        operatorController.b().onTrue(commandGroups.intakeCoralMinimum()); // Previous commandGroups.autoIntakeCoral(wristCommands, elevatorCommands, wrist)
 
         // Manual Elevator Commands
         operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
