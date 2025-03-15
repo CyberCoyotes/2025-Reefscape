@@ -69,7 +69,7 @@ public class RobotContainer {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     private final AutoFactory autoFactory;
-    private final AutoRoutines<EffectorSubsystem> autoRoutines;
+    private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
 
     /* Setting up bindings for necessary control of the swerve drive platform */
@@ -89,18 +89,21 @@ public class RobotContainer {
     public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
+        // Check the AutoRoutines class to ensure the constructor matches this parameter list
+        // If it doesn't, update either this call or the constructor in AutoRoutines class
         autoRoutines = new AutoRoutines(
                 autoFactory,
                 drivetrain,
                 endEffector,
                 elevator,
                 elevatorCommands,
-                commandGroups,
+                commandGroups,                
                 endEffectorCommands,
-                wristCommands,
-                wrist
-                
+                wrist,
+                wristCommands
                 );
+
+        // Alternative approach: Check the AutoRoutines.java file and pass parameters in the correct order
 
         configureBindings();
         configureAutoRoutines();
