@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.endEffector.EffectorConstants;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
@@ -69,6 +70,17 @@ public class EndEffectorCommands {
         .withName("IntakeCoralWithSensor");
     }
 
+    // Write a command or helper that returns the status of isCoralLoaded
+    // and use it in the intakeCoralWithSensor command to determine if the motor should stop
+    // or continue running. This will help in making the command more efficient and responsive.
+    // The isCoralLoaded method should be implemented in the EffectorSubsystem class.
+    // This method will check the status of the coral sensor and return true if a coral is detected.
+    // The command should be structured to run the motor until a coral is detected, at which point
+    // the motor will stop automatically. This will ensure that the intake process is efficient
+    // and responsive to the presence of coral, reducing the risk of jamming or overloading the system.
+
+    // https://claude.ai/chat/29b91c46-0b27-4294-a3a5-3358d8bfeb98
+
         /**
      * Creates a command that runs the intake until a coral is detected by the sensor.
      * When a coral is detected, the motor will automatically stop.
@@ -76,17 +88,23 @@ public class EndEffectorCommands {
      * @return A command to intake coral with sensor feedback
      */
     public Command intakeCoral() {
-        return new RunCommand(() -> {
-            // Check coral sensor
+return new FunctionalCommand(
+        // init
+        () -> {},
+        // execute
+        () -> {
             if (effector.isCoralLoaded()) {
                 effector.stopMotor();
             } else {
-                // No coral detected, run the intake as normal
                 effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
             }
-        }, effector)
-        .finallyDo((interrupted) -> effector.stopMotor())
-        .withName("IntakeCoralWithSensor");
+        },
+        // end
+        (interrupted) -> effector.stopMotor(),
+        // isFinished
+        () -> effector.isCoralLoaded(),
+        effector
+    ).withName("IntakeCoralWithSensor");
     }
 
     /**
