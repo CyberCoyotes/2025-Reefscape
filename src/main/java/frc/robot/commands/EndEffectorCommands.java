@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.robot.subsystems.endEffector.EffectorConstants;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
@@ -87,17 +88,23 @@ public class EndEffectorCommands {
      * @return A command to intake coral with sensor feedback
      */
     public Command intakeCoral() {
-        return new RunCommand(() -> {
-            // Check coral sensor
+return new FunctionalCommand(
+        // init
+        () -> {},
+        // execute
+        () -> {
             if (effector.isCoralLoaded()) {
                 effector.stopMotor();
             } else {
-                // No coral detected, run the intake as normal
                 effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
             }
-        }, effector)
-        .finallyDo((interrupted) -> effector.stopMotor())
-        .withName("IntakeCoralWithSensor");
+        },
+        // end
+        (interrupted) -> effector.stopMotor(),
+        // isFinished
+        () -> effector.isCoralLoaded(),
+        effector
+    ).withName("IntakeCoralWithSensor");
     }
 
     /**

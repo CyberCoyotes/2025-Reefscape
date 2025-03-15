@@ -51,7 +51,7 @@ public class RobotContainer {
 
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
-    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffectorCommands, frontToF);
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF);
 
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
@@ -184,8 +184,10 @@ public class RobotContainer {
         // Algae Commands
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.b().onTrue(commandGroups.moveToIntakeCoral(wristCommands, elevatorCommands, wrist));
+        // operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+        operatorController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands)); // Testing purpose only
+        operatorController.b().onTrue(commandGroups.autoIntakeCoralGroup(wristCommands, elevatorCommands, wrist));
+        // operatorController.b().onTrue(commandGroups.autoIntakeCoral(wristCommands, elevatorCommands, coralSensor));
         // operatorController.b().onTrue(commandGroups.intakeBasicCoral(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands

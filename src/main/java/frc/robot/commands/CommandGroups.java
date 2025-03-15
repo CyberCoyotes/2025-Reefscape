@@ -7,6 +7,7 @@ import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.endEffector.EffectorConstants;
+import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
 @SuppressWarnings("unused") // Suppress warnings for unused imports and methods
 
@@ -15,6 +16,7 @@ public class CommandGroups {
     private final WristCommands wristCommands;
     private final ElevatorCommands elevatorCommands;
     private final EndEffectorCommands effectorCommands;
+    private final EffectorSubsystem effector;
     private final FrontTOFSubsystem frontToF;
 
     /**
@@ -27,10 +29,12 @@ public class CommandGroups {
     public CommandGroups(
             WristCommands wristCommands,
             ElevatorCommands elevatorCommands,
+            EffectorSubsystem effector,
             EndEffectorCommands effectorCommands,
             FrontTOFSubsystem frontToF) {
         this.wristCommands = wristCommands;
         this.elevatorCommands = elevatorCommands;
+        this.effector = effector;
         this.effectorCommands = effectorCommands;
         this.frontToF = frontToF;
     }
@@ -244,30 +248,31 @@ public class CommandGroups {
     // Untestest version
     public Command autoIntakeCoralGroup(WristCommands wristCommands, ElevatorCommands elevatorCommands,
             WristSubsystem wrist) {
-        return Commands.sequence(
-
-                // Move wrist to L2 position
-                wristCommands.setL2(),
-
-                // Move elevator to intake position
-                elevatorCommands.setIntakeCoral(),
-
-                /*
-                 * Check the ToF distance from the loading station as a safety check
-                 * If the ToF distance is between within a certain range (LOADING_RANGE 720 -
-                 * 730 mm), continue to set wrist position
-                 * ELSE move the robot away from the station -or- just do nothing until
-                 * condition is met
-                 */
-                // Print the current ToF distance to the console
-                // Commands.runOnce(() -> System.out.println("ToF Distance: " +
-                // frontToF.getDistance())),
-
-                // Move wrist to intake position
-                wristCommands.setIntakeCoral(),
-
-                // Activate the intake end effector
-                // effectorCommands.intakeCoral().until(() -> effector.isCoralLoaded()),
+ 
+                return Commands.sequence(
+        
+                        // Move wrist to L2 position
+                        wristCommands.setL2(),
+        
+                        // Move elevator to intake position
+                        elevatorCommands.setIntakeCoral(),
+        
+                        /*
+                         * Check the ToF distance from the loading station as a safety check
+                         * If the ToF distance is between within a certain range (LOADING_RANGE 720 -
+                         * 730 mm), continue to set wrist position
+                         * ELSE move the robot away from the station -or- just do nothing until
+                         * condition is met
+                         */
+                        // Print the current ToF distance to the console
+                        // Commands.runOnce(() -> System.out.println("ToF Distance: " +
+                        // frontToF.getDistance())),
+        
+                        // Move wrist to intake position
+                        wristCommands.setIntakeCoral(),
+        
+                        // Activate the intake end effector
+                        effectorCommands.intakeCoral(),
 
                 // Move the wrist back to L2 position
                 wristCommands.setL2(),
