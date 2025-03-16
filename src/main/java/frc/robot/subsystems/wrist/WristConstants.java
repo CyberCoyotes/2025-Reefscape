@@ -76,11 +76,12 @@ public final class WristConstants {
         public static final double STOWED = 0.0;
         public static final double SAFE = 0.26;
         // public static final double LOAD_CORAL = 0.0;
+        public static final double GRAB_ALGAE = 0.40;
         public static final double L1 = 0.5;
         public static final double L2 = 1.75;
         public static final double L3 = 1.75;
         public static final double L4 = 4.2;
-        public static final double GRAB_ALGAE = 0.40;
+        public static final double INTAKE_CORAL_HALF = 5.0; // Halfway between L4 and PICK_ALGAE
         public static final double INTAKE_CORAL = 12.25;
         public static final double PICK_ALGAE = 14.0;
         public static final double SCORE_ALGAE = 18.0;
