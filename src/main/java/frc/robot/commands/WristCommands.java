@@ -70,6 +70,10 @@ public class WristCommands {
         return moveToPosition(WristSubsystem.WristPositions.SCORE_ALGAE.getRotations());
     }
     
+    public Command setTravelPose() {
+        return moveToPosition(WristSubsystem.WristPositions.TRAVEL.getRotations());
+    }
+
     public Command resetWrist() {
         return this.subsystem.runOnce(() -> this.subsystem.resetWrist());
     }

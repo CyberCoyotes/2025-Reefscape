@@ -81,7 +81,7 @@ public class WristSubsystem extends SubsystemBase {
         L2(WristConstants.Positions.L2), 
         L3(WristConstants.Positions.L3),
         L4(WristConstants.Positions.L4),
-        INTAKE_CORAL_HALF(WristConstants.Positions.INTAKE_CORAL_HALF),
+        TRAVEL(WristConstants.Positions.TRAVEL),
         INTAKE_CORAL(WristConstants.Positions.INTAKE_CORAL),
         PICK_ALGAE(WristConstants.Positions.PICK_ALGAE),
         SCORE_ALGAE(WristConstants.Positions.SCORE_ALGAE);
