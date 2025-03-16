@@ -9,32 +9,21 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
 /**
  * Command factory class for the EndEffector subsystem.
- * This class contains methods that create and return commands for the end effector.
  */
 public class EndEffectorCommands {
     private final EffectorSubsystem effector;
 
     /**
-     * Constructs a new EndEffectorCommands with the specified subsystem.
-     * 
+     * Constructs a new EndEffectorCommands with the specified subsystem
      * @param effector The end effector subsystem
      */
     public EndEffectorCommands(EffectorSubsystem effector) {
         this.effector = effector;
     }
 
-    /**
-     * Creates a basic command to intake coral at the default speed.
-     * This command does not check sensors and runs until canceled.
-     * 
-     * @return A command to run the intake
-     */
-    public Command intakeCoralBasic() {
-        return effector.run(() -> 
-            effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL)
-        ).finallyDo((interrupted) -> effector.stopMotor())
-         .withName("IntakeCoralBasic");
-    }
+    /************************************************
+     * Commands for coral handling
+     ***********************************************/
 
     /**
      * Creates a command to intake coral without sensor feedback.
@@ -48,26 +37,6 @@ public class EndEffectorCommands {
             effector
         ).finallyDo((interrupted) -> effector.stopMotor())
          .withName("IntakeCoralNoSensor");
-    }
-
-    /**
-     * Creates a command that runs the intake until a coral is detected by the sensor.
-     * When a coral is detected, the motor will automatically stop.
-     * 
-     * @return A command to intake coral with sensor feedback
-     */
-    public Command intakeCoralWithSensor() {
-        return new RunCommand(() -> {
-            // Check coral sensor
-            if (effector.isCoralLoaded()) {
-                effector.stopMotor();
-            } else {
-                // No coral detected, run the intake as normal
-                effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-            }
-        }, effector)
-        .finallyDo((interrupted) -> effector.stopMotor())
-        .withName("IntakeCoralWithSensor");
     }
 
     // Write a command or helper that returns the status of isCoralLoaded
@@ -88,23 +57,23 @@ public class EndEffectorCommands {
      * @return A command to intake coral with sensor feedback
      */
     public Command intakeCoral() {
-return new FunctionalCommand(
-        // init
-        () -> {},
-        // execute
-        () -> {
-            if (effector.isCoralLoaded()) {
-                effector.stopMotor();
-            } else {
-                effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-            }
-        },
-        // end
-        (interrupted) -> effector.stopMotor(),
-        // isFinished
-        () -> effector.isCoralLoaded(),
-        effector
-    ).withName("IntakeCoralWithSensor");
+        return new FunctionalCommand(
+                // init
+                () -> {
+                },
+                // execute
+                () -> {
+                    if (effector.isCoralLoaded()) {
+                        effector.stopMotor();
+                    } else {
+                        effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+                    }
+                },
+                // end
+                (interrupted) -> effector.stopMotor(),
+                // isFinished
+                () -> effector.isCoralLoaded(),
+                effector).withName("IntakeCoralWithSensorFeedback");
     }
 
     /**
@@ -114,11 +83,15 @@ return new FunctionalCommand(
      */
     public Command reverseCoralNoSensor() {
         return new RunCommand(() -> 
-            effector.setEffectorOutput(-EffectorConstants.INTAKE_CORAL * 0.55),
+            // -0.25 * 0.55 = -0.1375
+            // Replacing 0.15 * -1
+            effector.setEffectorOutput(EffectorConstants.SCORE_SLOW_CORAL * -1), 
             effector
         ).finallyDo((interrupted) -> effector.stopMotor())
          .withName("ReverseCoralNoSensor");
     }
+
+
 
     /**
      * Creates a command to score/eject coral at the standard speed.
@@ -133,19 +106,49 @@ return new FunctionalCommand(
          .withName("ScoreCoral");
     }
     
-   
     /**
+     * Creates a command to score/eject coral with a specified timeout.
+     * Useful for autonomous sequences where precise timing is needed.
+     * 
+     * @param timeoutSeconds The timeout in seconds
+     * @return A command to score coral that times out after specified duration
+     */
+    public Command scoreCoralWithTimeout(double timeoutSeconds) {
+        return new RunCommand(() -> 
+            effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            effector
+        ).withTimeout(timeoutSeconds)
+         .finallyDo((interrupted) -> effector.stopMotor())
+         .withName("ScoreCoral(" + timeoutSeconds + "s)");
+    }
+    
+    /**
+     * Creates a command to score/eject coral with a default timeout of 0.75 seconds.
+     * This is particularly useful for autonomous routines.
+     * 
+     * @return A command to score coral that times out after 0.75 seconds
+     */
+    public Command scoreCoralWithTimeout() {
+        return scoreCoralWithTimeout(0.75);
+    }
+
+        /**
      * Creates a command to score/eject coral at a slower speed.
      * 
      * @return A command to score coral slowly
      */
-    public Command slowCoral() {
+    public Command scoreCoralSlow() {
         return new RunCommand(() -> 
-            effector.setEffectorOutput(EffectorConstants.lSCORE_CORAL),
+            effector.setEffectorOutput(EffectorConstants.SCORE_SLOW_CORAL),
             effector
         ).finallyDo((interrupted) -> effector.stopMotor())
          .withName("SlowCoral");
     }
+
+
+    /************************************************
+     * Commands for algae handling
+     ***********************************************/
 
     /**
      * Creates a command to intake algae.
@@ -173,19 +176,8 @@ return new FunctionalCommand(
          .withName("ScoreAlgae");
     }
 
-    /**
-     * Creates a command that immediately stops the effector motor.
-     * 
-     * @return A command to stop the motor
-     */
-    public Command stopEffector() {
-        return Commands.runOnce(() -> effector.stopMotor(), effector)
-                .withName("StopEffector");
-    }
-
-    /**
+        /**
      * Creates a command to hold algae using minimal power to maintain grip.
-     * 
      * @return A command to hold algae
      */
     public Command holdAlgae() {
@@ -196,53 +188,20 @@ return new FunctionalCommand(
          .withName("HoldAlgae");
     }
 
+
+    /************************************************
+     * Commands for motor control
+     ***********************************************/
     /**
-     * Creates a command to run the effector motor at the specified output.
+     * Creates a command that immediately stops the effector motor.
      * 
-     * @param output The duty cycle output to apply (-1.0 to 1.0)
-     * @return A command to run the motor at the specified output
+     * @return A command to stop the motor
      */
-    public Command runAtOutput(double output) {
-        return new RunCommand(() -> 
-            effector.setEffectorOutput(output),
-            effector
-        ).finallyDo((interrupted) -> effector.stopMotor())
-         .withName("RunAtOutput(" + output + ")");
+    public Command stopEffector() {
+        return Commands.runOnce(() -> effector.stopMotor(), effector)
+                .withName("StopEffector");
     }
 
-    /******************************************
-     * Autonomous Commands
-     ******************************************/
 
-     /**
-     * Creates a command to score/eject coral with a specified timeout.
-     * Useful for autonomous sequences where precise timing is needed.
-     * 
-     * @param timeoutSeconds The timeout in seconds
-     * @return A command to score coral that times out after specified duration
-     */
-    // Original Timer based
-     public Command scoreCoralWithTimeout(double timeoutSeconds) {
-        return new RunCommand(() -> 
-            effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
-            effector
-        ).withTimeout(timeoutSeconds)
-         .finallyDo((interrupted) -> effector.stopMotor())
-         .withName("ScoreCoral(" + timeoutSeconds + "s)");
-    }
-    
-    /**
-     * Creates a command to score/eject coral with a default timeout of 0.75 seconds.
-     * This is particularly useful for autonomous routines.
-     * 
-     * @return A command to score coral that times out after 0.75 seconds
-     */
-    public Command autoScoreCoralWithTimeout() {
-        return scoreCoralWithTimeout(0.75);
-    }
 
-    // Improved version using the sensor // TODO Needs testing
-    public Command autoScoreCoral() {
-        return new AutoScoreCoral(effector);
-    }
-}
+} // End of Class
