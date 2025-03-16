@@ -34,9 +34,14 @@ public class AutoRoutines {
     private final WristSubsystem m_wrist;
     private final WristCommands m_wristCommands;
 
-    private final double ELEVATOR_WAIT = 4.2; // Time to wait for the elevator to move
-    private final double LOAD_WAIT = 2.0; // Time to wait for the effector to load coral
-    private final double SCORE_WAIT = 1.0; // Time to wait for the effector to score coral
+    // How long to wait after driving before doing something else
+    private final double DRIVE_WAIT = 1.0; // Cut 2.0 -> 1.0 or less 
+
+    // Time to wait for the elevator to move and score.
+    private final double ELEVATOR_WAIT = 2.5; // 4.2 -> 1.0
+    
+    private final double LOAD_WAIT = 1.25; // 2.0 -> 1.0
+    private final double SCORE_WAIT = 1.0; // 1.0 -> 0.5
 
     public AutoRoutines(
         AutoFactory autoFactory,
@@ -68,14 +73,14 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STA.resetOdometry(), // Always reset odometry first
                                 STA.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STA2.cmd()
 
                         ));
                 STA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(SCORE_WAIT));
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
+                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(LOAD_WAIT));
                 return routine;
         }
 
@@ -91,14 +96,14 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STA.resetOdometry(),
                                 STA.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STA2.cmd()
 
                         ));
                 STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL2());
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
+                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(LOAD_WAIT));
                 return routine;
         }
         
@@ -115,11 +120,11 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STA.resetOdometry(), // Always reset odometry first
                                 STA.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STA2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 CSL.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 CSL2.cmd()
 
                         ));
@@ -136,7 +141,7 @@ public class AutoRoutines {
                                 Commands.sequence(
                                                 STH.resetOdometry(), // Always reset odometry first
                                                 STH.cmd(), // Follow the path
-                                                m_drivetrain.stop().withTimeout(2.0),
+                                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                                 STH2.cmd()
 
                                 ));
@@ -153,9 +158,9 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STI.resetOdometry(), // Always reset odometry first
                                 STI.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STI2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT)
 
                         ));
 
@@ -171,7 +176,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STJ.resetOdometry(), // Always reset odometry first
                                 STJ.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STJ2.cmd()
 
                         ));
@@ -188,7 +193,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STK.resetOdometry(), // Always reset odometry first
                                 STK.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STK2.cmd()
 
                         ));
@@ -205,7 +210,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STL.resetOdometry(), // Always reset odometry first
                                 STL.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 STL2.cmd()
 
                         ));
@@ -222,9 +227,9 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBB.resetOdometry(), // Always reset odometry first
                                 SBB.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBB2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT)
 
                         ));
 
@@ -242,11 +247,11 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBB.resetOdometry(), // Always reset odometry first
                                 SBB.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBB2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 CSC.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 CSC2.cmd()));
 
                 return routine;
@@ -261,7 +266,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBC.resetOdometry(), // Always reset odometry first
                                 SBC.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBC2.cmd()
 
                         ));
@@ -278,7 +283,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBD.resetOdometry(), // Always reset odometry first
                                 SBD.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBD2.cmd()
 
                         ));
@@ -295,9 +300,9 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBE.resetOdometry(), // Always reset odometry first
                                 SBE.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBE2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT)
 
                         ));
 
@@ -313,9 +318,9 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBF.resetOdometry(), // Always reset odometry first
                                 SBF.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBF2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT)
 
                         ));
 
@@ -331,9 +336,9 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBG.resetOdometry(), // Always reset odometry first
                                 SBG.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 SBG2.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0)
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT)
 
                         ));
 
@@ -363,7 +368,7 @@ public class AutoRoutines {
                         Commands.sequence(
                                 TwoMetersT.resetOdometry(), // Always reset odometry first
                                 TwoMetersT.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 Back.cmd()
 
                         ));
@@ -385,15 +390,15 @@ public class AutoRoutines {
                         Commands.sequence(
                                 A.resetOdometry(), // Always reset odometry first
                                 A.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 C.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 E.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 G.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 I.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 K.cmd()
 
                         ));
@@ -414,15 +419,15 @@ public class AutoRoutines {
                         Commands.sequence(
                                 B.resetOdometry(), // Always reset odometry first
                                 B.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 D.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 F.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 H.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 J.cmd(),
-                                m_drivetrain.stop().withTimeout(2.0),
+                                m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                 L.cmd()
 
                         ));
@@ -441,23 +446,24 @@ public class AutoRoutines {
                                 Commands.sequence(
                                         STJ.resetOdometry(), // Always reset odometry first
                                         STJ.cmd(), // , // Follow the path
-                                        m_drivetrain.stop().withTimeout(1.5),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(SCORE_WAIT),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         CSA.cmd(),
-                                        m_drivetrain.stop().withTimeout(SCORE_WAIT),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         CSA2.cmd()));
-                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(SCORE_WAIT));
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
-                CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                STJ2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(LOAD_WAIT));
+                CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(SCORE_WAIT));
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(LOAD_WAIT));
                 return routine;
         }
 
+        // J L1 to A L2
         public AutoRoutine STJtoAL12() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
                 final AutoTrajectory STJ = routine.trajectory("ST-J-L1", 0);
@@ -469,22 +475,22 @@ public class AutoRoutines {
                                 Commands.sequence(
                                         STJ.resetOdometry(), // Always reset odometry first
                                         STJ.cmd(), // Follow the path
-                                        m_drivetrain.stop().withTimeout(1.0),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(1.0),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         CSA.cmd(),
-                                        m_drivetrain.stop().withTimeout(1.0),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         CSA2.cmd()
 
                                 ));
-                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
+                STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(SCORE_WAIT));
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                STJ2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine STJtoAL1AL2() {
@@ -514,13 +520,13 @@ public class AutoRoutines {
                                 ));
                 STJ.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                STJ2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                STJ2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 CSA.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                CSA2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSA2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 CSA3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                CSA4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSA4.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 return routine;
         }
 
@@ -543,10 +549,10 @@ public class AutoRoutines {
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                SBE2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
-                CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 return routine;
         }
 
@@ -569,10 +575,10 @@ public class AutoRoutines {
                                 CSB2.cmd()));
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                SBE2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 return routine;
         }
         public AutoRoutine SBEtoBL1BL2() {
@@ -602,15 +608,15 @@ public class AutoRoutines {
                 SBE.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 
-                SBE2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                SBE2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 CSB.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 
-                CSB2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSB2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 CSB3.atTime("scoreL1").onTrue(m_effectorCommands.intakeCoral().withTimeout(1.0));
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 
-                CSB4.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(1.0));
+                CSB4.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(1.0));
                 return routine;
         }
 
@@ -630,7 +636,7 @@ public class AutoRoutines {
                 MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
                 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                MH2.atTime("Load").onTrue(m_effectorCommands.slowCoral().withTimeout(2.0));
+                MH2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 return routine;
         }
         public AutoRoutine STAL4() {
@@ -665,7 +671,7 @@ public class AutoRoutines {
                                         STJ.cmd(), // , // Follow the path
                                         m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(3.0),
+                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
                                         CSA.cmd(),
                                         m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
                                         CSA2.cmd()

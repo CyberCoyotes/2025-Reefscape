@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import frc.robot.subsystems.FrontTOFSubsystem;
-import frc.robot.subsystems.wrist.WristSubsystem;
 
 /**
  * Utility class to check if the robot is in the correct range for loading coral
@@ -13,8 +12,8 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 public class LoadingRangeChecker {
     
     // Constants for loading range thresholds in millimeters
-    public static final int LOADING_RANGE_MIN = 700; // TODO Needs to be tested empirically more
-    public static final int LOADING_RANGE_MAX = 780; // TODO Needs to be tested empirically more
+    public static final int LOADING_RANGE_MIN = 700; // Needs to be tested empirically more
+    public static final int LOADING_RANGE_MAX = 780; // Needs to be tested empirically more
     
     private final FrontTOFSubsystem tofSensor;
     

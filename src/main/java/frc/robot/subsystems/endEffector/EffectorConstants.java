@@ -8,14 +8,15 @@ public class EffectorConstants {
 
     public static final double INTAKE_CORAL = 0.25;
     public static final double SCORE_CORAL = 0.25;
-    public static final double lSCORE_CORAL = 0.15;
-
+    public static final double SCORE_SLOW_CORAL = 0.15;
     public static final double SCORE_CORAL_INVERTED = -0.3;
 
     public static final double INTAKE_ALGAE = -0.40; // Opposite power of INTAKE
     public static final double SCORE_ALGAE = 0.40;
     public static final double HOLD_ALGAE = 0.05; // Low power hold
 
+    public static final double SCORE_WAIT = 0.5; // Time to wait after scoring before stopping
+    
     public static final double STOP = 0.0; // Fully stopped
 
     public static final double INTAKE_CURRENT_AMPS = 5.0; // Start low and tune up
