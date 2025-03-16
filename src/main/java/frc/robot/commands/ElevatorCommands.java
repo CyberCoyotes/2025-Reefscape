@@ -113,6 +113,10 @@ public class ElevatorCommands {
     }
 
     public Command setIntakeCoral() {
-        return setPosition(ElevatorPosition.INTAKE_CORAL.getPosition()).withName("SafeMoveElevatorToIntakeCoralPose");
+        return setPosition(ElevatorPosition.INTAKE_CORAL.getPosition()).withName("MoveElevatorToIntakeCoralPose");
+    }
+
+    public Command setTravelPose() {
+        return setPosition(ElevatorPosition.TRAVEL.getPosition()).withName("TravelPoseToPrepForIntakeAndL4Score");
     }
 }

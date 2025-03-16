@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
@@ -120,6 +121,20 @@ public class CommandGroups {
                 // new WaitCommand(0.1),
                 // Then move the elevator to the algae scoring position
                 elevatorCommands.setScoreAlgae()).withName("ScoringAlgaeSequence");
+    }
+
+    public Command moveToTravel(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // Add a small delay to give robot time to clear Reef Branches
+                new WaitCommand(0.3),
+
+                // Move wrist to travel position
+                wristCommands.setTravelPose(),
+
+                // Move the elevator to travel position, same as CORAL INTAKE currently
+                elevatorCommands.setTravelPose()
+                
+                ).withName("TravelPoseBetweenStations");
     }
 
     /**********************************

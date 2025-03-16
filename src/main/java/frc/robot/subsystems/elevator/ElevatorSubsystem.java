@@ -32,6 +32,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         ALGAE2(1.1),
         L3(1.85),
         INTAKE_CORAL(1.92),
+        TRAVEL(1.92),
         ALGAE3(2.45),
         L4(4.7);
 

@@ -700,7 +700,8 @@ public class AutoRoutines {
                 CSA2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
 
                 // Consider using these travel positions between the branches and coral station
-                // TODO .atTime("Travel").onTrue(m_commandGroups.autoTravel(m_wristCommands, m_elevatorCommands, m_wrist));
+                // Need to add an event
+                // STJ.atTime("Travel").onTrue(m_commandGroups.moveToTravel(m_wristCommands, m_elevatorCommands));
 
                 return routine;
         }
