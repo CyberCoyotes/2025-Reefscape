@@ -40,6 +40,7 @@ public class AutoRoutines {
     // Time to wait for the elevator to move and score.
     private final double ELEVATOR_WAIT = 2.5; // 4.2 -> 1.0
     
+    // Time to wait for the effector to load.
     private final double LOAD_WAIT = 1.25; // 2.0 -> 1.0
     private final double SCORE_WAIT = 1.0; // 1.0 -> 0.5
 
@@ -437,8 +438,10 @@ public class AutoRoutines {
 
         public AutoRoutine STJtoAL1() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J-L1");
+                // 
                 final AutoTrajectory STJ = routine.trajectory("ST-J-L1", 0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J-L1", 1);
+
                 final AutoTrajectory CSA = routine.trajectory("CS1-A-L1", 0);
                 final AutoTrajectory CSA2 = routine.trajectory("CS1-A-L1", 1);
 
@@ -662,27 +665,42 @@ public class AutoRoutines {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
+
                 final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
                 final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
 
                 routine.active().onTrue(
                                 Commands.sequence(
-                                        STJ.resetOdometry(), // Always reset odometry first
-                                        STJ.cmd(), // , // Follow the path
+                                        STJ.resetOdometry(),
+                                        
+                                        //  Drives from Start to Branch J, stops & waits, and scores L4
+                                        STJ.cmd(),
                                         m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+
+                                        // Drives from Branch J to Coral Station, stops & waits to load
                                         STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(DRIVE_WAIT),
+                                        m_drivetrain.stop().withTimeout(LOAD_WAIT),
+
+                                        // Drives from Coral Station to Branch A, stops & waits to score L4
                                         CSA.cmd(),
                                         m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+
+                                        // Drives from Branch A to Coral Station, stops & waits to load
                                         CSA2.cmd()
                                         ));
         
                 STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                
                 // STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
                 STJ2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
+                
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                
                 // STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
                 CSA2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
+
+                // Consider using these travel positions between the branches and coral station
+                // TODO .atTime("Travel").onTrue(m_commandGroups.autoTravel(m_wristCommands, m_elevatorCommands, m_wrist));
 
                 return routine;
         }
