@@ -38,10 +38,10 @@ public class AutoRoutines {
     private final double DRIVE_WAIT = 1.0; // Cut 2.0 -> 1.0 or less 
 
     // Time to wait for the elevator to move and score.
-    private final double ELEVATOR_WAIT = 2.5; // 4.2 -> 1.0
+    private final double ELEVATOR_WAIT = 4.2; // 4.2 -> 1.0
     
     // Time to wait for the effector to load.
-    private final double LOAD_WAIT = 1.25; // 2.0 -> 1.0
+    private final double LOAD_WAIT = 2; // 2.0 -> 1.0
     private final double SCORE_WAIT = 1.0; // 1.0 -> 0.5
 
     public AutoRoutines(
@@ -642,8 +642,26 @@ public class AutoRoutines {
                 MH2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
                 return routine;
         }
+        public AutoRoutine STJL4() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-JL4");
+                final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STJ.resetOdometry(), // Always reset odometry first
+                                STJ.cmd(), // Follow the path
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                STJ2.cmd()
+
+                        ));
+                   STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                        // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                  // STJ.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
+                   return routine;
+        }
         public AutoRoutine STAL4() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-A");
+                final AutoRoutine routine = m_factory.newRoutine("ST-AL4");
                 final AutoTrajectory STA = routine.trajectory("ST-A", 0);
                 //final AutoTrajectory STA2 = routine.trajectory("ST-A", 1);
 
@@ -661,48 +679,99 @@ public class AutoRoutines {
                 STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
                 return routine;
         }
+        public AutoRoutine SBEL4() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-EL4");
+                final AutoTrajectory SBE = routine.trajectory("SB-E", 0);
+                //final AutoTrajectory SBE2 = routine.trajectory("SB-E", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBE.resetOdometry(),
+                                SBE.cmd(),
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT)//,
+                                //SBE2.cmd()
+
+                        ));
+                SBE.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                //SBE2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
+                return routine;
+        }
+        public AutoRoutine SBBL4() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-BL4");
+                final AutoTrajectory SBB = routine.trajectory("SB-B", 0);
+                //final AutoTrajectory SBB2 = routine.trajectory("SB-B", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(),
+                                SBB.cmd(),
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT)//,
+                                //SBE2.cmd()
+
+                        ));
+                SBB.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                //SBB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
+                return routine;
+        }
         public AutoRoutine STJ4toAL4() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-J");
+                final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
-
                 final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
                 final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
 
                 routine.active().onTrue(
-                                Commands.sequence(
-                                        STJ.resetOdometry(),
-                                        
-                                        //  Drives from Start to Branch J, stops & waits, and scores L4
-                                        STJ.cmd(),
-                                        m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
-
-                                        // Drives from Branch J to Coral Station, stops & waits to load
-                                        STJ2.cmd(),
-                                        m_drivetrain.stop().withTimeout(LOAD_WAIT),
-
-                                        // Drives from Coral Station to Branch A, stops & waits to score L4
-                                        CSA.cmd(),
-                                        m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
-
-                                        // Drives from Branch A to Coral Station, stops & waits to load
-                                        CSA2.cmd()
-                                        ));
-        
+                        Commands.sequence(
+                                STJ.resetOdometry(),
+                                //  Drives from Start to Branch J, stops & waits, and scores L4
+                                STJ.cmd(),
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                // Drives from Branch J to Coral Station, stops & waits to load
+                                STJ2.cmd(),             
+                                m_drivetrain.stop().withTimeout(6.0),
+                                // Drives from Coral Station to Branch A, stops & waits to score L4
+                                CSA.cmd(),
+                                m_drivetrain.stop().withTimeout(4.2),
+                                // Drives from Branch A to Coral Station, stops & waits to load
+                                CSA2.cmd()
+                        ));
                 STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                
-                // STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
-                STJ2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
-                
+                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                
-                // STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
-                CSA2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
-
+                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
                 // Consider using these travel positions between the branches and coral station
                 // Need to add an event
                 // STJ.atTime("Travel").onTrue(m_commandGroups.moveToTravel(m_wristCommands, m_elevatorCommands));
+                return routine;
+        }
+        public AutoRoutine SBE4toBL4() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-EL4");
+                final AutoTrajectory SBE = routine.trajectory("SB-E", 0);
+                final AutoTrajectory SBE2 = routine.trajectory("SB-E", 1);
+                final AutoTrajectory CSB = routine.trajectory("CS2-B", 0);
+                final AutoTrajectory CSB2 = routine.trajectory("CS2-B", 1);
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBE.resetOdometry(),
+                                SBE.cmd(),
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                SBE2.cmd(),
+                                m_drivetrain.stop().withTimeout(5.0),
+                                CSB.cmd(),
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                CSB2.cmd()
 
+                        ));
+                SBE.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                SBE2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(5.0));
+                CSB.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                CSB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(5.0));
                 return routine;
         }
 }

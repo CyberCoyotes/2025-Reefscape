@@ -251,8 +251,7 @@ public class CommandGroups {
     }
 
     // Untestest version
-    public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands,
-            WristSubsystem wrist) {
+    public Command autoIntakeCoral() {
  
                 return Commands.sequence(
         
