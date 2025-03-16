@@ -672,9 +672,11 @@ public class AutoRoutines {
                                         ));
         
                 STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+                // STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+                STJ2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+                // STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist));
+                CSA2.atTime("Load").onTrue(m_commandGroups.intakeCoralMinimum());
 
                 return routine;
         }
