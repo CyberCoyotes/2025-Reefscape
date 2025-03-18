@@ -130,10 +130,10 @@ public class CommandGroups {
                 new WaitCommand(0.3),
 
                 // Move wrist to travel position
-                wristCommands.setTravelPose(),
+                wristCommands.setTravel(),
 
                 // Move the elevator to travel position, same as CORAL INTAKE currently
-                elevatorCommands.setTravelPose()
+                elevatorCommands.setTravel()
                 
                 ).withName("TravelPoseBetweenStations");
     }
@@ -284,6 +284,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
     public Command autoScoreL4() {
         return Commands.sequence(
+                // TODO Set to LTravel instead!
                 // Set the wrist to L2, i.e. a safe position
                 wristCommands.setL2(),
                 // Move the elevator to L4
@@ -292,12 +293,38 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 wristCommands.setL4(),
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
+
+                // TODO Make this Smart!
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.scoreCoralWithTimeout(),
+
+                // TODO Go to Travel instead
                 // Move wrist to safe travel position if not already
-                wristCommands.setL2(), // .withTimeout(1.5), // Add timeout to prevent hanging
+                wristCommands.setL2(),
+
+                // TODO Go to Travel instead
                 // Move the elevator to home position
                 elevatorCommands.setHome()).withName("scoreL4Sequence");
+    }
+
+    public Command autoRoadRunnerL4() {
+        return Commands.sequence(
+
+                moveToTravel(wristCommands, elevatorCommands),
+
+                // Move the elevator to L4
+                elevatorCommands.setL4(),
+                // Set wrist to L4
+                wristCommands.setL4(),
+                // Short delay to stabilize
+                Commands.waitSeconds(0.05),
+
+                // TODO Make this Smart!
+                // Score the coral with timing appropriate for autonomous
+                effectorCommands.scoreCoralWithTimeout(),
+
+                moveToTravel(wristCommands, elevatorCommands)
+                    .withName("scoreL4Sequence"));
     }
 
     public Command autoIntakeCoral() {

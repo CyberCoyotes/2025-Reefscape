@@ -51,7 +51,6 @@ public class RobotContainer {
 
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
-    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF);
 
     // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
@@ -68,6 +67,7 @@ public class RobotContainer {
     // 3/4 of a rotation per second max angular velocity
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
+    
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
@@ -85,6 +85,8 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
 
     public RobotContainer() {
 
@@ -126,6 +128,8 @@ public class RobotContainer {
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
         // autoRoutines::SBEtoBL1BL2);
         autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
+        autoChooser.addRoutine("Left Speedy", autoRoutines::LeftSideSpeedy);
+        autoChooser.addRoutine("Left Speedy-G", autoRoutines::LeftSideSpeedyG);
 
         // autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
         // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
