@@ -285,9 +285,8 @@ public class CommandGroups {
                 elevatorCommands.setHome()).withName("scoreL4Sequence");
     }
 
-
-    public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands,
-            WristSubsystem wrist) {
+    // Untestest version
+    public Command autoIntakeCoral() {
  
                 return Commands.sequence(
         
