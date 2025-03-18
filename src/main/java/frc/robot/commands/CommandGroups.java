@@ -1,11 +1,15 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.endEffector.EffectorConstants;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -19,6 +23,7 @@ public class CommandGroups {
     private final EndEffectorCommands effectorCommands;
     private final EffectorSubsystem effector;
     private final FrontTOFSubsystem frontToF;
+    private final CommandSwerveDrivetrain drivetrain;
 
     /**
      * Creates a new CommandGroups instance with the necessary command factories.
@@ -32,12 +37,14 @@ public class CommandGroups {
             ElevatorCommands elevatorCommands,
             EffectorSubsystem effector,
             EndEffectorCommands effectorCommands,
-            FrontTOFSubsystem frontToF) {
+            FrontTOFSubsystem frontToF,
+            CommandSwerveDrivetrain drivetrain) {
         this.wristCommands = wristCommands;
         this.elevatorCommands = elevatorCommands;
         this.effector = effector;
         this.effectorCommands = effectorCommands;
         this.frontToF = frontToF;
+        this.drivetrain = drivetrain;
     }
 
     /*******************************
@@ -294,29 +301,75 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
     }
 
     public Command autoIntakeCoral() {
- 
-                return Commands.sequence(
-        
-                        // Move wrist to L2 position
-                        wristCommands.setL2(),
-        
-                        // Move elevator to intake position
-                        elevatorCommands.setIntakeCoral(),
-        
-                        // Move wrist to intake position
-                        wristCommands.setIntakeCoral(),
-        
-                        // Activate the intake end effector
-                        effectorCommands.intakeCoral(),
-
-                // Move the wrist back to L2 position
+        return Commands.sequence(
+            // Move wrist to L2 position
+            wristCommands.setL2(),
+            
+            // Move elevator to intake position
+            elevatorCommands.setIntakeCoral(),
+            
+            // Move wrist to intake position
+            wristCommands.setIntakeCoral(),
+            
+            // Start the intake
+            effectorCommands.intakeCoral(),
+            
+            // Wait for coral detection or timeout - THIS DOESN'T REQUIRE SUBSYSTEM EXCLUSIVITY
+            effectorCommands.waitForCoralLoadWithTimeout(3.0),
+            
+            // Once loaded or timed out, move to safe position
+            Commands.parallel(
                 wristCommands.setL2(),
+                Commands.sequence(
+                    Commands.waitSeconds(0.1), // Give wrist time to start moving
+                    elevatorCommands.setL2()
+                )
+            )
+        ).withName("AutoIntakeCoralSequence");
+    }
 
-                // Move the elevator back to L2 position
-                elevatorCommands.setL2()
+    /**
+     * Creates a command that stops the drivetrain until coral is loaded or timeout expires.
+     * @param timeoutSeconds Maximum time to wait for coral loading
+     * @return Command that completes when coral is loaded or timeout expires
+     */
+    public Command stopUntilCoralLoaded(double timeoutSeconds) {
+        return Commands.race(
+            // Stop drivetrain
+            drivetrain.run(() -> {
+                drivetrain.setControl(new SwerveRequest.RobotCentric()
+                    .withVelocityX(0)
+                    .withVelocityY(0) 
+                    .withRotationalRate(0));
+            }),
+            // Wait until coral loaded OR timeout expires (whichever comes first)
+            Commands.race(
+                Commands.waitUntil(() -> effector.isCoralLoaded()),
+                Commands.waitSeconds(timeoutSeconds)
+            )
+        ).withName("StopUntilCoralLoaded");
+    }
 
-        ).withName("IntakeCoralSequence");
-
+        /**
+     * Creates a command that stops the drivetrain until coral is loaded or timeout expires.
+     * @param timeoutSeconds Maximum time to wait for coral loading
+     * @return Command that completes when coral is loaded or timeout expires
+     */
+    public Command stopUntilCoralReleased(double timeoutSeconds) {
+        return Commands.race(
+            // Stop drivetrain
+            drivetrain.run(() -> {
+                drivetrain.setControl(new SwerveRequest.RobotCentric()
+                    .withVelocityX(0)
+                    .withVelocityY(0) 
+                    .withRotationalRate(0));
+            }),
+            // Wait until coral NOT loaded OR timeout expires (whichever comes first)
+            Commands.race(
+                Commands.waitUntil(() -> !effector.isCoralLoaded()),
+                Commands.waitSeconds(timeoutSeconds)
+            )
+        ).withName("StopUntilCoralReleased");
     }
 
     /*

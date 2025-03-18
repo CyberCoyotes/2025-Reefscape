@@ -748,6 +748,64 @@ public class AutoRoutines {
                 // STJ.atTime("Travel").onTrue(m_commandGroups.moveToTravel(m_wristCommands, m_elevatorCommands));
                 return routine;
         }
+
+        /*********************************
+         * TODO Test this routine
+         * @return
+         *********************************/
+        public AutoRoutine LeftSide() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
+                final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STJ.resetOdometry(),
+
+                                //  Drives from Start to Branch J, stops & waits, and scores L4
+                                STJ.cmd(),
+                                
+                                // TODO Make so this only waits until the coral piece has cleared the end effector sensor
+                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+
+                                STJ2.cmd(),             
+
+                                // TODO Make so this only wait based on `waitForCoralLoadWithTimeout`
+                                m_drivetrain.stop().withTimeout(6.0),
+
+                                // Drives from Coral Station to Branch A, stops & waits to score L4
+                                CSA.cmd(),
+                                m_drivetrain.stop().withTimeout(4.2),
+                                // Drives from Branch A to Coral Station, stops & waits to load
+                                CSA2.cmd()
+                        ));
+                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                STJ2.atTime("Load").onTrue(
+                        Commands.sequence(
+                                m_commandGroups.autoIntakeCoral(),
+                                m_drivetrain.stop().withTimeout(0.1) // Wait for the coral to be fully loaded
+                        ));
+                CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+                // Consider using these travel positions between the branches and coral station
+                // Need to add an event
+                // STJ.atTime("Travel").onTrue(m_commandGroups.moveToTravel(m_wristCommands, m_elevatorCommands));
+                return routine;
+        }
+
+        /*
+        STA.cmd(), 
+        commandGroups.stopUntilCoralReleased(6.0),
+        STA2.cmd()
+
+        STA.cmd(), 
+        commandGroups.stopUntilCoralLoaded(6.0),
+        STA2.cmd()
+
+         */
+
         public AutoRoutine SBE4toBL4() {
                 final AutoRoutine routine = m_factory.newRoutine("SB-EL4");
                 final AutoTrajectory SBE = routine.trajectory("SB-E", 0);
