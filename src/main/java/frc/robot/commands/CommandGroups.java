@@ -277,7 +277,7 @@ public class CommandGroups {
 
     }
 
-    /* // TODO Test this advanced version on autoIntakeCoral
+    /*
     public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, 
                               WristSubsystem wrist) {
     
@@ -337,32 +337,6 @@ public class CommandGroups {
 */
 
 
-
-/* Deprecated 
-    // Version from Choreo branch
-    public Command autoIntakeCoralChoreo() {
-        return Commands.sequence(
-                // Move wrist to L2 position
-                wristCommands.setL2(),
-
-                // Move elevator to intake position
-                elevatorCommands.setIntakeCoral(),
-
-                // After elevator is at positioned, move wrist to intake position
-                wristCommands.setIntakeCoral(),
-
-                // Finally activate the intake
-                effectorCommands.intakeCoral(),
-
-                Commands.waitSeconds(0.2),
-
-                wristCommands.setL2(),
-
-                elevatorCommands.setHome()).withName("IntakeCoralSequence");
-    }
-    */
-
-    // Add this new method to CommandGroups.java
 /**
  * Creates a command that checks if the robot is within loading range before
  * attempting to intake coral. If the robot is in the correct distance range,
