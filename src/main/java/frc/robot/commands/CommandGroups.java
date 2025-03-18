@@ -344,7 +344,7 @@ public class CommandGroups {
  * 
  * @return A command that safely intakes coral when properly positioned
  */
-public Command intakeCoralMinimum() {
+public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         // Create a loading range checker instance
         LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
         

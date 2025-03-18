@@ -152,14 +152,12 @@ public class RobotContainer {
         /***********************************************
          ** Driver Controls **
          ***********************************************/
-        // Testing purposes
-        // driverController.back().onTrue(commandGroups.autoScoreL4());
 
-        // Resets the gyro
+        // driverController.back().onTrue(commandGroups.autoScoreL4()); // Testing Button
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
-        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Auto sensor stop
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
@@ -176,16 +174,17 @@ public class RobotContainer {
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
 
         // Manual Wrist Commands
-        driverController.povRight().whileTrue(wristCommands.incrementOut());
         driverController.povLeft().whileTrue(wristCommands.incrementIn());
+        driverController.povRight().whileTrue(wristCommands.incrementOut());
 
         /***********************************************
          ** Operator Controls **
          ***********************************************/
-        // Rotates the servo to a specific angle when the start button is pressed
-        operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
-        operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
 
+        // Rotates the servo to a specific angle when the start button is pressed
+        operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands)); // Redundant 
+        operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
+        
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
@@ -196,15 +195,16 @@ public class RobotContainer {
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
         operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.b().onTrue(commandGroups.intakeCoralMinimum()); // Previous commandGroups.autoIntakeCoral(wristCommands, elevatorCommands, wrist)
+        operatorController.b().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
 
         // Manual Elevator Commands
         operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
 
         // Manual Wrist Commands
-        operatorController.povRight().whileTrue(wristCommands.incrementOut());
         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
+        operatorController.povRight().whileTrue(wristCommands.incrementOut());
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
