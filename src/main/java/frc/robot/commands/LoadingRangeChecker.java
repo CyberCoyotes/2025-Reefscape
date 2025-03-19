@@ -12,7 +12,7 @@ import frc.robot.subsystems.FrontTOFSubsystem;
 public class LoadingRangeChecker {
     
     // Constants for loading range thresholds in millimeters
-    public static final int LOADING_RANGE_MIN = 700; // Needs to be tested empirically more
+    public static final int LOADING_RANGE_MIN = 10; // Needs to be tested empirically more
     public static final int LOADING_RANGE_MAX = 780; // Needs to be tested empirically more
     
     private final FrontTOFSubsystem tofSensor;
