@@ -7,85 +7,114 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.vision.LimelightHelpers;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
+/**
+ * Command to align the robot to an AprilTag in target-relative space
+ */
 public class AlignToReefTagRelative extends Command {
-    private PIDController xController, yController, rotController;
-    private boolean isRightScore;
-    private Timer dontSeeTagTimer, stopTimer;
-    private CommandSwerveDrivetrain drivebase;
+    private final PIDController xController;
+    private final PIDController yController;
+    private final PIDController rotController;
+    private final boolean isRightScore;
+    private final Timer dontSeeTagTimer;
+    private final Timer stopTimer;
+    private final CommandSwerveDrivetrain drivebase;
+    private final VisionSubsystem visionSubsystem;
     
     // Create SwerveRequest for robot-centric control
     private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric();
 
-    // TODO: Tune these values
-    /** 
-     * represent proportional control constants for the X, Y, and rotational axes, respectively. 
-     * These constants are used in proportional control algorithms to adjust the system's position 
-     * and orientation based on the error between the current state 
-     * and the desired setpoint. */
-    private double X_REEF_ALIGNMENT_P = 0.1; 
-    private double Y_REEF_ALIGNMENT_P = 0.1;
-    private double ROT_REEF_ALIGNMENT_P = 0.1;
-
     /**
-     * Define the desired setpoints for the X, Y, and rotational axes. 
-     * These setpoints represent the target positions and 
-     * orientation that the system aims to achieve during the alignment process.
+     * Creates a new AlignToReefTagRelative command
+     * 
+     * @param isRightScore Whether to align to the right side of the target
+     * @param drivebase The drivetrain subsystem
+     * @param visionSubsystem The vision subsystem
      */
-    // TODO: Test these values
-    private double X_SETPOINT_REEF_ALIGNMENT = 0.0; // One meter away from the target?
-    private double Y_SETPOINT_REEF_ALIGNMENT = 0.0;
-    private double ROT_SETPOINT_REEF_ALIGNMENT = 0.0;
-    private double X_TOLERANCE_REEF_ALIGNMENT = 0.1;
-    private double Y_TOLERANCE_REEF_ALIGNMENT = 0.1;
-    private double ROT_TOLERANCE_REEF_ALIGNMENT = 0.1;
-    private double DONT_SEE_TAG_WAIT_TIME = 0.3;
-    private double POSE_VALIDATION_TIME = 0.3;
-
-    public AlignToReefTagRelative(boolean isRightScore, CommandSwerveDrivetrain drivebase) {
-        xController = new PIDController(X_REEF_ALIGNMENT_P, 0, 0); // Vertical movement
-        yController = new PIDController(Y_REEF_ALIGNMENT_P, 0, 0); // Horitontal movement
-        rotController = new PIDController(ROT_REEF_ALIGNMENT_P, 0, 0); // Rotation
+    public AlignToReefTagRelative(boolean isRightScore, CommandSwerveDrivetrain drivebase, 
+                                VisionSubsystem visionSubsystem) {
+        this.xController = new PIDController(VisionConstants.X_REEF_ALIGNMENT_P, 0, 0);
+        this.yController = new PIDController(VisionConstants.Y_REEF_ALIGNMENT_P, 0, 0);
+        this.rotController = new PIDController(VisionConstants.ROT_REEF_ALIGNMENT_P, 0, 0);
         this.isRightScore = isRightScore;
         this.drivebase = drivebase;
+        this.visionSubsystem = visionSubsystem;
+        this.dontSeeTagTimer = new Timer();
+        this.stopTimer = new Timer();
+        
+        // Require the drivetrain subsystem
         addRequirements(drivebase);
     }
 
     @Override
     public void initialize() {
-        this.stopTimer = new Timer();
+        // Start timers
+        this.stopTimer.reset();
         this.stopTimer.start();
-        this.dontSeeTagTimer = new Timer();
+        this.dontSeeTagTimer.reset();
         this.dontSeeTagTimer.start();
 
-        rotController.setSetpoint(ROT_SETPOINT_REEF_ALIGNMENT);
-        rotController.setTolerance(ROT_TOLERANCE_REEF_ALIGNMENT);
+        // Configure the rotation PID controller
+        rotController.setSetpoint(VisionConstants.ROT_SETPOINT_REEF_ALIGNMENT);
+        rotController.setTolerance(VisionConstants.ROT_TOLERANCE_REEF_ALIGNMENT);
+        rotController.enableContinuousInput(-Math.PI, Math.PI);
 
-        xController.setSetpoint(X_SETPOINT_REEF_ALIGNMENT);
-        xController.setTolerance(X_TOLERANCE_REEF_ALIGNMENT);
+        // Configure the X (forward/back) PID controller
+        xController.setSetpoint(VisionConstants.X_SETPOINT_REEF_ALIGNMENT);
+        xController.setTolerance(VisionConstants.X_TOLERANCE_REEF_ALIGNMENT);
 
-        yController
-                .setSetpoint(isRightScore ? Y_SETPOINT_REEF_ALIGNMENT : -Y_SETPOINT_REEF_ALIGNMENT);
-        yController.setTolerance(Y_TOLERANCE_REEF_ALIGNMENT);
+        // Configure the Y (left/right) PID controller
+        // Positive Y for right score, negative Y for left score
+        yController.setSetpoint(isRightScore ? 
+            VisionConstants.Y_SETPOINT_REEF_ALIGNMENT : 
+            -VisionConstants.Y_SETPOINT_REEF_ALIGNMENT);
+        yController.setTolerance(VisionConstants.Y_TOLERANCE_REEF_ALIGNMENT);
+        
+        // Log initialization
+        SmartDashboard.putString("Alignment/Status", "Initialized");
+        SmartDashboard.putString("Alignment/Target", isRightScore ? "Right" : "Left");
     }
 
     @Override
     public void execute() {
-        if (LimelightHelpers.getTV("")) {
+        if (visionSubsystem.hasTarget()) {
+            // Reset the "don't see tag" timer when we see a tag
             this.dontSeeTagTimer.reset();
-
-            double[] positions = LimelightHelpers.getBotPose_TargetSpace("");
-            SmartDashboard.putNumber("x", positions[2]);
-
+            
+            // Get the robot pose in target space
+            double[] positions = visionSubsystem.getBotPose_TargetSpace();
+            
+            // Verify we have valid pose data
+            if (positions.length < 6) {
+                SmartDashboard.putString("Alignment/Error", "Invalid pose data");
+                stopRobot();
+                return;
+            }
+            
+            // Calculate control outputs
+            // X is the Z axis in target space (forward/back)
             double xSpeed = xController.calculate(positions[2]);
-            SmartDashboard.putNumber("xspeed", xSpeed);
+            // Y is the X axis in target space (left/right) - negative because of coordinate system
             double ySpeed = -yController.calculate(positions[0]);
+            // Rotation is the pitch in target space - negative because of coordinate system
             double rotValue = -rotController.calculate(positions[4]);
-
-            // Use robot-centric control for simplicity
-            if (yController.getError() < Y_TOLERANCE_REEF_ALIGNMENT) {
-                // Using CTRE's setControl with RobotCentric request for velocity control
+            
+            // Log debugging data
+            SmartDashboard.putNumber("Alignment/X_Position", positions[2]);
+            SmartDashboard.putNumber("Alignment/Y_Position", positions[0]);
+            SmartDashboard.putNumber("Alignment/Rotation", positions[4]);
+            SmartDashboard.putNumber("Alignment/X_Speed", xSpeed);
+            SmartDashboard.putNumber("Alignment/Y_Speed", ySpeed);
+            SmartDashboard.putNumber("Alignment/Rot_Speed", rotValue);
+            SmartDashboard.putNumber("Alignment/X_Error", xController.getPositionError());
+            SmartDashboard.putNumber("Alignment/Y_Error", yController.getPositionError());
+            SmartDashboard.putNumber("Alignment/Rot_Error", rotController.getPositionError());
+            
+            // Use robot-centric control for alignment
+            if (yController.getPositionError() < VisionConstants.Y_TOLERANCE_REEF_ALIGNMENT) {
+                // If Y is aligned, use all axes
                 drivebase.setControl(
                     robotCentricRequest
                         .withVelocityX(xSpeed)  // Forward/backward
@@ -93,33 +122,45 @@ public class AlignToReefTagRelative extends Command {
                         .withRotationalRate(rotValue)  // Rotation rate
                 );
             } else {
+                // If Y is not aligned, prioritize Y and rotation alignment
                 drivebase.setControl(
                     robotCentricRequest
-                        .withVelocityX(0)
-                        .withVelocityY(ySpeed)
-                        .withRotationalRate(rotValue)
+                        .withVelocityX(0)  // No forward/backward motion
+                        .withVelocityY(ySpeed)  // Left/right
+                        .withRotationalRate(rotValue)  // Rotation rate
                 );
             }
 
-            if (!rotController.atSetpoint() ||
-                    !yController.atSetpoint() ||
-                    !xController.atSetpoint()) {
+            // Reset the stop timer if we're not at the setpoint
+            if (!isAtSetpoint()) {
                 stopTimer.reset();
             }
+            
+            // Log alignment status
+            SmartDashboard.putBoolean("Alignment/AtSetpoint", isAtSetpoint());
+            SmartDashboard.putString("Alignment/Status", "Aligning");
         } else {
-            // Stop the robot when no tag is visible
-            drivebase.setControl(
-                robotCentricRequest
-                    .withVelocityX(0)
-                    .withVelocityY(0)
-                    .withRotationalRate(0)
-            );
+            // No target visible
+            SmartDashboard.putString("Alignment/Status", "No target");
+            stopRobot();
         }
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        // Ensure the robot stops when command ends
+    /**
+     * Checks if all controllers are at their setpoints
+     * 
+     * @return true if all controllers are at their setpoints
+     */
+    private boolean isAtSetpoint() {
+        return rotController.atSetpoint() && 
+               yController.atSetpoint() && 
+               xController.atSetpoint();
+    }
+    
+    /**
+     * Stops the robot movement
+     */
+    private void stopRobot() {
         drivebase.setControl(
             robotCentricRequest
                 .withVelocityX(0)
@@ -129,10 +170,22 @@ public class AlignToReefTagRelative extends Command {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        // Ensure the robot stops when command ends
+        stopRobot();
+        
+        // Log end status
+        SmartDashboard.putString("Alignment/Status", 
+            interrupted ? "Interrupted" : "Completed");
+    }
+
+    @Override
     public boolean isFinished() {
-        // Requires the robot to stay in the correct position for 0.3 seconds, as long
-        // as it gets a tag in the camera
-        return this.dontSeeTagTimer.hasElapsed(DONT_SEE_TAG_WAIT_TIME) ||
-                stopTimer.hasElapsed(POSE_VALIDATION_TIME);
+        // Command is finished if:
+        // 1. We don't see a tag for DONT_SEE_TAG_WAIT_TIME seconds, or
+        // 2. We've been at the setpoint for POSE_VALIDATION_TIME seconds
+        return this.dontSeeTagTimer.hasElapsed(VisionConstants.DONT_SEE_TAG_WAIT_TIME) ||
+               (isAtSetpoint() && 
+                stopTimer.hasElapsed(VisionConstants.POSE_VALIDATION_TIME));
     }
 }

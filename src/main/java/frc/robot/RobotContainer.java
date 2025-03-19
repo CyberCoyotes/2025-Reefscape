@@ -16,8 +16,10 @@ import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToReefTagRelative;
+import frc.robot.commands.AlignmentCommandFactory;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
 import frc.robot.commands.ElevatorCommands;
@@ -31,6 +33,10 @@ import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.vision.CameraSubsystem;
+import frc.robot.subsystems.vision.VisionConstants;
+import frc.robot.subsystems.vision.VisionIO;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 @SuppressWarnings("unused")
@@ -49,6 +55,7 @@ public class RobotContainer {
         private final ClimberSubsystem climber = new ClimberSubsystem();
         private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
+        
         private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands,
                         effectorCommands);
 
@@ -86,6 +93,14 @@ public class RobotContainer {
         private final CommandXboxController operatorController = new CommandXboxController(1);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+        // Vision subsystem with IO pattern
+    private final VisionIO visionIO = new VisionIOLimelight(VisionConstants.DEFAULT_TABLE_NAME);
+    private final VisionSubsystem visionSubsystem = new VisionSubsystem(visionIO, drivetrain);
+    
+    // Alignment command factory
+    private final AlignmentCommandFactory alignmentFactory = 
+            new AlignmentCommandFactory(drivetrain, visionSubsystem);
 
         public RobotContainer() {
 
@@ -143,6 +158,26 @@ public class RobotContainer {
                 /***********************************************
                  ** Driver Controls **
                  ***********************************************/
+                // Vision alignment bindings using the factory
+        driverController.leftBumper()
+                .whileTrue(alignmentFactory.createAlignToReefTagRelative(false));
+        
+        driverController.rightBumper()
+                .whileTrue(alignmentFactory.createAlignToReefTagRelative(true));
+
+        // Reset pose from vision
+        driverController.start().and(driverController.back())
+                .onTrue(alignmentFactory.createResetPoseFromVision());
+                
+        // Toggle between driver mode and vision mode
+        driverController.back()
+                .toggleOnTrue(Commands.either(
+                    Commands.runOnce(() -> visionSubsystem.setDriverMode(true)),
+                    Commands.runOnce(() -> visionSubsystem.setDriverMode(false)),
+                    visionSubsystem::getState
+                ));
+
+                
                 // Testing purposes
                 driverController.back().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
