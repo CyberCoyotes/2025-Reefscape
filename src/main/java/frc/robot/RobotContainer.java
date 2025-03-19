@@ -129,7 +129,9 @@ public class RobotContainer {
         // autoRoutines::SBEtoBL1BL2);
         autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
         autoChooser.addRoutine("Left Speedy", autoRoutines::LeftSideSpeedy);
-        autoChooser.addRoutine("Left Speedy-G", autoRoutines::LeftSideSpeedyG);
+        autoChooser.addRoutine("Left Gonzales", autoRoutines::LeftSideGonzales);
+        autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
+        autoChooser.addRoutine("Left Beep-Beep", autoRoutines::LeftSideBeepBeep );
 
         // autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
         // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
@@ -157,7 +159,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
 
-        // driverController.back().onTrue(commandGroups.autoScoreL4()); // Testing Button
+        driverController.back().onTrue(commandGroups.autoBeepBeepL4()); // TODO Testing button only!
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral

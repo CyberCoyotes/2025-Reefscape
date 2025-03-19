@@ -154,6 +154,56 @@ public class EndEffectorCommands {
                 Commands.waitSeconds(timeoutSeconds)).withName("WaitForCoralLoad");
     }
 
+    /**
+ * Alternative implementation using command composition.
+ * Creates a command to score coral and continue running for a short period
+ * after the coral is no longer detected by the sensor.
+ * 
+ * @return A command for scoring coral with delayed stop
+ */
+public Command scoreCoralWithDelayedStopSimple() {
+    return Commands.sequence(
+        // First, run until coral is no longer detected
+        Commands.run(
+            () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            effector
+        ).until(() -> !effector.isCoralLoaded()),
+        
+        // Then continue running for 0.2 seconds
+        Commands.run(
+            () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            effector
+        ).withTimeout(0.2)
+    ).finallyDo((interrupted) -> effector.stopMotor())
+     .withName("ScoreCoralWithDelayedStopSimple");
+}
+
+
+/**
+ * Autonomous version with overall timeout.
+ * 
+ * @return A command for autonomous scoring with delayed stop
+ */
+public Command autoScoreCoralDelayedStop() {
+    return Commands.sequence(
+        // First, run until coral is no longer detected or timeout occurs
+        Commands.race(
+            Commands.run(
+                () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+                effector
+            ).until(() -> !effector.isCoralLoaded()),
+            Commands.waitSeconds(0.75)  // Safety timeout for autonomous
+        ),
+        
+        // Then continue running for 0.2 seconds
+        Commands.run(
+            () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            effector
+        ).withTimeout(0.2)
+    ).finallyDo((interrupted) -> effector.stopMotor())
+     .withName("AutoScoreCoralWithDelayedStopSimple");
+}
+
     /************************************************
      * Commands for algae handling
      ***********************************************/
