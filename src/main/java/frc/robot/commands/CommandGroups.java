@@ -167,7 +167,7 @@ public class CommandGroups {
  */
 public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     // Create a loading range checker instance
-    LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
+    // LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
     
     // Create the command to execute when in range
     Command intakeSequence = Commands.sequence(
