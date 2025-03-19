@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import java.util.function.Supplier;
-
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 
@@ -14,30 +12,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.VisionSubsystem;
 
-/**
- * Command to align the robot relative to an AprilTag.
- * Can align to the left or right of the tag with a specified offset.
- */
 public class AlignWithTagCommand extends Command {
     private final VisionSubsystem visionSubsystem;
     private final CommandSwerveDrivetrain drivetrain;
     private final boolean alignToRightSide;
+    private final double distanceFromTag;
     
     // PID controllers for alignment
-    private final PIDController xController = new PIDController(1.0, 0, 0);
-    private final PIDController yController = new PIDController(1.0, 0, 0);
-    private final PIDController rotationController = new PIDController(1.5, 0, 0.05);
+    private final PIDController xController = new PIDController(0.8, 0, 0.02);
+    private final PIDController yController = new PIDController(0.8, 0, 0.02);
+    private final PIDController rotationController = new PIDController(1.2, 0, 0.05);
     
     // Target pose we're trying to reach
     private Pose2d targetPose;
     
     // Request for controlling the swerve drivetrain
-    private final SwerveRequest.ApplyChassisSpeeds chassisRequest = 
-        new SwerveRequest.ApplyChassisSpeeds()
-            .withDriveRequestType(DriveRequestType.Velocity);
+    private final SwerveRequest.FieldCentric fieldCentricRequest = new SwerveRequest.FieldCentric();
     
     // Alignment thresholds
-    private static final double POSITION_TOLERANCE = 0.05; // 5 cm
+    private static final double POSITION_TOLERANCE = 0.04; // 4 cm
     private static final double ROTATION_TOLERANCE = 0.05; // ~3 degrees
     
     /**
@@ -46,11 +39,14 @@ public class AlignWithTagCommand extends Command {
      * @param vision The vision subsystem
      * @param drivetrain The swerve drivetrain
      * @param alignToRightSide If true, align to the right of the tag. If false, align to the left.
+     * @param distanceFromTag Distance in meters to position in front of the tag (default: 0.7m)
      */
-    public AlignWithTagCommand(VisionSubsystem vision, CommandSwerveDrivetrain drivetrain, boolean alignToRightSide) {
+    public AlignWithTagCommand(VisionSubsystem vision, CommandSwerveDrivetrain drivetrain, 
+                              boolean alignToRightSide, double distanceFromTag) {
         this.visionSubsystem = vision;
         this.drivetrain = drivetrain;
         this.alignToRightSide = alignToRightSide;
+        this.distanceFromTag = distanceFromTag;
         
         // Configure PID controllers
         rotationController.enableContinuousInput(-Math.PI, Math.PI);
@@ -58,7 +54,14 @@ public class AlignWithTagCommand extends Command {
         yController.setTolerance(POSITION_TOLERANCE);
         rotationController.setTolerance(ROTATION_TOLERANCE);
         
-        addRequirements(vision, drivetrain);
+        addRequirements(drivetrain);
+    }
+    
+    /**
+     * Overloaded constructor with default distance
+     */
+    public AlignWithTagCommand(VisionSubsystem vision, CommandSwerveDrivetrain drivetrain, boolean alignToRightSide) {
+        this(vision, drivetrain, alignToRightSide, 0.7);
     }
     
     @Override
@@ -80,15 +83,25 @@ public class AlignWithTagCommand extends Command {
     }
     
     private void calculateTargetPose() {
-        // Get the tag pose
-        Pose2d tagPose = visionSubsystem.getTagPose();
+        // Use the Limelight data to determine tag position
+        double[] targetpose_robotspace = visionSubsystem.getTargetPoseRobotSpace();
+        Pose2d robotPose = drivetrain.getState().Pose;
         
-        if (tagPose != null) {
-            // Calculate the offset based on whether we're aligning to the right or left
-            Transform2d offset = visionSubsystem.calculateTagAlignment(alignToRightSide);
+        if (visionSubsystem.hasTarget() && targetpose_robotspace.length >= 6) {
+            // Calculate lateral offset (left/right of tag)
+            double lateralOffset = alignToRightSide ? 0.35 : -0.35; // 35cm offset
             
-            // Apply the offset to get our target pose
-            targetPose = tagPose.plus(offset);
+            // Create a transform from the robot's current pose
+            Transform2d tagToRobotTransform = new Transform2d(
+                // Position in front of the tag at the specified distance
+                -distanceFromTag, 
+                lateralOffset,
+                // Face the tag (opposite direction of the tag's orientation)
+                robotPose.getRotation()
+            );
+            
+            // Apply the transform to get the target pose
+            targetPose = visionSubsystem.getTagPose().plus(tagToRobotTransform);
         } else {
             targetPose = null;
         }
@@ -96,10 +109,10 @@ public class AlignWithTagCommand extends Command {
     
     @Override
     public void execute() {
-        // Update odometry with vision information
-        visionSubsystem.updateOdometryWithVision();
+        // Update target pose with latest vision data
+        calculateTargetPose();
         
-        // If we don't have a target pose or lose vision, do nothing
+        // If we don't have a target pose or lose vision, stop
         if (targetPose == null || !visionSubsystem.hasTarget()) {
             drivetrain.setControl(chassisRequest.withSpeeds(new ChassisSpeeds(0, 0, 0)));
             return;
@@ -117,9 +130,9 @@ public class AlignWithTagCommand extends Command {
         );
         
         // Apply speed limits
-        xSpeed = limitMagnitude(xSpeed, 2.0); // Max 2 m/s
-        ySpeed = limitMagnitude(ySpeed, 2.0); // Max 2 m/s
-        rotationSpeed = limitMagnitude(rotationSpeed, 1.5); // Max 1.5 rad/s
+        xSpeed = limitMagnitude(xSpeed, 1.5); // Max 1.5 m/s
+        ySpeed = limitMagnitude(ySpeed, 1.5); // Max 1.5 m/s
+        rotationSpeed = limitMagnitude(rotationSpeed, 1.2); // Max 1.2 rad/s
         
         // Create field-relative chassis speeds
         ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(
