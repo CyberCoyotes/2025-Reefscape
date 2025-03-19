@@ -284,8 +284,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
     public Command autoScoreL4() {
         return Commands.sequence(
-                // TODO Set to LTravel instead!
-                // Set the wrist to L2, i.e. a safe position
+                // Set the wrist to L2
                 wristCommands.setL2(),
                 // Move the elevator to L4
                 elevatorCommands.setL4(),
@@ -294,15 +293,12 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
 
-                // TODO Make this Smart!
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.scoreCoralWithTimeout(),
 
-                // TODO Go to Travel instead
                 // Move wrist to safe travel position if not already
                 wristCommands.setL2(),
 
-                // TODO Go to Travel instead
                 // Move the elevator to home position
                 elevatorCommands.setHome()).withName("scoreL4Sequence");
     }
@@ -312,16 +308,36 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
                 moveToTravel(wristCommands, elevatorCommands),
 
-                // Move the elevator to L4
+                // TODO Test to make sure this does not hit reef going up
                 elevatorCommands.setL4(),
                 // Set wrist to L4
                 wristCommands.setL4(),
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
 
-                // TODO Make this Smart!
+                // TODO Instead of a timeout, Make this Smart!
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.scoreCoralWithTimeout(),
+
+                moveToTravel(wristCommands, elevatorCommands)
+                    .withName("scoreL4Sequence"));
+    }
+
+    public Command autoBeepBeepL4() {
+        return Commands.sequence(
+
+                moveToTravel(wristCommands, elevatorCommands),
+
+                // TODO Test to make sure this does not hit reef going up
+                elevatorCommands.setL4(),
+                // Set wrist to L4
+                wristCommands.setL4(),
+                // Short delay to stabilize
+                Commands.waitSeconds(0.05),
+
+                // TODO Test to see if it auto stops when coral released
+                // Score the coral with timing appropriate for autonomous
+                effectorCommands.autoScoreCoralDelayedStop(), 
 
                 moveToTravel(wristCommands, elevatorCommands)
                     .withName("scoreL4Sequence"));
