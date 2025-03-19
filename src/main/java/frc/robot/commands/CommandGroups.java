@@ -167,7 +167,7 @@ public class CommandGroups {
  */
 public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     // Create a loading range checker instance
-    // LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
+    LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
     
     // Create the command to execute when in range
     Command intakeSequence = Commands.sequence(
@@ -293,14 +293,19 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
 
+
+
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.scoreCoralWithTimeout(),
 
+                wristCommands.setTravel(),
+                elevatorCommands.setTravel()
+                );
                 // Move wrist to safe travel position if not already
-                wristCommands.setL2(),
+                // wristCommands.setL2(),
 
                 // Move the elevator to home position
-                elevatorCommands.setHome()).withName("scoreL4Sequence");
+                // elevatorCommands.setHome()).withName("scoreL4Sequence");
     }
 
     public Command autoRoadRunnerL4() {
