@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 /**
@@ -22,10 +23,21 @@ public class DriveDistanceCommands {
      * Creates a command that drives the robot forward 0.15 meters from its current position,
      * regardless of its rotational orientation.
      * 
-     * @return A command that drives forward 0.15 meters
+     * @return A command that drives forward 0.15 meters at the default speed (0.5 m/s)
      */
     public Command driveForward15cm() {
         return new DriveForwardCommand(drivetrain, 0.15);
+    }
+    
+    /**
+     * Creates a command that drives the robot forward 0.15 meters from its current position
+     * at the specified speed.
+     * 
+     * @param speedMetersPerSecond The speed at which to drive (in meters per second)
+     * @return A command that drives forward 0.15 meters at the specified speed
+     */
+    public Command driveForward15cm(double speedMetersPerSecond) {
+        return new DriveForwardCommand(drivetrain, 0.15, speedMetersPerSecond);
     }
     
     /**

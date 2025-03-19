@@ -11,13 +11,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+@SuppressWarnings("unused")
+
 /**
  * Command that drives the robot forward by a specific distance using time-based control.
  * This command uses robot-centric control to drive forward regardless of robot heading.
  */
-
-@SuppressWarnings("unused")
-
 public class DriveForwardCommand extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final double distanceMeters;
@@ -53,7 +52,17 @@ public class DriveForwardCommand extends Command {
      * @param distanceMeters The distance to drive in meters
      */
     public DriveForwardCommand(CommandSwerveDrivetrain drivetrain, double distanceMeters) {
-        this(drivetrain, distanceMeters, 0.5); // Default speed of 0.5 m/s
+        this(drivetrain, distanceMeters, 1); //
+    }
+    
+    /**
+     * Creates a command that drives the robot forward by 0.15 meters at the specified speed.
+     * 
+     * @param drivetrain The swerve drivetrain subsystem
+     * @param speedMetersPerSecond The speed at which to drive
+     */
+    public static Command forward15cm(CommandSwerveDrivetrain drivetrain, double speedMetersPerSecond) {
+        return new DriveForwardCommand(drivetrain, 0.15, speedMetersPerSecond);
     }
     
     @Override
