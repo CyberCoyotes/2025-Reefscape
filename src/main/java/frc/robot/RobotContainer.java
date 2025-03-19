@@ -153,8 +153,8 @@ public class RobotContainer {
         // Resets the gyro
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
+        // driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
+        // driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
         driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
@@ -164,10 +164,10 @@ public class RobotContainer {
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        driverController.b().and(driverController.leftBumper())
+        driverController.leftBumper()
                 .whileTrue(vision.createAlignToTagCommand());
         
-        driverController.b().and(driverController.rightBumper())
+        driverController.rightBumper()
                 .whileTrue(vision.createFullAlignToTagCommand());
 
         driverController.b().and(driverController.x())
