@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
+import frc.robot.commands.DriveDistanceCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
@@ -84,7 +85,10 @@ public class RobotContainer {
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
+    
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+    private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain); // TODO Test the drive forward command
 
     public RobotContainer() {
 
@@ -153,7 +157,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
 
-        // driverController.back().onTrue(commandGroups.autoScoreL4()); // Testing Button
+        driverController.back().onTrue(driveCommands.driveForward15cm(1)); // TODO Testing button
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
