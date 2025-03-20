@@ -32,6 +32,8 @@ import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.subsystems.vision.CameraSubsystem;
+import frc.robot.subsystems.vision.VisionIOLimelight;
+import frc.robot.subsystems.vision.VisionSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 @SuppressWarnings("unused")
@@ -52,6 +54,8 @@ public class RobotContainer {
     private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
+    private final VisionSubsystem vision;
+
     // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
     
     // 3 meters per second max speed
@@ -77,6 +81,8 @@ public class RobotContainer {
     private final CommandXboxController operatorController = new CommandXboxController(1); 
 
     public RobotContainer() {
+        
+        vision = new VisionSubsystem(new VisionIOLimelight("limelight"), drivetrain);
 
         autoFactory = drivetrain.createAutoFactory();
         // Check the AutoRoutines class to ensure the constructor matches this parameter list
@@ -148,7 +154,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
 
-        driverController.back().onTrue(commandGroups.autoBeepBeepL4()); // TODO Testing button only!
+        driverController.back().onTrue(vision.createAlignToTagCommand()); // TODO Testing button only!
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral

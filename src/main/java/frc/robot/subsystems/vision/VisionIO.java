@@ -19,6 +19,7 @@ public interface VisionIO {
         
         // AprilTag specific data  
         public double[] botpose = new double[6];
+        public double[] botposeTargetSpace = new double[6];
         public int tagId = -1;
         
         // Latency data

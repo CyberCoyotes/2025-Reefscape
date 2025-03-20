@@ -1,10 +1,13 @@
 package frc.robot.subsystems.vision;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.AlignToTagCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 // import frc.robot.subsystems.led.LEDState;
 // import frc.robot.subsystems.led.LEDSubsystem;
@@ -12,126 +15,125 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 @SuppressWarnings("unused")
 
 public class VisionSubsystem extends SubsystemBase {
-    private final String tableName;
-    private final NetworkTable limelightTable;
+    private final VisionIO io;
+    private final VisionIO.VisionIOInputs inputs = new VisionIO.VisionIOInputs();
     private final CommandSwerveDrivetrain drivetrain;
-    // private final LEDSubsystem leds;
-    
-    // NetworkTable entries
-    private final NetworkTableEntry tv; // Whether there are valid targets
-    private final NetworkTableEntry tx; // Horizontal offset
-    private final NetworkTableEntry ty; // Vertical offset
-    private final NetworkTableEntry ta; // Target area
-    private final NetworkTableEntry tid; // AprilTag ID
     
     // Vision processing constants
     private static final double TARGET_LOCK_THRESHOLD = 2.0; // Degrees
     private static final double VALID_TARGET_AREA = 0.1; // % of image
     
     private VisionState currentState = VisionState.NO_TARGET;
-    private boolean ledsEnabled = false;
-
-    public VisionSubsystem(String tableName, CommandSwerveDrivetrain drivetrain/* , LEDSubsystem leds*/) {
-        this.tableName = tableName;
+    
+    /**
+     * Constants for vision alignment
+     */
+    public static class AlignmentConstants {
+        // PID values
+        public static final class PID {
+            // Forward (X) control
+            public static final double FORWARD_P = 0.5;
+            public static final double FORWARD_I = 0.0;
+            public static final double FORWARD_D = 0.0;
+            public static final double FORWARD_TOLERANCE = 0.05; // meters
+            
+            // Lateral (Y) control
+            public static final double LATERAL_P = 0.2;
+            public static final double LATERAL_I = 0.0;
+            public static final double LATERAL_D = 0.0;
+            public static final double LATERAL_TOLERANCE = 1.0; // degrees
+            
+            // Rotation control
+            public static final double ROTATION_P = 0.1;
+            public static final double ROTATION_I = 0.0;
+            public static final double ROTATION_D = 0.0;
+            public static final double ROTATION_TOLERANCE = 2.0; // degrees
+        }
+        
+        // Target values
+        public static final double TARGET_DISTANCE = -0.5; // meters
+        public static final double MAX_SPEED = 1.0; // maximum speed for alignment
+        public static final double MAX_ANGULAR_SPEED = 1.0; // maximum angular speed
+    }
+    
+    public VisionSubsystem(VisionIO io, CommandSwerveDrivetrain drivetrain) {
+        this.io = io;
         this.drivetrain = drivetrain;
-        // this.leds = leds;
         
-        // Initialize NetworkTable
-        limelightTable = NetworkTableInstance.getDefault().getTable(tableName);
-        tv = limelightTable.getEntry("tv");
-        tx = limelightTable.getEntry("tx");
-        ty = limelightTable.getEntry("ty");
-        ta = limelightTable.getEntry("ta");
-        tid = limelightTable.getEntry("tid");
-        
-        // Configure Limelight
-        configureLimelight();
-        // setLeds(false);
-        // ledsEnabled = false;
+        // Configure Limelight if it's a Limelight implementation
+        if (io instanceof VisionIOLimelight) {
+            ((VisionIOLimelight) io).setPipeline(0); // Set to AprilTag pipeline
+            io.setLeds(true);
+        }
     }
-
-    private void configureLimelight() {
-        // Set to AprilTag pipeline
-        limelightTable.getEntry("pipeline").setNumber(0);
-        setLeds(true); // Turn off LEDs if false
-        ledsEnabled = true;
-
-        // NetworkTableInstance.getDefault().flush();
-
-    }
-
+    
     @Override
     public void periodic() {
+        io.updateInputs(inputs);
         updateVisionState();
-        // updateLEDs();
         logData();
     }
-
+    
     private void updateVisionState() {
-        boolean hasTarget = tv.getDouble(0.0) > 0.5;
-        double horizontalOffset = tx.getDouble(0.0);
-        double area = ta.getDouble(0.0);
-
-        if (!hasTarget || area < VALID_TARGET_AREA) {
+        if (!inputs.hasTargets) {
             currentState = VisionState.NO_TARGET;
-        } else if (Math.abs(horizontalOffset) <= TARGET_LOCK_THRESHOLD) {
+        } else if (Math.abs(Units.radiansToDegrees(inputs.horizontalAngleRadians)) <= TARGET_LOCK_THRESHOLD) {
             currentState = VisionState.TARGET_LOCKED;
         } else {
             currentState = VisionState.TARGET_VISIBLE;
         }
     }
-
+    
     public void setLeds(boolean enabled) {
-        ledsEnabled = enabled;
-        limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1); // 3=force on, 1=force off
+        io.setLeds(enabled);
     }
-
-    /*
-    private void updateLEDs() {
-        if (leds != null) {
-            switch (currentState) {
-                case TARGET_LOCKED:
-                    leds.setState(LEDState.TARGET_LOCKED);
-                    break;
-                case TARGET_VISIBLE:
-                    leds.setState(LEDState.TARGET_VISIBLE);
-                    break;
-                case NO_TARGET:
-                default:
-                    leds.setState(LEDState.NO_TARGET);
-                    break;
-            }
-        }
-    } 
-    */
-
+    
     private void logData() {
         SmartDashboard.putString("Vision/State", currentState.toString());
-        SmartDashboard.putNumber("Vision/TagID", tid.getDouble(0));
-        SmartDashboard.putNumber("Vision/TX", tx.getDouble(0));
-        SmartDashboard.putNumber("Vision/TY", ty.getDouble(0));
-        SmartDashboard.putNumber("Vision/TA", ta.getDouble(0));
+        SmartDashboard.putNumber("Vision/TagID", inputs.tagId);
+        SmartDashboard.putNumber("Vision/TX", Units.radiansToDegrees(inputs.horizontalAngleRadians));
+        SmartDashboard.putNumber("Vision/TY", Units.radiansToDegrees(inputs.verticalAngleRadians));
+        SmartDashboard.putBoolean("Vision/HasTargets", inputs.hasTargets);
     }
-
+    
     // Getter methods for use in commands
     public VisionState getState() {
         return currentState;
     }
-
+    
     public boolean hasTarget() {
-        return currentState != VisionState.NO_TARGET;
+        return inputs.hasTargets;
     }
-
-    public double getHorizontalOffset() {
-        return tx.getDouble(0.0);
+    
+    public double getHorizontalOffsetDegrees() {
+        return Units.radiansToDegrees(inputs.horizontalAngleRadians);
     }
-
-    public double getVerticalOffset() {
-        return ty.getDouble(0.0);
+    
+    public double getVerticalOffsetDegrees() {
+        return Units.radiansToDegrees(inputs.verticalAngleRadians);
     }
-
+    
     public int getTagId() {
-        return (int) tid.getDouble(0);
+        return inputs.tagId;
     }
-
+    
+    public double[] getBotPose() {
+        return inputs.botpose.clone();
+    }
+    
+    public double[] getBotPoseTargetSpace() {
+        return inputs.botposeTargetSpace.clone();
+    }
+    
+    public double getTimestamp() {
+        return inputs.lastTimeStamp;
+    }
+    
+    /**
+     * Creates a command to align to an AprilTag using tag-relative positioning
+     * @return A command that aligns the robot to the AprilTag
+     */
+    public Command createAlignToTagCommand() {
+        return new AlignToTagCommand(this, drivetrain);
+    }
 }
