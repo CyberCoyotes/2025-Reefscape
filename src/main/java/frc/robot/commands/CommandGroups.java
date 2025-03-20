@@ -292,12 +292,9 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 wristCommands.setL4(),
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
-
-
-
                 // Score the coral with timing appropriate for autonomous
-                effectorCommands.scoreCoralWithTimeout(),
-
+                // effectorCommands.scoreCoralWithTimeout(), // FIXME This was too slow
+                effectorCommands.autoScoreCoral(), // This should fix the elevator waiting to long
                 wristCommands.setTravel(),
                 elevatorCommands.setTravel()
                 );
@@ -322,7 +319,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
                 // TODO Instead of a timeout, Make this Smart!
                 // Score the coral with timing appropriate for autonomous
-                effectorCommands.scoreCoralWithTimeout(),
+                effectorCommands.autoScoreCoral(),
 
                 moveToTravel(wristCommands, elevatorCommands)
                     .withName("scoreL4Sequence"));
@@ -342,7 +339,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
                 // TODO Test to see if it auto stops when coral released
                 // Score the coral with timing appropriate for autonomous
-                effectorCommands.autoScoreCoralDelayedStop(), 
+                effectorCommands.autoScoreCoral(), 
 
                 moveToTravel(wristCommands, elevatorCommands)
                     .withName("scoreL4Sequence"));

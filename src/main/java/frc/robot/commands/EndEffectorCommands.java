@@ -180,11 +180,13 @@ public Command scoreCoralWithDelayedStopSimple() {
 
 
 /**
- * Autonomous version with overall timeout.
+ * Autonomous version that turns on the end effector to score it
+ * until its no longer detected with slight delay before stopping.
+ * There is also a back up timeout.
  * 
  * @return A command for autonomous scoring with delayed stop
  */
-public Command autoScoreCoralDelayedStop() {
+public Command autoScoreCoral() {
     return Commands.sequence(
         // First, run until coral is no longer detected or timeout occurs
         Commands.race(
@@ -195,11 +197,11 @@ public Command autoScoreCoralDelayedStop() {
             Commands.waitSeconds(0.75)  // Safety timeout for autonomous
         ),
         
-        // Then continue running for 0.2 seconds
+        // Then continue running for 0.2 seconds; try 0.1
         Commands.run(
             () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
             effector
-        ).withTimeout(0.2)
+        ).withTimeout(0.1)
     ).finallyDo((interrupted) -> effector.stopMotor())
      .withName("AutoScoreCoralWithDelayedStopSimple");
 }
