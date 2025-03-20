@@ -38,37 +38,28 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
     private final EndEffectorCommands endEffectorCommands = new EndEffectorCommands(endEffector);
-
     private final WristSubsystem wrist = new WristSubsystem();
     private final WristCommands wristCommands = new WristCommands(wrist);
-
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
     private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator);
-
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
-
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
-
-    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF);
-
-    // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
-
-
     private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
-
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
+    private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
     // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
     
-    // kSpeedAt12Volts desired top speed
-
-     // 3 meters per second max speed
+    // 3 meters per second max speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     
     // 3/4 of a rotation per second max angular velocity
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-
+  
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
@@ -83,12 +74,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController driverController = new CommandXboxController(0);
-    private final CommandXboxController operatorController = new CommandXboxController(1);
-
-    
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
-    private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain); // TODO Test the drive forward command
+    private final CommandXboxController operatorController = new CommandXboxController(1); 
 
     public RobotContainer() {
 
@@ -130,6 +116,11 @@ public class RobotContainer {
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
         // autoRoutines::SBEtoBL1BL2);
         autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
+      
+        autoChooser.addRoutine("Left Speedy", autoRoutines::LeftSideSpeedy);
+        autoChooser.addRoutine("Left Gonzales", autoRoutines::LeftSideGonzales);
+        autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
+        autoChooser.addRoutine("Left Beep-Beep", autoRoutines::LeftSideBeepBeep );
 
         // autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
         // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
@@ -157,7 +148,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
 
-        driverController.back().onTrue(driveCommands.driveForward15cm(1)); // TODO Testing button
+        driverController.back().onTrue(commandGroups.autoBeepBeepL4()); // TODO Testing button only!
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral

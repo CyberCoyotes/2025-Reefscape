@@ -70,7 +70,7 @@ public class WristCommands {
         return moveToPosition(WristSubsystem.WristPositions.SCORE_ALGAE.getRotations());
     }
     
-    public Command setTravelPose() {
+    public Command setTravel() {
         return moveToPosition(WristSubsystem.WristPositions.TRAVEL.getRotations());
     }
 

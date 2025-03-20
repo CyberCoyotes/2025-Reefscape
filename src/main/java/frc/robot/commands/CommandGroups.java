@@ -1,11 +1,15 @@
 package frc.robot.commands;
 
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.endEffector.EffectorConstants;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -19,6 +23,7 @@ public class CommandGroups {
     private final EndEffectorCommands effectorCommands;
     private final EffectorSubsystem effector;
     private final FrontTOFSubsystem frontToF;
+    private final CommandSwerveDrivetrain drivetrain;
 
     /**
      * Creates a new CommandGroups instance with the necessary command factories.
@@ -32,13 +37,19 @@ public class CommandGroups {
             ElevatorCommands elevatorCommands,
             EffectorSubsystem effector,
             EndEffectorCommands effectorCommands,
-            FrontTOFSubsystem frontToF) {
+            FrontTOFSubsystem frontToF,
+            CommandSwerveDrivetrain drivetrain) {
         this.wristCommands = wristCommands;
         this.elevatorCommands = elevatorCommands;
         this.effector = effector;
         this.effectorCommands = effectorCommands;
         this.frontToF = frontToF;
+        this.drivetrain = drivetrain;
     }
+
+    /*******************************
+     ** END GAME 
+     ******************************/
 
     public Command releaseKickSetWrist(WristCommands wristCommands, ClimberCommands climbCommands) {
         return Commands.sequence(
@@ -49,12 +60,11 @@ public class CommandGroups {
                 .withName("ReleaseKickSetWristSequence");
     }
 
+
     public Command moveToHome(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // Move wrist to safe travel position if not already
                 wristCommands.setL2(), // Add timeout to prevent hanging
-                // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Move the elevator to home position
                 elevatorCommands.setHome()).withName("MoveToHomeSequence");
     }
@@ -63,8 +73,6 @@ public class CommandGroups {
         return Commands.sequence(
                 // First move wrist to L2 - this must complete
                 wristCommands.setL2(), // Add timeout to prevent hanging
-                // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Then move elevator - this will wait for the wrist
                 elevatorCommands.setL2()).withName("MoveToL2Sequence");
     }
@@ -73,8 +81,6 @@ public class CommandGroups {
         return Commands.sequence(
                 // Set the wrist to L3, i.e. a safe position
                 wristCommands.setL3(), // Add timeout to prevent hanging
-                // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Move the elevator to L3
                 elevatorCommands.setL3()).withName("MoveToL3Sequence");
     }
@@ -83,8 +89,6 @@ public class CommandGroups {
         return Commands.sequence(
                 // Set the wrist to L2, i.e. a safe position
                 wristCommands.setL2(), // Add timeout to prevent hanging
-                // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Move the elevator to L4
                 elevatorCommands.setL4(),
                 // Set wrist to L4
@@ -95,8 +99,6 @@ public class CommandGroups {
         return Commands.sequence(
                 // Move to safe wrist position first
                 wristCommands.setL2(), // Add timeout to prevent hanging
-                // Move elevator up to L2 position
-                // elevatorCommands.setL2(),
                 // Move elevator up to algae position
                 elevatorCommands.setAlgae2(),
                 // Move the wrist to the picking position
@@ -118,7 +120,6 @@ public class CommandGroups {
                 // First move the wrist to the scoring position
                 wristCommands.scoreAlgae(),
                 // Add small delay to ensure wrist command has started
-                // new WaitCommand(0.1),
                 // Then move the elevator to the algae scoring position
                 elevatorCommands.setScoreAlgae()).withName("ScoringAlgaeSequence");
     }
@@ -129,10 +130,10 @@ public class CommandGroups {
                 new WaitCommand(0.3),
 
                 // Move wrist to travel position
-                wristCommands.setTravelPose(),
+                wristCommands.setTravel(),
 
                 // Move the elevator to travel position, same as CORAL INTAKE currently
-                elevatorCommands.setTravelPose()
+                elevatorCommands.setTravel()
                 
                 ).withName("TravelPoseBetweenStations");
     }
@@ -155,6 +156,55 @@ public class CommandGroups {
 
                 // Finally activate the intake
                 effectorCommands.intakeCoral()).withName("IntakeCoralSequence");
+    }
+
+    /**
+ * Creates a command that checks if the robot is within loading range before
+ * attempting to intake coral. If the robot is in the correct distance range,
+ * it will run the intake sequence. Otherwise, it will log a message and wait.
+ * 
+ * @return A command that safely intakes coral when properly positioned
+ */
+public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+    // Create a loading range checker instance
+    LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
+    
+    // Create the command to execute when in range
+    Command intakeSequence = Commands.sequence(
+    
+        wristCommands.setL2(),
+            // This is the condition - use approximate comparison with tolerance
+        
+        // Move elevator to intake position
+        elevatorCommands.setIntakeCoral(),
+        
+        // Move wrist to intake position
+        wristCommands.setIntakeCoral(),
+        
+        // Activate the intake end effector
+        effectorCommands.intakeCoral(),
+        
+        // After intaking, move the wrist back to L2 position
+        wristCommands.setL2(),
+        
+        // Move the elevator back to L2 position
+        elevatorCommands.setL2()
+    ).withName("IntakeCoralSequence");
+    
+    // Create feedback command for when not in range
+    Command outOfRangeFeedback = Commands.sequence(
+        Commands.runOnce(() -> {
+            double currentDistance = frontToF.getFrontDistance();
+            System.out.println("Cannot intake coral: Robot not in loading position.");
+            System.out.println("Current distance: " + currentDistance + " mm");
+            System.out.println("Required range: " + LoadingRangeChecker.LOADING_RANGE_MIN + 
+                               " to " + LoadingRangeChecker.LOADING_RANGE_MAX + " mm");
+        }),
+        Commands.waitSeconds(1.0) // Short delay to prevent message spam
+    ).withName("OutOfLoadingRange");
+    
+    // Return conditional command that checks range first
+    return rangeChecker.whenInLoadingRange(intakeSequence, outOfRangeFeedback);
     }
 
     // Test Implement this method
@@ -234,7 +284,7 @@ public class CommandGroups {
 
     public Command autoScoreL4() {
         return Commands.sequence(
-                // Set the wrist to L2, i.e. a safe position
+                // Set the wrist to L2
                 wristCommands.setL2(),
                 // Move the elevator to L4
                 elevatorCommands.setL4(),
@@ -242,39 +292,132 @@ public class CommandGroups {
                 wristCommands.setL4(),
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
+
+
+
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.scoreCoralWithTimeout(),
+
+                wristCommands.setTravel(),
+                elevatorCommands.setTravel()
+                );
                 // Move wrist to safe travel position if not already
-                wristCommands.setL2(), // .withTimeout(1.5), // Add timeout to prevent hanging
+                // wristCommands.setL2(),
+
                 // Move the elevator to home position
-                elevatorCommands.setHome()).withName("scoreL4Sequence");
+                // elevatorCommands.setHome()).withName("scoreL4Sequence");
     }
 
-    // Untestest version
+    public Command autoRoadRunnerL4() {
+        return Commands.sequence(
+
+                moveToTravel(wristCommands, elevatorCommands),
+
+                // TODO Test to make sure this does not hit reef going up
+                elevatorCommands.setL4(),
+                // Set wrist to L4
+                wristCommands.setL4(),
+                // Short delay to stabilize
+                Commands.waitSeconds(0.05),
+
+                // TODO Instead of a timeout, Make this Smart!
+                // Score the coral with timing appropriate for autonomous
+                effectorCommands.scoreCoralWithTimeout(),
+
+                moveToTravel(wristCommands, elevatorCommands)
+                    .withName("scoreL4Sequence"));
+    }
+
+    public Command autoBeepBeepL4() {
+        return Commands.sequence(
+
+                moveToTravel(wristCommands, elevatorCommands),
+
+                // TODO Test to make sure this does not hit reef going up
+                elevatorCommands.setL4(),
+                // Set wrist to L4
+                wristCommands.setL4(),
+                // Short delay to stabilize
+                Commands.waitSeconds(0.05),
+
+                // TODO Test to see if it auto stops when coral released
+                // Score the coral with timing appropriate for autonomous
+                effectorCommands.autoScoreCoralDelayedStop(), 
+
+                moveToTravel(wristCommands, elevatorCommands)
+                    .withName("scoreL4Sequence"));
+    }
+
     public Command autoIntakeCoral() {
- 
-                return Commands.sequence(
-        
-                        // Move wrist to L2 position
-                        wristCommands.setL2(),
-        
-                        // Move elevator to intake position
-                        elevatorCommands.setIntakeCoral(),
-        
-                        // Move wrist to intake position
-                        wristCommands.setIntakeCoral(),
-        
-                        // Activate the intake end effector
-                        effectorCommands.intakeCoral(),
-
-                // Move the wrist back to L2 position
+        return Commands.sequence(
+            // Move wrist to L2 position
+            wristCommands.setL2(),
+            
+            // Move elevator to intake position
+            elevatorCommands.setIntakeCoral(),
+            
+            // Move wrist to intake position
+            wristCommands.setIntakeCoral(),
+            
+            // Start the intake
+            effectorCommands.intakeCoral(),
+            
+            // Wait for coral detection or timeout - THIS DOESN'T REQUIRE SUBSYSTEM EXCLUSIVITY
+            effectorCommands.waitForCoralLoadWithTimeout(3.0),
+            
+            // Once loaded or timed out, move to safe position
+            Commands.parallel(
                 wristCommands.setL2(),
+                Commands.sequence(
+                    Commands.waitSeconds(0.1), // Give wrist time to start moving
+                    elevatorCommands.setL2()
+                )
+            )
+        ).withName("AutoIntakeCoralSequence");
+    }
 
-                // Move the elevator back to L2 position
-                elevatorCommands.setL2()
+    /**
+     * Creates a command that stops the drivetrain until coral is loaded or timeout expires.
+     * @param timeoutSeconds Maximum time to wait for coral loading
+     * @return Command that completes when coral is loaded or timeout expires
+     */
+    public Command stopUntilCoralLoaded(double timeoutSeconds) {
+        return Commands.race(
+            // Stop drivetrain
+            drivetrain.run(() -> {
+                drivetrain.setControl(new SwerveRequest.RobotCentric()
+                    .withVelocityX(0)
+                    .withVelocityY(0) 
+                    .withRotationalRate(0));
+            }),
+            // Wait until coral loaded OR timeout expires (whichever comes first)
+            Commands.race(
+                Commands.waitUntil(() -> effector.isCoralLoaded()),
+                Commands.waitSeconds(timeoutSeconds)
+            )
+        ).withName("StopUntilCoralLoaded");
+    }
 
-        ).withName("IntakeCoralSequence");
-
+        /**
+     * Creates a command that stops the drivetrain until coral is loaded or timeout expires.
+     * @param timeoutSeconds Maximum time to wait for coral loading
+     * @return Command that completes when coral is loaded or timeout expires
+     */
+    public Command stopUntilCoralReleased(double timeoutSeconds) {
+        return Commands.race(
+            // Stop drivetrain
+            drivetrain.run(() -> {
+                drivetrain.setControl(new SwerveRequest.RobotCentric()
+                    .withVelocityX(0)
+                    .withVelocityY(0) 
+                    .withRotationalRate(0));
+            }),
+            // Wait until coral NOT loaded OR timeout expires (whichever comes first)
+            Commands.race(
+                Commands.waitUntil(() -> !effector.isCoralLoaded()),
+                Commands.waitSeconds(timeoutSeconds)
+            )
+        ).withName("StopUntilCoralReleased");
     }
 
     /*
@@ -337,53 +480,6 @@ public class CommandGroups {
 */
 
 
-/**
- * Creates a command that checks if the robot is within loading range before
- * attempting to intake coral. If the robot is in the correct distance range,
- * it will run the intake sequence. Otherwise, it will log a message and wait.
- * 
- * @return A command that safely intakes coral when properly positioned
- */
-public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-        // Create a loading range checker instance
-        LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
-        
-        // Create the command to execute when in range
-        Command intakeSequence = Commands.sequence(
-        
-            wristCommands.setL2(),
-                // This is the condition - use approximate comparison with tolerance
-            
-            // Move elevator to intake position
-            elevatorCommands.setIntakeCoral(),
-            
-            // Move wrist to intake position
-            wristCommands.setIntakeCoral(),
-            
-            // Activate the intake end effector
-            effectorCommands.intakeCoral(),
-            
-            // After intaking, move the wrist back to L2 position
-            wristCommands.setL2(),
-            
-            // Move the elevator back to L2 position
-            elevatorCommands.setL2()
-        ).withName("IntakeCoralSequence");
-        
-        // Create feedback command for when not in range
-        Command outOfRangeFeedback = Commands.sequence(
-            Commands.runOnce(() -> {
-                double currentDistance = frontToF.getFrontDistance();
-                System.out.println("Cannot intake coral: Robot not in loading position.");
-                System.out.println("Current distance: " + currentDistance + " mm");
-                System.out.println("Required range: " + LoadingRangeChecker.LOADING_RANGE_MIN + 
-                                   " to " + LoadingRangeChecker.LOADING_RANGE_MAX + " mm");
-            }),
-            Commands.waitSeconds(1.0) // Short delay to prevent message spam
-        ).withName("OutOfLoadingRange");
-        
-        // Return conditional command that checks range first
-        return rangeChecker.whenInLoadingRange(intakeSequence, outOfRangeFeedback);
-    }
+
 
 } // End of CommandGroups class
