@@ -224,17 +224,19 @@ public class EffectorSubsystem extends SubsystemBase {
     public void periodic() {
         // stopIfDetected();
 
+
         SmartDashboard.putBoolean("Effector/Sensor/isCoralLoaded", isCoralLoaded());        
         SmartDashboard.putNumber("Effector/Sensor/getCoralDistance (mm)", getCoralDistance());
         SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", coralDetectionDistance);
-        /* 
-        // Update dashboard - uncomment if needed
-        SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
-        SmartDashboard.putNumber("Effector/Supply Voltage", supplyVoltage.getValueAsDouble());
 
-        SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
-        SmartDashboard.putBoolean("Effector/Sensor/Range Valid", isCoralRangeValid());
-        SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
-        */
+        //
+        // Update dashboard - uncomment if needed
+        // SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
+        // SmartDashboard.putNumber("Effector/Supply Voltage", supplyVoltage.getValueAsDouble());
+
+        // SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
+        // SmartDashboard.putBoolean("Effector/Sensor/Range Valid", isCoralRangeValid());
+        // SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
+        
     }
 }

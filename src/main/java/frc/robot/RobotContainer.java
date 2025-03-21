@@ -147,8 +147,8 @@ public class RobotContainer {
         /***********************************************
          ** Driver Controls **
          ***********************************************/
-
-        driverController.back().onTrue(endEffectorCommands.autoScoreCoral()); // TODO Testing button only!
+      
+        driverController.back().onTrue(commandGroups.autoRoadRunnerL4()); // TODO Testing button only!
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral

@@ -27,7 +27,6 @@ public class CommandGroups {
 
     /**
      * Creates a new CommandGroups instance with the necessary command factories.
-     * 
      * @param wristCommands    The wrist command factory
      * @param elevatorCommands The elevator command factory
      * @param effectorCommands The end effector command factory
@@ -316,11 +315,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 wristCommands.setL4(),
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
-
-                // TODO Instead of a timeout, Make this Smart!
-                // Score the coral with timing appropriate for autonomous
                 effectorCommands.autoScoreCoral(),
-
                 wristCommands.setL3(),
                 elevatorCommands.setL2()
                 // moveToTravel(wristCommands, elevatorCommands)
@@ -418,67 +413,5 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             )
         ).withName("StopUntilCoralReleased");
     }
-
-    /*
-    public Command autoIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands, 
-                              WristSubsystem wrist) {
-    
-    // Create loading range checker
-    LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
-    
-    // First create the base sequence without range checking
-    Command baseIntakeSequence = Commands.sequence(
-        // Move wrist to L2 position
-        wristCommands.setL2(),
-        
-        // Move elevator to intake position
-        elevatorCommands.setIntakeCoral(),
-        
-        // Log the current distance
-        Commands.runOnce(() -> System.out.println("Auto Intake Distance: " + frontToF.getFrontDistance() + "mm")),
-        
-        // Move wrist to intake position
-        wristCommands.setIntakeCoral(),
-        
-        // Activate the intake end effector
-        effectorCommands.intakeCoral(),
-        
-        // Move the wrist back to L2 position
-        wristCommands.setL2(),
-        
-        // Move the elevator back to L2 position
-        elevatorCommands.setL2()
-    ).withName("AutoIntakeCoralSequence");
-    
-    // For autonomous, we want to timeout the waiting so the routine doesn't get stuck
-    Command rangeCheckWithTimeout = Commands.race(
-        // Wait until in range or timeout after 2 seconds
-        Commands.waitUntil(rangeChecker::isInLoadingRange).withTimeout(2.0),
-        
-        // While waiting, periodically log the distance
-        Commands.repeatingSequence(
-            Commands.runOnce(() -> System.out.println("Waiting for loading range. Current: " + 
-                                                     frontToF.getFrontDistance() + "mm")),
-            Commands.waitSeconds(0.5)
-        )
-    );
-    
-    // Complete command with range checking for autonomous
-    return Commands.sequence(
-        // Start by moving into position
-        wristCommands.setL2(),
-        elevatorCommands.setIntakeCoral(),
-        
-        // Check if in range (with timeout to prevent blocking auto)
-        rangeCheckWithTimeout,
-        
-        // Then execute the rest regardless (since we're in autonomous)
-        baseIntakeSequence
-    );
-}
-*/
-
-
-
 
 } // End of CommandGroups class
