@@ -24,8 +24,8 @@ public class AlignToReefTagRelative extends Command {
      * These constants are used in proportional control algorithms to adjust the system's position 
      * and orientation based on the error between the current state 
      * and the desired setpoint. */
-    private double X_REEF_ALIGNMENT_P = 0.1; 
-    private double Y_REEF_ALIGNMENT_P = 0.1;
+    private double X_REEF_ALIGNMENT_P = 2; 
+    private double Y_REEF_ALIGNMENT_P = 2;
     private double ROT_REEF_ALIGNMENT_P = 0.1;
 
     /**
@@ -34,8 +34,8 @@ public class AlignToReefTagRelative extends Command {
      * orientation that the system aims to achieve during the alignment process.
      */
     // TODO: Test these values
-    private double X_SETPOINT_REEF_ALIGNMENT = 0.0; // One meter away from the target?
-    private double Y_SETPOINT_REEF_ALIGNMENT = 0.0;
+    private double X_SETPOINT_REEF_ALIGNMENT = -0.5; // One meter away from the target?
+    private double Y_SETPOINT_REEF_ALIGNMENT = 0.15;
     private double ROT_SETPOINT_REEF_ALIGNMENT = 0.0;
     private double X_TOLERANCE_REEF_ALIGNMENT = 0.1;
     private double Y_TOLERANCE_REEF_ALIGNMENT = 0.1;
