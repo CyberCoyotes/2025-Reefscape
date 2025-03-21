@@ -194,7 +194,7 @@ public Command autoScoreCoral() {
                 () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
                 effector
             ).until(() -> !effector.isCoralLoaded()),
-            Commands.waitSeconds(0.75)  // Safety timeout for autonomous
+            Commands.waitSeconds(0.75)  // Back-up timeout just in cased for auton
         ),
         
         // Then continue running for 0.2 seconds; try 0.1
