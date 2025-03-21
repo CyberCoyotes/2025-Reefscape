@@ -360,14 +360,14 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             effectorCommands.intakeCoral(),
             
             // Wait for coral detection or timeout - THIS DOESN'T REQUIRE SUBSYSTEM EXCLUSIVITY
-            effectorCommands.waitForCoralLoadWithTimeout(3.0),
+            effectorCommands.waitForCoralLoadWithTimeout(6.0),
             
             // Once loaded or timed out, move to safe position
             Commands.parallel(
-                wristCommands.setL2(),
+                wristCommands.setL3(),
                 Commands.sequence(
                     Commands.waitSeconds(0.1), // Give wrist time to start moving
-                    elevatorCommands.setL2()
+                    elevatorCommands.setL3() // Changed from L2
                 )
             )
         ).withName("AutoIntakeCoralSequence");

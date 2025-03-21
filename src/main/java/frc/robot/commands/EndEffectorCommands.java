@@ -12,6 +12,7 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
  */
 public class EndEffectorCommands {
     private final EffectorSubsystem effector;
+    // private final WristCommands wristCommands; // added
 
     /**
      * Constructs a new EndEffectorCommands with the specified subsystem
@@ -20,6 +21,7 @@ public class EndEffectorCommands {
      */
     public EndEffectorCommands(EffectorSubsystem effector) {
         this.effector = effector;
+        // this.wristCommands = wristCommands; // added
     }
 
     /************************************************
