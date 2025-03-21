@@ -749,22 +749,16 @@ public class AutoRoutines {
                 routine.active().onTrue(
                         Commands.sequence(
                                 STJ.resetOdometry(),
-
                                 //  Drives from Start to Branch J
                                 STJ.cmd(),
-                                
                                 // Drivetrain uses an estimated timeout to wait for the elevator & coral to be released
                                 m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
-                                
                                 // Drives from Branch J to Coral Station
                                 STJ2.cmd(),
-
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
                                 CSA.cmd(),
-
                                 // Drivetrain uses an estimated timeout to wait for the elevator & coral to be released
                                 m_drivetrain.stop().withTimeout(4.2),
-
                                 // Drives from Branch A to Coral Station, stops & waits to load
                                 CSA2.cmd()
                         ));

@@ -12,6 +12,7 @@ import frc.robot.subsystems.endEffector.EffectorSubsystem;
  */
 public class EndEffectorCommands {
     private final EffectorSubsystem effector;
+    // private final WristCommands wristCommands; // added
 
     /**
      * Constructs a new EndEffectorCommands with the specified subsystem
@@ -20,6 +21,7 @@ public class EndEffectorCommands {
      */
     public EndEffectorCommands(EffectorSubsystem effector) {
         this.effector = effector;
+        // this.wristCommands = wristCommands; // added
     }
 
     /************************************************
@@ -180,11 +182,13 @@ public Command scoreCoralWithDelayedStopSimple() {
 
 
 /**
- * Autonomous version with overall timeout.
+ * Autonomous version that turns on the end effector to score it
+ * until its no longer detected with slight delay before stopping.
+ * There is also a back up timeout.
  * 
  * @return A command for autonomous scoring with delayed stop
  */
-public Command autoScoreCoralDelayedStop() {
+public Command autoScoreCoral() {
     return Commands.sequence(
         // First, run until coral is no longer detected or timeout occurs
         Commands.race(
@@ -192,14 +196,14 @@ public Command autoScoreCoralDelayedStop() {
                 () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
                 effector
             ).until(() -> !effector.isCoralLoaded()),
-            Commands.waitSeconds(0.75)  // Safety timeout for autonomous
+            Commands.waitSeconds(0.75)  // Back-up timeout just in cased for auton
         ),
         
-        // Then continue running for 0.2 seconds
+        // Then continue running for 0.2 seconds; try 0.1
         Commands.run(
             () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
             effector
-        ).withTimeout(0.2)
+        ).withTimeout(0.1)
     ).finallyDo((interrupted) -> effector.stopMotor())
      .withName("AutoScoreCoralWithDelayedStopSimple");
 }
