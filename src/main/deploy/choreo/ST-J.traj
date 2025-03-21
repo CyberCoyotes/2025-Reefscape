@@ -130,6 +130,6 @@
   "splits":[0,34]
  },
  "events":[
-   {"name":"scoreL1", "from":{"target":1, "targetTimestamp":1.35745, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"Load", "from":{"target":3, "targetTimestamp":2.98852, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"scoreL1", "from":{"target":2, "targetTimestamp":1.82878, "offset":{"exp":"-0.5 s", "val":-0.5}}, "event":null},
+   {"name":"Load", "from":{"target":3, "targetTimestamp":2.98852, "offset":{"exp":"-0.5 s", "val":-0.5}}, "event":null}]
 }

@@ -14,14 +14,12 @@ import frc.robot.Constants;
 
 /**
  * Subsystem class to primarily use a Time of Flight sensor from 'Playing with Fusion'.
- * It reads the distance from the sensor to the 'note' and determines if the note is in a load position.
  */
 public class FrontTOFSubsystem extends SubsystemBase {
 
     // Time of Flight sensor
     private final TimeOfFlight frontTOF = new TimeOfFlight(Constants.TOF_SENSOR_ID);
     
-    // Distance threshold for considering a note loaded (in mm)
     private int frontTargetDistance = 725;
     private int FRONT_LOWER_LIMIT = 720;
     private int FRONT_UPPER_LIMIT = 730;
@@ -29,7 +27,7 @@ public class FrontTOFSubsystem extends SubsystemBase {
     // NetworkTable entries for more reliable data publishing
     private final NetworkTable front_sensorTable;
     private final NetworkTableEntry front_distanceEntry;
-    private final NetworkTableEntry front_isLoadedEntry;
+    // private final NetworkTableEntry front_isLoadedEntry;
     private final NetworkTableEntry front_thresholdEntry;
     
     // Constructor
@@ -40,7 +38,6 @@ public class FrontTOFSubsystem extends SubsystemBase {
         // Set up NetworkTables for more reliable data publishing
         front_sensorTable = NetworkTableInstance.getDefault().getTable("FrontTOF");
         front_distanceEntry = front_sensorTable.getEntry("Distance");
-        front_isLoadedEntry = front_sensorTable.getEntry("NoteLoaded");
         front_thresholdEntry = front_sensorTable.getEntry("DistanceThreshold");
         
         // Initialize threshold in NetworkTables
@@ -85,7 +82,7 @@ public class FrontTOFSubsystem extends SubsystemBase {
         
         // Update NetworkTable entries - this ensures data is published
         front_distanceEntry.setDouble(currentDistance);
-        front_isLoadedEntry.setBoolean(frontDistanceReached);
+        // front_isLoadedEntry.setBoolean(frontDistanceReached);
         
         // Check if the dashboard has updated our threshold value
         double dashThreshold = SmartDashboard.getNumber("FrontTOF/Distance Threshold", frontTargetDistance);
@@ -96,7 +93,6 @@ public class FrontTOFSubsystem extends SubsystemBase {
         
         // Update SmartDashboard values
         SmartDashboard.putNumber("FrontTOF/Raw Distance (mm)", currentDistance);
-        SmartDashboard.putBoolean("FrontTOF/Note Loaded", frontDistanceReached);
         
         // Force a NetworkTables flush to ensure data is sent immediately
         // NetworkTableInstance.getDefault().flush();

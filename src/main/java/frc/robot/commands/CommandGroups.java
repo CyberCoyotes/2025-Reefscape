@@ -311,8 +311,9 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
     public Command autoRoadRunnerL4() {
         return Commands.sequence(
 
-                moveToTravel(wristCommands, elevatorCommands),
-
+                // moveToTravel(wristCommands, elevatorCommands),
+                wristCommands.setL3(),
+                // elevatorCommands.setL3(),
                 // TODO Test to make sure this does not hit reef going up
                 elevatorCommands.setL4(),
                 // Set wrist to L4
