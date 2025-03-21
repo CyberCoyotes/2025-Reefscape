@@ -292,7 +292,6 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
                 // Score the coral with timing appropriate for autonomous
-                // effectorCommands.scoreCoralWithTimeout(), // FIXME This was too slow
                 effectorCommands.autoScoreCoral(), // This should fix the elevator waiting to long
                 wristCommands.setTravel(),
                 elevatorCommands.setTravel()
@@ -309,7 +308,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
                 // moveToTravel(wristCommands, elevatorCommands),
                 wristCommands.setL3(),
-                // TODO Test to make sure this does not hit reef going up
+                // Test to make sure this does not hit reef going up - appears to hit the reef!
                 elevatorCommands.setL4(),
                 // Set wrist to L4
                 wristCommands.setL4(),
@@ -324,17 +323,17 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
     public Command autoBeepBeepL4() {
         return Commands.sequence(
-
                 moveToTravel(wristCommands, elevatorCommands),
 
-                // TODO Test to make sure this does not hit reef going up
+                // Test to make sure this does not hit reef going up - Appears to hit the reef!
                 elevatorCommands.setL4(),
+
                 // Set wrist to L4
                 wristCommands.setL4(),
+
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
 
-                // TODO Test to see if it auto stops when coral released
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.autoScoreCoral(), 
 

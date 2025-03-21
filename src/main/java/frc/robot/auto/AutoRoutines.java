@@ -736,9 +736,9 @@ public class AutoRoutines {
         }
 
         /***************************************************
-         * TODO Test the `LeftSideSpeedy` auto routine
+         * Test the `LeftSideSpeedy` auto routine
         **************************************************/
-
+/*
         public AutoRoutine LeftSideSpeedy() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
@@ -767,7 +767,7 @@ public class AutoRoutines {
                 STJ2.atTime("Load").onTrue(
                         Commands.sequence(
                                 m_commandGroups.autoIntakeCoral(),
-                                m_drivetrain.stop().withTimeout(0.1) // TODO Test the Coral Intake Wait for the coral to be fully loaded
+                                m_drivetrain.stop().withTimeout(0.1) // Test the Coral Intake Wait for the coral to be fully loaded
                         ));
 
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
@@ -780,11 +780,12 @@ public class AutoRoutines {
         
                 return routine;
         }
+ */
 
         /************************************************
-         * TODO Test the `LeftSideSpeedyGonzales` auto routine
+         * Test the `LeftSideSpeedyGonzales` auto routine
         *************************************************/
-
+/*
         public AutoRoutine LeftSideGonzales() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
@@ -797,7 +798,7 @@ public class AutoRoutines {
                                 STJ.resetOdometry(),                                
                                 //  Drives from Start to Branch J
                                 STJ.cmd(),                                
-                                // TODO Confirm the drivetrain only waits until the coral piece has cleared the end effector sensor
+                                // Confirm the drivetrain only waits until the coral piece has cleared the end effector sensor
                                 m_commandGroups.stopUntilCoralReleased(6.0),
 
                                 STJ2.cmd(),
@@ -818,10 +819,10 @@ public class AutoRoutines {
                 CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
-
+ */
 
          /************************************************
-         * TODO Test the `LeftSideRoadRunner` auto routine
+         * `LeftSideRoadRunner` auto routine
          *************************************************/
         public AutoRoutine LeftSideRoadRunner() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
@@ -835,22 +836,16 @@ public class AutoRoutines {
                                 STJ.resetOdometry(),                                
                                 //  Drives from Start to Branch J
                                 STJ.cmd(),                                
-
                                 m_commandGroups.stopUntilCoralReleased(6.0),
-
                                 STJ2.cmd(),             
-
                                 m_commandGroups.stopUntilCoralLoaded(6.0),
-
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
                                 CSA.cmd(),
-
                                 m_commandGroups.stopUntilCoralReleased(6.0),
-
                                 // Drives from Branch A to Coral Station, stops & waits to load
                                 CSA2.cmd()
                         ));
-                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4()); // TODO Confirm autoRoadRunnerL4() function
+                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                 STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                 CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
@@ -858,7 +853,7 @@ public class AutoRoutines {
         }
 
          /************************************************
-         * TODO Test the `LeftSideRoadRunner` auto routine
+         * `LeftSideBeepBeep` auto routine
          *************************************************/
         public AutoRoutine LeftSideBeepBeep() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
@@ -887,7 +882,7 @@ public class AutoRoutines {
                                 // Drives from Branch A to Coral Station, stops & waits to load
                                 CSA2.cmd()
                         ));
-                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoBeepBeepL4()); // TODO Confirm auto turn off of end effector
+                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoBeepBeepL4());
                 STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 CSA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                 CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
