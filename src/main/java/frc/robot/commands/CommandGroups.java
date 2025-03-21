@@ -367,10 +367,10 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             
             // Once loaded or timed out, move to safe position
             Commands.parallel(
-                wristCommands.setL2(),
+                wristCommands.setL3(),
                 Commands.sequence(
                     Commands.waitSeconds(0.1), // Give wrist time to start moving
-                    elevatorCommands.setL2()
+                    elevatorCommands.setL3()
                 )
             )
         ).withName("AutoIntakeCoralSequence");
