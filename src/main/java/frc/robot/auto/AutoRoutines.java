@@ -740,30 +740,50 @@ public class AutoRoutines {
          * `LeftSideRoadRunner` auto routine
          *************************************************/
         public AutoRoutine LeftSideRoadRunner() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
-                final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
-                final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
-                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
-                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
+                final AutoRoutine routine = m_factory.newRoutine("LeftRoadRunner");
+                final AutoTrajectory STJ = routine.trajectory("ST-J-Speedy", 0);
+                final AutoTrajectory STJ2 = routine.trajectory("ST-J-Speedy", 1);
+                // final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
+                // final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
 
                 routine.active().onTrue(
                         Commands.sequence(
-                                STJ.resetOdometry(),                                
+                                STJ.resetOdometry(),
+
+                                // TODO Start moving to L4 score position
+
                                 //  Drives from Start to Branch J
                                 STJ.cmd(),                                
+                                
                                 m_commandGroups.stopUntilCoralReleased(6.0),
+                                
+                                // TODO Start moving intaking coral
+
+                                // Drives from Branch J to Coral Station, stops & waits to load
                                 STJ2.cmd(),             
-                                m_commandGroups.stopUntilCoralLoaded(6.0),
+                                
+                                m_commandGroups.stopUntilCoralLoaded(6.0) // FIXME testing
+
+                                // TODO Start moving to L4 score position
+                                
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
-                                CSA.cmd(),
-                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                // CSA.cmd(),
+                                
+                                // m_commandGroups.stopUntilCoralReleased(6.0),
+                                
                                 // Drives from Branch A to Coral Station, stops & waits to load
-                                CSA2.cmd()
+                                // CSA2.cmd()
                         ));
-                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
-                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
-                CSA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
-                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+
+                // TODO Test movement of wristPosition.L3 && elevatorPosition.TRAVEL to make scoring faster
+                STJ.atTime("preScore").onTrue(m_commandGroups.autoPreScore());
+                STJ.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
+
+                // TODO Test movement of wristPosition.TRAVEL && elevatorPosition.TRAVEL to make coral intake faster
+                STJ2.atTime("postScore").onTrue(m_commandGroups.moveToTravel());
+                STJ2.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
+                // CSA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                // CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
 
@@ -780,11 +800,13 @@ public class AutoRoutines {
                 routine.active().onTrue(
                         Commands.sequence(
                                 STJ.resetOdometry(),                                
+                                
                                 //  Drives from Start to Branch J
                                 STJ.cmd(),                                
 
                                 m_commandGroups.stopUntilCoralReleased(6),
 
+                                // Drives from Branch J to Coral Station, stops & waits to load
                                 STJ2.cmd(),             
 
                                 m_commandGroups.stopUntilCoralLoaded(6),
