@@ -1,4 +1,4 @@
-package frc.robot.subsystems.vision;
+package frc.robot.subsystems;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
@@ -7,11 +7,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 @SuppressWarnings("unused")
 
-public class CameraSubsystem extends SubsystemBase {
+public class DriverCameraSubsystem extends SubsystemBase {
     private UsbCamera camera;
     private boolean cameraInitialized = false;
   
-    public CameraSubsystem() {
+    public DriverCameraSubsystem() {
       // Initialize camera once with proper configuration
       initializeCamera();
     }

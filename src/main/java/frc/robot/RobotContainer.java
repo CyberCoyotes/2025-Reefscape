@@ -24,15 +24,14 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
-import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.DriverCameraSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.commands.EndEffectorCommands;
-import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
 @SuppressWarnings("unused")
@@ -50,7 +49,7 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
-    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+    private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
     // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();

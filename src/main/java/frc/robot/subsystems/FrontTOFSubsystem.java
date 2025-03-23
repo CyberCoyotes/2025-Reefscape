@@ -21,7 +21,7 @@ public class FrontTOFSubsystem extends SubsystemBase {
     private final TimeOfFlight frontTOF = new TimeOfFlight(Constants.TOF_SENSOR_ID);
     
     private int frontTargetDistance = 725;
-    private int FRONT_LOWER_LIMIT = 720;
+    private int FRONT_LOWER_LIMIT = 200;
     private int FRONT_UPPER_LIMIT = 730;
     
     // NetworkTable entries for more reliable data publishing
