@@ -123,10 +123,10 @@ public class CommandGroups {
                 elevatorCommands.setScoreAlgae()).withName("ScoringAlgaeSequence");
     }
 
-    public Command moveToTravel(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+    public Command moveToTravel(/*WristCommands wristCommands, ElevatorCommands elevatorCommands*/) {
         return Commands.sequence(
                 // Add a small delay to give robot time to clear Reef Branches
-                new WaitCommand(0.3),
+                // new WaitCommand(0.3),
 
                 // Move wrist to travel position
                 wristCommands.setTravel(),
@@ -323,7 +323,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
 
     public Command autoBeepBeepL4() {
         return Commands.sequence(
-                moveToTravel(wristCommands, elevatorCommands),
+                moveToTravel(),
 
                 // Test to make sure this does not hit reef going up - Appears to hit the reef!
                 elevatorCommands.setL4(),
@@ -337,7 +337,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.autoScoreCoral(), 
 
-                moveToTravel(wristCommands, elevatorCommands)
+                moveToTravel()
                     .withName("scoreL4Sequence"));
     }
 
@@ -362,11 +362,18 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             Commands.parallel(
                 wristCommands.setL3(),
                 Commands.sequence(
-                    Commands.waitSeconds(0.1), // Give wrist time to start moving
+                    Commands.waitSeconds(0.05), // Give wrist time to start moving
                     elevatorCommands.setL3() // Changed from L2
                 )
             )
         ).withName("AutoIntakeCoralSequence");
+    }
+
+    public Command autoPreScore() {
+        return Commands.sequence(
+                wristCommands.setL3(),
+                elevatorCommands.setTravel()
+                .withName("AutoScoreL2Sequence"));
     }
 
     /**
