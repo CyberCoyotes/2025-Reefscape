@@ -42,24 +42,17 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private final EffectorSubsystem endEffector = new EffectorSubsystem();
-    private final EndEffectorCommands effectorCommands = new EndEffectorCommands(endEffector);
-
+    private final EndEffectorCommands endEffectorCommands = new EndEffectorCommands(endEffector);
     private final WristSubsystem wrist = new WristSubsystem();
     private final WristCommands wristCommands = new WristCommands(wrist);
-
     private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
-
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator);
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
-
-    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
-
-    // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
-
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
-
     private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
+    private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);    
 
     // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
     private final double SPEED_LIMIT = 0.65;
@@ -87,8 +80,6 @@ public class RobotContainer {
     private final CommandXboxController driverController = new CommandXboxController(0);
     private final CommandXboxController operatorController = new CommandXboxController(1);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-
         public RobotContainer() {
 
         autoFactory = drivetrain.createAutoFactory();
@@ -97,8 +88,11 @@ public class RobotContainer {
                 drivetrain,
                 endEffector,
                 elevator,
+                elevatorCommands, 
                 commandGroups,
-                effectorCommands);
+                endEffectorCommands, 
+                wrist, 
+                wristCommands);
 
                 configureBindings();
                 configureAutoRoutines();
@@ -145,66 +139,63 @@ public class RobotContainer {
         /***********************************************
          ** Driver Controls **
          ***********************************************/
-        // Testing purposes
-        driverController.back().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+      
+         driverController.back().onTrue(commandGroups.autoRoadRunnerL4()); // Testing button only
+         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+ 
+         // Handle End Effector Commands for Coral
+         driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
+         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
+ 
+        //  driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
+        //  driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+ 
+         // Groups commands for wrist and elevator to move to specific positions
+         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
+         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
+         driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
+         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
+ 
+         // Manual Elevator Commands
+         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
+         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
+ 
+         // Manual Wrist Commands
+         driverController.povLeft().whileTrue(wristCommands.incrementIn());
+         driverController.povRight().whileTrue(wristCommands.incrementOut());
 
-        // Resets the gyro
-        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
-        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
-
-        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
-        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
-
-        /*
-         ** Y**
-         ** X** **B**
-         ** A**
-         */
-
-        driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
-        driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
-        driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
-        // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
-
-        // Proper AND button logic
-        driverController.b().and(driverController.x())
-                .onTrue(wristCommands.setIntakeCoral());
-        driverController.b().and(driverController.y())
-                .onTrue(elevatorCommands.setIntakeCoral());
-
-        driverController.povUp().whileTrue(elevatorCommands.incrementUp());
-        driverController.povDown().whileTrue(elevatorCommands.incrementDown());
-        driverController.povLeft().whileTrue(wristCommands.incrementOut());
-        driverController.povRight().whileTrue(wristCommands.incrementIn());
-
-                /***********************************************
-                 ** Operator Controls **
-                 ***********************************************/
-
-        // Rotates the servo to a specific angle when the start button is pressed
-        operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
-        operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
-
-        operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
-        operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
-
-        operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
-        operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
-
-        // Algae Commands
-        operatorController.x().onTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
-        operatorController.y().onTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToScoreAlgaeGroup(wristCommands, elevatorCommands));
-
-                // Manual Elevator Commands
-                operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
-                operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
-
-        // Manual Wrist Commands
-        operatorController.povLeft().whileTrue(wristCommands.incrementIn());
-        operatorController.povRight().whileTrue(wristCommands.incrementOut());
+         driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // TODO Test alignment
+         driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // TODO Test alignment
+ 
+ 
+         /***********************************************
+          ** Operator Controls **
+          ***********************************************/
+ 
+         // Rotates the servo to a specific angle when the start button is pressed
+         operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands)); // Redundant 
+         operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
+         
+         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
+         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
+ 
+         operatorController.leftTrigger().whileTrue(endEffectorCommands.intakeAlgae());
+         operatorController.rightTrigger().whileTrue(endEffectorCommands.scoreAlgae());
+ 
+         // Algae Commands
+         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
+         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
+         operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+         operatorController.b().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
+ 
+         // Manual Elevator Commands
+         operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
+         operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
+ 
+         // Manual Wrist Commands
+         operatorController.povLeft().whileTrue(wristCommands.incrementIn());
+         operatorController.povRight().whileTrue(wristCommands.incrementOut());
+ 
 
                 drivetrain.registerTelemetry(logger::telemeterize);
 
