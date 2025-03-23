@@ -12,13 +12,13 @@ public final class ElevatorConstants {
 
     // Control Parameters
     public static final double DEADBAND = 0.02;
-    public static final double POSITION_TOLERANCE = 0.02;
+    // public static final double POSITION_TOLERANCE = 0.02; // Deprecated?
 
     /******************************
      *  Motion Magic 
      ******************************/ 
     // Tested 160 previously
-    public static final double CRUISE_VELOCITY = 120; // Rotations per second
+    public static final double VELOCITY = 120; // Rotations per second
     // Tested 160 previously
     public static final double ACCELERATION = 120; // Rotations per second^2
     
@@ -36,8 +36,9 @@ public final class ElevatorConstants {
     
     // Soft Limits (in rotations)
     // This will need updating when new build
-    public static final double FORWARD_LIMIT = 4.67;
-    public static final double REVERSE_LIMIT = 0;   
+    public static final double FORWARD_LIMIT = 4.75;
+    public static final double REVERSE_LIMIT = 0;
+
     
     public class TestMode {
         
@@ -70,5 +71,8 @@ public final class ElevatorConstants {
             .withKV(0.12)
             .withKG(0.12)
             .withGravityType(GravityTypeValue.Elevator_Static);
-            
+    
+    public static final double INCREMENT_VALUE = 0.1; // Rotations per execution
+    public static final double MAX_INCREMENT = 2.0; // Maximum increment "speed" in rotations per second
+
 }

@@ -40,7 +40,7 @@ public class ClimberCommands {
 
     /**
      * Returns a Command that immediately stops the climb motor (0 V).
-     * This can be used in “instant” scenarios.
+     * This can be used in instant scenarios.
      */
     public Command stopClimb() {
         return Commands.runOnce(

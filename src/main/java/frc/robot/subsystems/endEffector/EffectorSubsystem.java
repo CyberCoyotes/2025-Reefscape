@@ -119,6 +119,8 @@ public class EffectorSubsystem extends SubsystemBase {
      * Command Factories
      ******************************/
 
+     /* Testing removal */
+     /*
     public Command intakeCoralBasic() {
         return run(() -> {
             setEffectorOutput(EffectorConstants.INTAKE_CORAL);
@@ -135,7 +137,7 @@ public class EffectorSubsystem extends SubsystemBase {
             }
         };
     }
-    
+     */
     /**
      * Creates a command that runs the effector motor until a coral is detected by
      * the sensor.
@@ -143,6 +145,7 @@ public class EffectorSubsystem extends SubsystemBase {
      *
      * @return A command that runs the effector motor with sensor feedback.
      */
+    /*
     public Command intakeCoralWithSensor() {
 
         return new RunCommand(() -> {
@@ -216,22 +219,24 @@ public class EffectorSubsystem extends SubsystemBase {
             }
         };
     }
-
+    */
     @Override
     public void periodic() {
         // stopIfDetected();
 
+
         SmartDashboard.putBoolean("Effector/Sensor/isCoralLoaded", isCoralLoaded());        
         SmartDashboard.putNumber("Effector/Sensor/getCoralDistance (mm)", getCoralDistance());
         SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", coralDetectionDistance);
-        /* 
-        // Update dashboard - uncomment if needed
-        SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
-        SmartDashboard.putNumber("Effector/Supply Voltage", supplyVoltage.getValueAsDouble());
 
-        SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
-        SmartDashboard.putBoolean("Effector/Sensor/Range Valid", isCoralRangeValid());
-        SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
-        */
+        //
+        // Update dashboard - uncomment if needed
+        // SmartDashboard.putNumber("Effector/Voltage", motorVoltage.getValueAsDouble());
+        // SmartDashboard.putNumber("Effector/Supply Voltage", supplyVoltage.getValueAsDouble());
+
+        // SmartDashboard.putNumber("Effector/Sensor/Coral Distance (mm)", getCoralDistanceMillimeters());
+        // SmartDashboard.putBoolean("Effector/Sensor/Range Valid", isCoralRangeValid());
+        // SmartDashboard.putBoolean("Effector/Sensor/Coral Detected", isCoralDetected());
+        
     }
 }

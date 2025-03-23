@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
+import frc.robot.commands.DriveDistanceCommands;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
@@ -30,6 +31,7 @@ import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
+import frc.robot.commands.EndEffectorCommands;
 import frc.robot.subsystems.vision.CameraSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
 
@@ -37,40 +39,40 @@ import frc.robot.subsystems.wrist.WristSubsystem;
 
 public class RobotContainer {
 
-        private final EffectorSubsystem endEffector = new EffectorSubsystem();
-        private final EndEffectorCommands effectorCommands = new EndEffectorCommands(endEffector);
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-        private final WristSubsystem wrist = new WristSubsystem();
-        private final WristCommands wristCommands = new WristCommands(wrist);
+    private final EffectorSubsystem endEffector = new EffectorSubsystem();
+    private final EndEffectorCommands effectorCommands = new EndEffectorCommands(endEffector);
 
-        private final ElevatorSubsystem elevator = new ElevatorSubsystem();
-        private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
+    private final WristSubsystem wrist = new WristSubsystem();
+    private final WristCommands wristCommands = new WristCommands(wrist);
 
-        private final ClimberSubsystem climber = new ClimberSubsystem();
-        private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
+    private final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    private final ElevatorCommands elevatorCommands = new ElevatorCommands(elevator, wrist);
 
-        private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands,
-                        effectorCommands);
+    private final ClimberSubsystem climber = new ClimberSubsystem();
+    private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
 
-        // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
+    private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, effectorCommands);
 
-        private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
+    // private final ElevatorLaserSubsystem m_tof = new ElevatorLaserSubsystem();
 
-        private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
+    private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
 
-        // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
-        private final double SPEED_LIMIT = 0.65;
+    private final CameraSubsystem m_cameraSubsystem = new CameraSubsystem();
 
-        // kSpeedAt12Volts desired top speed
-        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * SPEED_LIMIT; // 3 meters per
-                                                                                                    // second
-                                                                                                    // max speed
-        // 3/4 of a rotation per second max angular velocity
-        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond) * SPEED_LIMIT;
+    // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
+    private final double SPEED_LIMIT = 0.65;
 
-        private final AutoFactory autoFactory;
-        private final AutoRoutines autoRoutines;
-        private final AutoChooser autoChooser = new AutoChooser();
+    // kSpeedAt12Volts desired top speed
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond) * SPEED_LIMIT; // 3 meters per second
+                                                                                                // max speed
+    // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond) * SPEED_LIMIT;
+
+    private final AutoFactory autoFactory;
+    private final AutoRoutines autoRoutines;
+    private final AutoChooser autoChooser = new AutoChooser();
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -82,21 +84,21 @@ public class RobotContainer {
 
         private final Telemetry logger = new Telemetry(MaxSpeed);
 
-        private final CommandXboxController driverController = new CommandXboxController(0);
-        private final CommandXboxController operatorController = new CommandXboxController(1);
+    private final CommandXboxController driverController = new CommandXboxController(0);
+    private final CommandXboxController operatorController = new CommandXboxController(1);
 
-        public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
         public RobotContainer() {
 
-                autoFactory = drivetrain.createAutoFactory();
-                autoRoutines = new AutoRoutines(
-                                autoFactory,
-                                drivetrain,
-                                endEffector,
-                                elevator,
-                                commandGroups,
-                                effectorCommands);
+        autoFactory = drivetrain.createAutoFactory();
+        autoRoutines = new AutoRoutines(
+                autoFactory,
+                drivetrain,
+                endEffector,
+                elevator,
+                commandGroups,
+                effectorCommands);
 
                 configureBindings();
                 configureAutoRoutines();
@@ -104,18 +106,18 @@ public class RobotContainer {
 
         private void configureAutoRoutines() {
 
-                autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
-                // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
-                autoChooser.addRoutine("StartLeft->ScoreAL2", autoRoutines::STAL2);
+        autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
+        // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
+        autoChooser.addRoutine("StartLeft->ScoreAL2", autoRoutines::STAL2);
 
-                // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
-                // autoRoutines::STJtoAL1AL2);
-                autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
-                // autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2",
-                // autoRoutines::SBEtoBL12);
-                // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
-                // autoRoutines::SBEtoBL1BL2);
-                autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
+        // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
+        // autoRoutines::STJtoAL1AL2);
+        autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
+        // autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2",
+        // autoRoutines::SBEtoBL12);
+        // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
+        // autoRoutines::SBEtoBL1BL2);
+        autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
 
                 // autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
                 // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
@@ -140,69 +142,69 @@ public class RobotContainer {
 
                                 ));
 
-                /***********************************************
-                 ** Driver Controls **
-                 ***********************************************/
-                // Testing purposes
-                driverController.back().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
+        /***********************************************
+         ** Driver Controls **
+         ***********************************************/
+        // Testing purposes
+        driverController.back().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-                // Resets the gyro
-                driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // Resets the gyro
+        driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
-                // driverController.rightBumper().whileTrue(endEffector.scoreCoral());
+        driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
+        driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
-                driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
-                driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
+        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
-                driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
-                driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
-                driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
+        /*
+         ** Y**
+         ** X** **B**
+         ** A**
+         */
 
-                // TODO Test Left alignment to reef relative
-                driverController.leftBumper()
-                                .whileTrue(new AlignToReefTagRelative(false, drivetrain));
+        driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
+        driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
+        driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
+        // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-                // TODO Test Right alignment to reef relative
-                driverController.rightBumper()
-                                .whileTrue(new AlignToReefTagRelative(true, drivetrain));
-                                
-                driverController.b().and(driverController.x())
-                                .onTrue(wristCommands.setIntakeCoral());
-                driverController.b().and(driverController.y())
-                                .onTrue(elevatorCommands.setIntakeCoral());
+        // Proper AND button logic
+        driverController.b().and(driverController.x())
+                .onTrue(wristCommands.setIntakeCoral());
+        driverController.b().and(driverController.y())
+                .onTrue(elevatorCommands.setIntakeCoral());
 
-                driverController.povUp().whileTrue(elevatorCommands.incrementUp());
-                driverController.povDown().whileTrue(elevatorCommands.incrementDown());
-                driverController.povLeft().whileTrue(wristCommands.incrementOut());
-                driverController.povRight().whileTrue(wristCommands.incrementIn());
+        driverController.povUp().whileTrue(elevatorCommands.incrementUp());
+        driverController.povDown().whileTrue(elevatorCommands.incrementDown());
+        driverController.povLeft().whileTrue(wristCommands.incrementOut());
+        driverController.povRight().whileTrue(wristCommands.incrementIn());
 
                 /***********************************************
                  ** Operator Controls **
                  ***********************************************/
 
-                // Rotates the servo to a specific angle when the start button is pressed
-                operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
-                operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
+        // Rotates the servo to a specific angle when the start button is pressed
+        operatorController.start().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
+        operatorController.back().onTrue(commandGroups.releaseKickSetWrist(wristCommands, climberCommands));
 
-                operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
-                operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
+        operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
+        operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
-                operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
-                operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
+        operatorController.leftTrigger().whileTrue(endEffector.intakeAlgae());
+        operatorController.rightTrigger().whileTrue(endEffector.scoreAlgae());
 
-                // Algae Commands
-                operatorController.x().onTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
-                operatorController.y().onTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
-                operatorController.a().onTrue(commandGroups.moveToScoreAlgaeGroup(wristCommands, elevatorCommands));
+        // Algae Commands
+        operatorController.x().onTrue(commandGroups.moveToPickAlgae2Group(wristCommands, elevatorCommands));
+        operatorController.y().onTrue(commandGroups.moveToPickAlgae3Group(wristCommands, elevatorCommands));
+        operatorController.a().onTrue(commandGroups.moveToScoreAlgaeGroup(wristCommands, elevatorCommands));
 
                 // Manual Elevator Commands
                 operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
                 operatorController.povDown().whileTrue(elevatorCommands.incrementDown());
 
-                // Manual Wrist Commands
-                operatorController.povLeft().whileTrue(wristCommands.incrementIn());
-                operatorController.povRight().whileTrue(wristCommands.incrementOut());
+        // Manual Wrist Commands
+        operatorController.povLeft().whileTrue(wristCommands.incrementIn());
+        operatorController.povRight().whileTrue(wristCommands.incrementOut());
 
                 drivetrain.registerTelemetry(logger::telemeterize);
 
