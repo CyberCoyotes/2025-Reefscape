@@ -156,18 +156,18 @@ public class RobotContainer {
         // driverController.leftBumper().whileTrue(endEffector.intakeCoralWithSensor());
         // driverController.rightBumper().whileTrue(endEffector.scoreCoral());
 
-        driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
-        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+        // driverController.leftTrigger().whileTrue(endEffector.reverseCoralNoSensor());
+        // driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         driverController.x().onTrue(commandGroups.moveToL2Group(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3Group(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHomeGroup(wristCommands, elevatorCommands));
         // driverController.b().onTrue(commandGroups.moveToL4Group(wristCommands, elevatorCommands));
 
-        driverController.leftBumper()
+        driverController.leftTrigger()
                 .whileTrue(vision.createAlignToTagCommand());
         
-        driverController.rightBumper()
+        driverController.rightTrigger()
                 .whileTrue(vision.createFullAlignToTagCommand());
 
         driverController.b().and(driverController.x())

@@ -37,10 +37,10 @@ public class VisionSubsystem extends SubsystemBase {
         // PID values
         public static final class PID {
             // Forward control
-            public static final double FORWARD_P = 0.5;
+            public static final double FORWARD_P = 0.2;
             public static final double FORWARD_I = 0.0;
             public static final double FORWARD_D = 0.0;
-            public static final double FORWARD_TOLERANCE = 0.05; // meters
+            public static final double FORWARD_TOLERANCE = 0.5; // meters
 
             // Lateral control
             public static final double LATERAL_P = 0.2;
@@ -56,7 +56,7 @@ public class VisionSubsystem extends SubsystemBase {
         }
 
         // Target values
-        public static final double TARGET_DISTANCE = -0.5; // meters
+        public static final double TARGET_DISTANCE = -1; // meters
         public static final double MAX_SPEED = 1.0; // maximum speed for alignment
         public static final double MAX_ANGULAR_SPEED = 1.0; // maximum angular speed
         
