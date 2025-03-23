@@ -86,32 +86,35 @@ public class VisionSubsystem extends SubsystemBase {
         limelightTable.getEntry("ledMode").setNumber(enabled ? 3 : 1); // 3=force on, 1=force off
     }
 
-    /*
-    private void updateLEDs() {
-        if (leds != null) {
-            switch (currentState) {
-                case TARGET_LOCKED:
-                    leds.setState(LEDState.TARGET_LOCKED);
-                    break;
-                case TARGET_VISIBLE:
-                    leds.setState(LEDState.TARGET_VISIBLE);
-                    break;
-                case NO_TARGET:
-                default:
-                    leds.setState(LEDState.NO_TARGET);
-                    break;
-            }
-        }
-    } 
-    */
-
     private void logData() {
+        // Current state and basic targeting info
         SmartDashboard.putString("Vision/State", currentState.toString());
         SmartDashboard.putNumber("Vision/TagID", tid.getDouble(0));
         SmartDashboard.putNumber("Vision/TX", tx.getDouble(0));
         SmartDashboard.putNumber("Vision/TY", ty.getDouble(0));
         SmartDashboard.putNumber("Vision/TA", ta.getDouble(0));
+        
+        // Add timestamp and latency information
+        SmartDashboard.putNumber("Vision/Timestamp", limelightTable.getEntry("ts").getDouble(0));
+        SmartDashboard.putNumber("Vision/Pipeline_Latency_ms", limelightTable.getEntry("tl").getDouble(0));
+        SmartDashboard.putNumber("Vision/Capture_Latency_ms", limelightTable.getEntry("cl").getDouble(0));
+        
+        // Add 3D pose data if available
+        double[] botpose = limelightTable.getEntry("botpose").getDoubleArray(new double[6]);
+        if (botpose.length >= 6) {
+            SmartDashboard.putNumber("Vision/PoseX", botpose[0]);
+            SmartDashboard.putNumber("Vision/PoseY", botpose[1]);
+            SmartDashboard.putNumber("Vision/PoseZ", botpose[2]);
+            SmartDashboard.putNumber("Vision/PoseRoll", botpose[3]);
+            SmartDashboard.putNumber("Vision/PosePitch", botpose[4]);
+            SmartDashboard.putNumber("Vision/PoseYaw", botpose[5]);
+        }
+        
+        // Detailed target tracking status
+        SmartDashboard.putBoolean("Vision/HasTarget", tv.getDouble(0) > 0.5);
+        SmartDashboard.putBoolean("Vision/TargetLocked", currentState == VisionState.TARGET_LOCKED);
     }
+    
 
     // Getter methods for use in commands
     public VisionState getState() {
