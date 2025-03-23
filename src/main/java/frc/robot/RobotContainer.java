@@ -153,15 +153,16 @@ public class RobotContainer {
         driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
-        driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // TODO Test alignment
-        driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // TODO Test alignment
-        // driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
-        // driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+        // driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // TODO Test alignment
+        // driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // TODO Test alignment
+        driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
+        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
+        // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
