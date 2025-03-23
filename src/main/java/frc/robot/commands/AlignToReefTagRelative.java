@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -10,43 +9,28 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.vision.LimelightHelpers;
 
 public class AlignToReefTagRelative extends Command {
-    private PIDController xController, yController, rotController;
     private boolean isRightScore;
-    private Timer dontSeeTagTimer, stopTimer;
+    private Timer dontSeeTagTimer;
     private CommandSwerveDrivetrain drivebase;
     
     // Create SwerveRequest for robot-centric control
     private final SwerveRequest.RobotCentric robotCentricRequest = new SwerveRequest.RobotCentric();
 
-    // TODO: Tune these values
-    /** 
-     * represent proportional control constants for the X, Y, and rotational axes, respectively. 
-     * These constants are used in proportional control algorithms to adjust the system's position 
-     * and orientation based on the error between the current state 
-     * and the desired setpoint. */
-    private double X_REEF_ALIGNMENT_P = 2; 
-    private double Y_REEF_ALIGNMENT_P = 2;
-    private double ROT_REEF_ALIGNMENT_P = 0.1;
-
-    /**
-     * Define the desired setpoints for the X, Y, and rotational axes. 
-     * These setpoints represent the target positions and 
-     * orientation that the system aims to achieve during the alignment process.
-     */
-    // TODO: Test these values
-    private double X_SETPOINT_REEF_ALIGNMENT = -0.5; // One meter away from the target?
-    private double Y_SETPOINT_REEF_ALIGNMENT = 0.15;
-    private double ROT_SETPOINT_REEF_ALIGNMENT = 0.0;
-    private double X_TOLERANCE_REEF_ALIGNMENT = 0.1;
-    private double Y_TOLERANCE_REEF_ALIGNMENT = 0.1;
-    private double ROT_TOLERANCE_REEF_ALIGNMENT = 0.1;
+    // Simple proportional control with very low values
+    private double Y_GAIN = 1;  // Very conservative
+    private double ROT_GAIN = 0.5; // Very conservative
+    
+    // Target position values
+    private double Y_SETPOINT = 0.15;  // Target Y offset in meters
+    
+    // Deadband values to prevent tiny movements
+    private double Y_DEADBAND = 0.07;  // 7cm deadband
+    private double ROT_DEADBAND = 0.05; // ~3 degrees deadband
+    
+    // Timers
     private double DONT_SEE_TAG_WAIT_TIME = 0.3;
-    private double POSE_VALIDATION_TIME = 0.3;
 
     public AlignToReefTagRelative(boolean isRightScore, CommandSwerveDrivetrain drivebase) {
-        xController = new PIDController(X_REEF_ALIGNMENT_P, 0, 0); // Vertical movement
-        yController = new PIDController(Y_REEF_ALIGNMENT_P, 0, 0); // Horitontal movement
-        rotController = new PIDController(ROT_REEF_ALIGNMENT_P, 0, 0); // Rotation
         this.isRightScore = isRightScore;
         this.drivebase = drivebase;
         addRequirements(drivebase);
@@ -54,66 +38,81 @@ public class AlignToReefTagRelative extends Command {
 
     @Override
     public void initialize() {
-        this.stopTimer = new Timer();
-        this.stopTimer.start();
         this.dontSeeTagTimer = new Timer();
         this.dontSeeTagTimer.start();
-
-        rotController.setSetpoint(ROT_SETPOINT_REEF_ALIGNMENT);
-        rotController.setTolerance(ROT_TOLERANCE_REEF_ALIGNMENT);
-
-        xController.setSetpoint(X_SETPOINT_REEF_ALIGNMENT);
-        xController.setTolerance(X_TOLERANCE_REEF_ALIGNMENT);
-
-        yController
-                .setSetpoint(isRightScore ? Y_SETPOINT_REEF_ALIGNMENT : -Y_SETPOINT_REEF_ALIGNMENT);
-        yController.setTolerance(Y_TOLERANCE_REEF_ALIGNMENT);
+        
+        // Reset visual indicator
+        SmartDashboard.putBoolean("Vision/AlignmentReady", false);
     }
 
     @Override
     public void execute() {
         if (LimelightHelpers.getTV("")) {
+            // Reset timer when tag is visible
             this.dontSeeTagTimer.reset();
 
+            // Get current pose data from Limelight
             double[] positions = LimelightHelpers.getBotPose_TargetSpace("");
-            SmartDashboard.putNumber("x", positions[2]);
-
-            double xSpeed = xController.calculate(positions[2]);
-            SmartDashboard.putNumber("xspeed", xSpeed);
-            double ySpeed = -yController.calculate(positions[0]);
-            double rotValue = -rotController.calculate(positions[4]);
-
-            // Use robot-centric control for simplicity
-            if (yController.getError() < Y_TOLERANCE_REEF_ALIGNMENT) {
-                // Using CTRE's setControl with RobotCentric request for velocity control
-                drivebase.setControl(
-                    robotCentricRequest
-                        .withVelocityX(xSpeed)  // Forward/backward
-                        .withVelocityY(ySpeed)  // Left/right 
-                        .withRotationalRate(rotValue)  // Rotation rate
-                );
-            } else {
-                drivebase.setControl(
-                    robotCentricRequest
-                        .withVelocityX(0)
-                        .withVelocityY(ySpeed)
-                        .withRotationalRate(rotValue)
-                );
+            
+            // Print raw values to understand what's happening
+            SmartDashboard.putNumber("Vision/RawTagX", positions[0]);
+            SmartDashboard.putNumber("Vision/RawTagZ", positions[2]);
+            SmartDashboard.putNumber("Vision/RawTagPitch", positions[4]);
+            
+            // Calculate Y error (using positions[0] for side-to-side)
+            double yTarget = isRightScore ? Y_SETPOINT : -Y_SETPOINT;
+            double yError = yTarget - positions[0];
+            
+            // Calculate rotation error (using positions[4] for rotation)
+            double rotError = -positions[4];  // Target is 0
+            
+            // Apply deadband - only move if error is significant
+            double ySpeed = 0;
+            if (Math.abs(yError) > Y_DEADBAND) {
+                ySpeed = Y_GAIN * yError;
             }
-
-            if (!rotController.atSetpoint() ||
-                    !yController.atSetpoint() ||
-                    !xController.atSetpoint()) {
-                stopTimer.reset();
+            
+            double rotSpeed = 0;
+            if (Math.abs(rotError) > ROT_DEADBAND) {
+                rotSpeed = ROT_GAIN * rotError;
             }
+            
+            // Apply speed limits
+            ySpeed = Math.min(Math.max(ySpeed, -0.3), 0.3);     // Limit to ±0.3 m/s
+            rotSpeed = Math.min(Math.max(rotSpeed, -0.3), 0.3); // Limit rotation speed
+            
+            // Display errors and speeds
+            SmartDashboard.putNumber("Vision/YError", yError);
+            SmartDashboard.putNumber("Vision/RotError", rotError);
+            SmartDashboard.putNumber("Vision/YSpeed", ySpeed);
+            SmartDashboard.putNumber("Vision/RotSpeed", rotSpeed);
+            
+            // Apply control - only Y and rotation, no X movement
+            drivebase.setControl(
+                robotCentricRequest
+                    .withVelocityX(0)        // No forward/backward movement
+                    .withVelocityY(ySpeed)   // Side-to-side alignment
+                    .withRotationalRate(rotSpeed)  // Rotational alignment
+            );
+            
+            // Show if we're within deadband
+            boolean yAligned = Math.abs(yError) <= Y_DEADBAND;
+            boolean rotAligned = Math.abs(rotError) <= ROT_DEADBAND;
+            SmartDashboard.putBoolean("Vision/YAligned", yAligned);
+            SmartDashboard.putBoolean("Vision/RotAligned", rotAligned);
+            SmartDashboard.putBoolean("Vision/AlignmentReady", yAligned && rotAligned);
+            
         } else {
-            // Stop the robot when no tag is visible
+            // Stop movement when no tag is visible
             drivebase.setControl(
                 robotCentricRequest
                     .withVelocityX(0)
                     .withVelocityY(0)
                     .withRotationalRate(0)
             );
+            
+            // Indicate that alignment is not ready when tag is lost
+            SmartDashboard.putBoolean("Vision/AlignmentReady", false);
         }
     }
 
@@ -126,13 +125,14 @@ public class AlignToReefTagRelative extends Command {
                 .withVelocityY(0)
                 .withRotationalRate(0)
         );
+        
+        // Reset alignment ready indicator
+        SmartDashboard.putBoolean("Vision/AlignmentReady", false);
     }
 
     @Override
     public boolean isFinished() {
-        // Requires the robot to stay in the correct position for 0.3 seconds, as long
-        // as it gets a tag in the camera
-        return this.dontSeeTagTimer.hasElapsed(DONT_SEE_TAG_WAIT_TIME) ||
-                stopTimer.hasElapsed(POSE_VALIDATION_TIME);
+        // Only finish if we've lost sight of the tag for too long
+        return this.dontSeeTagTimer.hasElapsed(DONT_SEE_TAG_WAIT_TIME);
     }
 }
