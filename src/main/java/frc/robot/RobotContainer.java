@@ -24,6 +24,7 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
+import frc.robot.commands.AlignToReefTagRelative;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
@@ -152,8 +153,10 @@ public class RobotContainer {
         driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
-        driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
-        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+        driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // TODO Test alignment
+        driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // TODO Test alignment
+        // driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
+        // driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
