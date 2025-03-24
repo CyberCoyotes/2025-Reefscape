@@ -17,10 +17,25 @@ import frc.robot.subsystems.FrontTOFSubsystem;
 public class AlignToBranchCommand extends SequentialCommandGroup {
     
     // TODO Tune Constants for alignment distances - tune these based on testing
-    private static final double LEFT_BRANCH_OFFSET = 0.40; // 40 cm strafe for left branch 
-    private static final double RIGHT_BRANCH_OFFSET = 0.20; // 20 cm strafe for right branch
-    private static final double YOU_SHALL_NOT_PASS = 1000; // 100 cm (1m) threshold for opening detection
-    private static final double STRAFE_SPEED = 0.5; // 50% of max speed for strafing
+    private static final double RIGHT_BRANCH_OFFSET =   1.600; //strafe for right branch
+    private static final double LEFT_BRANCH_OFFSET =    3.300; // strafe for left branch 
+    private static final double YOU_SHALL_NOT_PASS =    400; // threshold for opening detection
+    // Previously 375, but increased to 400 for better detection
+/*
+    | YSNP  | RIGHT | LEFT | STRAFE_SPEED |
+    |-------|-------|-------|--------------|
+    |  375  | 0.3556| 0.3000|     0.5      |
+    |  400  | 0.3556| 0.3000|     0.5      |
+    |  400  | 1.200 | 1.2858|     0.5      |
+    |  400  | 1.300 | 1.2858|     0.75     |
+    |  400  | 1.300 | 3.200 |     1.00     |
+    |  400  | 1.500 | 3.200 |     1.00     |
+    |  400  | 1.600 | 3.300 |     1.00     |
+    ----------------------------------------
+    Strafe speed is too inaccurate going any faster
+
+ */
+    private static final double STRAFE_SPEED = 1.0; // 50% of max speed for strafing
     
     // Request for robot-centric strafing
     private final SwerveRequest.RobotCentric strafeRequest = new SwerveRequest.RobotCentric();
