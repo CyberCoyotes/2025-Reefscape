@@ -24,6 +24,7 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
+import frc.robot.commands.AlignToBranchCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
@@ -168,9 +169,10 @@ public class RobotContainer {
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
 
-        // Manual Wrist Commands
-        driverController.povLeft().whileTrue(wristCommands.incrementIn());
-        driverController.povRight().whileTrue(wristCommands.incrementOut());
+        
+        // Add reef branch alignment commands to POV buttons
+        driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
+        driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
 
         /***********************************************
          ** Operator Controls **
