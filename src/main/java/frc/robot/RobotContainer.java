@@ -146,15 +146,13 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
       
-        driverController.back().onTrue(commandGroups.autoRoadRunnerL4()); // Testing button only
+        driverController.back().onTrue(wristCommands.setStowed()); // Testing button only
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
         driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
-        // driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // Test alignment
-        // driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // Test alignment
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
@@ -162,13 +160,12 @@ public class RobotContainer {
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
-        driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
+        // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
-
         
         // Add reef branch alignment commands to POV buttons
         driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));

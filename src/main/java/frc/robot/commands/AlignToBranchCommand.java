@@ -16,11 +16,9 @@ import frc.robot.subsystems.FrontTOFSubsystem;
  */
 public class AlignToBranchCommand extends SequentialCommandGroup {
     
-    // TODO Tune Constants for alignment distances - tune these based on testing
     private static final double RIGHT_BRANCH_OFFSET =   1.600; //strafe for right branch
     private static final double LEFT_BRANCH_OFFSET =    3.300; // strafe for left branch 
     private static final double YOU_SHALL_NOT_PASS =    400; // threshold for opening detection
-    // Previously 375, but increased to 400 for better detection
 /*
     | YSNP  | RIGHT | LEFT | STRAFE_SPEED |
     |-------|-------|-------|--------------|
