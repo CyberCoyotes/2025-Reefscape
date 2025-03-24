@@ -24,6 +24,7 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
+import frc.robot.commands.AlignToBranchCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
@@ -152,8 +153,8 @@ public class RobotContainer {
         driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
-        // driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // TODO Test alignment
-        // driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // TODO Test alignment
+        // driverController.leftTrigger().whileTrue(new AlignToReefTagRelative(false, drivetrain)); // Test alignment
+        // driverController.rightTrigger().whileTrue(new AlignToReefTagRelative(true, drivetrain)); // Test alignment
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
@@ -161,16 +162,17 @@ public class RobotContainer {
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
-        // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
+        driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
 
-        // Manual Wrist Commands
-        driverController.povLeft().whileTrue(wristCommands.incrementIn());
-        driverController.povRight().whileTrue(wristCommands.incrementOut());
+        
+        // Add reef branch alignment commands to POV buttons
+        driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
+        driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
 
         /***********************************************
          ** Operator Controls **
