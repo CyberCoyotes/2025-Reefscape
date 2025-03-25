@@ -718,13 +718,13 @@ public class AutoRoutines {
                                 STJ.resetOdometry(),
                                 //  Drives from Start to Branch J, stops & waits, and scores L4
                                 STJ.cmd(),
-                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                m_commandGroups.stopUntilCoralReleased(4.5),
                                 // Drives from Branch J to Coral Station, stops & waits to load
                                 STJ2.cmd(),             
-                                m_commandGroups.stopUntilCoralLoaded(6.0),
+                                m_commandGroups.stopUntilCoralLoaded(4.5),
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
                                 CSA.cmd(),
-                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                m_commandGroups.stopUntilCoralReleased(4.5),
                                 // Drives from Branch A to Coral Station, stops & waits to load
                                 CSA2.cmd()
                         ));
