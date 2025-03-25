@@ -116,7 +116,7 @@ public class RobotContainer {
         // autoRoutines::SBEtoBL12);
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
         // autoRoutines::SBEtoBL1BL2);
-        autoChooser.addRoutine("Smith Smasher", autoRoutines::MHL1);
+        autoChooser.addRoutine("Smith Smasher", autoRoutines::MH);
         autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
         // autoChooser.addRoutine("Left Beep-Beep", autoRoutines::LeftSideBeepBeep );
 
