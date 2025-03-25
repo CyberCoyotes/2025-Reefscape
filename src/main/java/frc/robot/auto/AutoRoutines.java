@@ -615,23 +615,23 @@ public class AutoRoutines {
                 return routine;
         }
 
-        public AutoRoutine MHL1() {
-                final AutoRoutine routine = m_factory.newRoutine("Mid-H-L1");
-                final AutoTrajectory MH = routine.trajectory("Mid-H-L1", 0);
-                final AutoTrajectory MH2 = routine.trajectory("Mid-H-L1", 1);
+        public AutoRoutine MH() {
+                final AutoRoutine routine = m_factory.newRoutine("Mid-H");
+                final AutoTrajectory MH = routine.trajectory("Mid-H", 0);
+                final AutoTrajectory MH2 = routine.trajectory("Mid-H", 1);
 
                 routine.active().onTrue(
                         Commands.sequence(
                                 MH.resetOdometry(), // Always reset odometry first
                                 MH.cmd(), // Follow the path
-                                m_drivetrain.stop().withTimeout(1.0),
-                                MH2.cmd()
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
+                              //  MH2.cmd()
 
                         ));
-                MH.atTime("scoreL1").onTrue(m_effectorCommands.scoreCoral().withTimeout(1.0));
+                MH.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                MH2.atTime("Load").onTrue(m_effectorCommands.scoreCoralSlow().withTimeout(2.0));
+                //MH2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
         public AutoRoutine STJL4() {
@@ -643,11 +643,11 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STJ.resetOdometry(),
                                 STJ.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
                                 STJ2.cmd()
 
                         ));
-                   STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                   STJ.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                    return routine;
         }
         public AutoRoutine STAL4() {
@@ -659,13 +659,13 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STA.resetOdometry(),
                                 STA.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT)//,
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
                                 //STA2.cmd()
 
                         ));
                 STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
 
-                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral().withTimeout(2.0));
+                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral());
                 return routine;
         }
         public AutoRoutine SBEL4() {
@@ -677,11 +677,11 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBE.resetOdometry(),
                                 SBE.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT)//,
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
                                 //SBE2.cmd()
 
                         ));
-                SBE.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                SBE.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 //SBE2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
@@ -696,11 +696,11 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBB.resetOdometry(),
                                 SBB.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT)//,
-                                //SBE2.cmd()
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
+                                //SBB2.cmd()
 
                         ));
-                SBB.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                SBB.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 //SBB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
@@ -718,20 +718,20 @@ public class AutoRoutines {
                                 STJ.resetOdometry(),
                                 //  Drives from Start to Branch J, stops & waits, and scores L4
                                 STJ.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
                                 // Drives from Branch J to Coral Station, stops & waits to load
                                 STJ2.cmd(),             
-                                m_drivetrain.stop().withTimeout(6.0),
+                                m_commandGroups.stopUntilCoralLoaded(6.0),
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
                                 CSA.cmd(),
-                                m_drivetrain.stop().withTimeout(4.2),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
                                 // Drives from Branch A to Coral Station, stops & waits to load
                                 CSA2.cmd()
                         ));
-                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
-                CSA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
+                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+                CSA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
 
@@ -836,18 +836,18 @@ public class AutoRoutines {
                         Commands.sequence(
                                 SBE.resetOdometry(),
                                 SBE.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
                                 SBE2.cmd(),
-                                m_drivetrain.stop().withTimeout(5.0),
+                                m_commandGroups.stopUntilCoralLoaded(6.0),
                                 CSB.cmd(),
-                                m_drivetrain.stop().withTimeout(ELEVATOR_WAIT),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
                                 CSB2.cmd()
 
                         ));
-                SBE.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                SBE2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(5.0));
-                CSB.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
-                CSB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(5.0));
+                SBE.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                SBE2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+                CSB.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                CSB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
 }
