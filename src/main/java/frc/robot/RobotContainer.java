@@ -102,29 +102,24 @@ public class RobotContainer {
 
     private void configureAutoRoutines() {
 
+        SmartDashboard.putData("Autonomous", autoChooser);
         // autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
+        // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
+        
         autoChooser.addRoutine("StartLeft->ScoreAL4", autoRoutines::STAL4);
         autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
-        autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
         autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
+        // autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
+        
+        autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
         autoChooser.addRoutine("StartRight->ScoreEL4->ScoreBL4", autoRoutines::SBE4toBL4);
-        // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
-        // autoRoutines::STJtoAL1AL2);
-        autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
+        // autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2",
-        // autoRoutines::SBEtoBL12);
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B+BL2",
-        // autoRoutines::SBEtoBL1BL2);
+        
         autoChooser.addRoutine("Smith Smasher", autoRoutines::MH);
-        autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
-        // autoChooser.addRoutine("Left Beep-Beep", autoRoutines::LeftSideBeepBeep );
-
-        // autoChooser.addRoutine("BetterSTA", autoRoutines::STA3);
-        // autoChooser.addRoutine("STA-L1", autoRoutines::STAL1);
-        // autoChooser.addRoutine("STJ-L1", autoRoutines::STJL1);
-        SmartDashboard.putData("Autonomous", autoChooser);
-
+        
     }
 
     private void configureBindings() {
@@ -146,7 +141,7 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
       
-        driverController.back().onTrue(wristCommands.setStowed()); // Testing button only
+        driverController.back().onTrue(wristCommands.setStowed()); // TESTING button only
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
@@ -159,8 +154,8 @@ public class RobotContainer {
         // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
-        driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
-        // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); 
+        // driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
+        // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); // TESTING only
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
