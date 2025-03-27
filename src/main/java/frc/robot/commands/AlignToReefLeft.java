@@ -25,7 +25,7 @@ public class AlignToReefLeft extends SequentialCommandGroup {
      * @param maserSensor The LaserCan sensor subsystem
      */
     public AlignToReefLeft(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
-        // Step 1: Strafe right until we detect an opening
+        // Step 1: Strafe left until we detect an opening
         addCommands(
             // Log the start of alignment process
             Commands.runOnce(() -> System.out.println("Starting reef alignment for left")),
