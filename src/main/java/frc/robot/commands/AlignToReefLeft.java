@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -25,7 +24,7 @@ public class AlignToReefLeft extends SequentialCommandGroup {
      * @param maserSensor The LaserCan sensor subsystem
      */
     public AlignToReefLeft(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
-        // Step 1: Strafe left until we detect an opening
+        // Step 1: Strafe right until we detect an opening
         addCommands(
             // Log the start of alignment process
             Commands.runOnce(() -> System.out.println("Starting reef alignment for left")),
