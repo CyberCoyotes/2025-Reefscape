@@ -34,7 +34,7 @@ public class AlignToReefRight extends SequentialCommandGroup {
                     .withVelocityX(0)
                     .withVelocityY(Constants.STRAFE_SPEED_RT) // Negative Y is right in robot-centric frame
                     .withRotationalRate(0));
-            }).until(() -> maserSensor.getReefDistance() < Constants.YOU_SHALL_NOT_PASS),
+            }).until(() -> maserSensor.getReefDistance() <= Constants.YOU_SHALL_NOT_PASS && maserSensor.getReefDistance() >= 0),
             
             // Stop briefly
             drivetrain.runOnce(() -> drivetrain.setControl(strafeRequest
