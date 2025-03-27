@@ -750,21 +750,15 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STJS1.resetOdometry(),
 
-                                // TODO Start moving to L4 score position
-
                                 //  Drives from Start to Branch J
                                 STJS1.cmd(),
                                     
                                 m_commandGroups.stopUntilCoralReleased(6.0),
                                 
-                                // TODO Start moving intaking coral
-
                                 // Drives from Branch J to Coral Station, stops & waits to load
                                 STJS2.cmd(),             
                                 
-                                m_commandGroups.stopUntilCoralLoaded(6.0), // FIXME testing
-
-                                // TODO Start moving to L4 score position
+                                m_commandGroups.stopUntilCoralLoaded(6.0),
                                 
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
                                 CSSA1.cmd(),
@@ -775,11 +769,9 @@ public class AutoRoutines {
                                 CSSA2.cmd()
                         ));
 
-                // TODO Test movement of wristPosition.L3 && elevatorPosition.TRAVEL to make scoring faster
                 // STJ.atTime("preScore").onTrue(m_commandGroups.autoPreScore());
                 STJS1.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
 
-                // TODO Test movement of wristPosition.TRAVEL && elevatorPosition.TRAVEL to make coral intake faster
                 // STJ2.atTime("postScore").onTrue(m_commandGroups.moveToTravel());
                 STJS2.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
                 CSSA1.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
