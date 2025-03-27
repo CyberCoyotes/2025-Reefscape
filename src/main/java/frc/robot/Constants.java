@@ -34,12 +34,14 @@ public class Constants {
     // Time of flight sensor by Limelight, determine robot distance
     public static final int TOF_SENSOR_ID = 41;
 
-    public static final double YOU_SHALL_NOT_PASS =    450; // FIXME Test this threshold for post or slope
+    public static final double YOU_SHALL_NOT_PASS =    450;
     // Consider setting the elevator to a height that can detect the end of the post.
 
-    public static final double STRAFE_SPEED_RT = -1.0; // TODO Verify
-    public static final double STRAFE_SPEED_LT = 1.0; // TODO Verify
+    public static final double STRAFE_SPEED_RT = -1.0;
+    public static final double STRAFE_SPEED_LT = 1.0;
 
+    public static final double AUTO_TARGET_DISTANCE = 100.0; // TODO Verify the drive-to distance
+    public static final double AUTO_DRIVE_SPEED = 1.0; // TODO Verify the speed of driving-to speed 
 
     /**
      * Fun fact: Traditional Java uses ALL_CAPS_SNAKE_CASE. WPILib and CTRE use kCamelCase convention

@@ -5,13 +5,17 @@ import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.CommandGroups;
+import frc.robot.commands.DriveUntilDistance;
 import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.WristCommands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.FrontTOFSubsystem;
+import frc.robot.subsystems.MaserCannon;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.subsystems.wrist.WristSubsystem;
+import frc.robot.Constants;
 
 @SuppressWarnings("unused")
 
@@ -33,6 +37,8 @@ public class AutoRoutines {
     private final EndEffectorCommands m_effectorCommands;
     private final WristSubsystem m_wrist;
     private final WristCommands m_wristCommands;
+    private final FrontTOFSubsystem m_tofSensor;
+    private final MaserCannon m_maserSensor;
 
     // How long to wait after driving before doing something else
     private final double DRIVE_WAIT = 1.0; // Cut 2.0 -> 1.0 or less 
@@ -53,7 +59,9 @@ public class AutoRoutines {
         CommandGroups commandGroups,
         EndEffectorCommands effectorCommands,
         WristSubsystem wrist,
-        WristCommands wristCommands) {
+        WristCommands wristCommands,
+        FrontTOFSubsystem tofSensor,
+        MaserCannon maserSensor) {
             m_factory = autoFactory;
             m_drivetrain = drivetrain;
             m_effector = effector;
@@ -63,6 +71,8 @@ public class AutoRoutines {
             m_effectorCommands = effectorCommands;
             m_wrist = wrist;
             m_wristCommands = wristCommands;
+            m_tofSensor = tofSensor;
+            m_maserSensor = maserSensor;
     }
 
         public AutoRoutine STAL1() {
@@ -634,6 +644,28 @@ public class AutoRoutines {
                 //MH2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
+        
+        public AutoRoutine smartH() {
+                final AutoRoutine routine = m_factory.newRoutine("Mid-H");
+                final AutoTrajectory MH = routine.trajectory("Mid-H", 0);
+                final AutoTrajectory MH2 = routine.trajectory("Mid-H", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                MH.resetOdometry(), // Always reset odometry first
+                                MH.cmd(), // Follow the path
+                                new DriveUntilDistance(m_drivetrain, m_tofSensor, m_maserSensor),
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
+                                //  MH2.cmd()
+
+                        ));
+                MH.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
+                // MH2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+                return routine;
+        }
+
         public AutoRoutine STJL4() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-JL4");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
