@@ -25,13 +25,10 @@ import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.AlignToBranchCommand;
-import frc.robot.commands.AlignToReefLeft;
-import frc.robot.commands.AlignToReefRight;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
-import frc.robot.subsystems.MaserCannon;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -54,9 +51,6 @@ public class RobotContainer {
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
     private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
-    private final MaserCannon maserCannon = new MaserCannon();
-    private final AlignToReefRight alignToReefRight = new AlignToReefRight(drivetrain, maserCannon);
-    private final AlignToReefLeft alignToReefLeft = new AlignToReefLeft(drivetrain, maserCannon);
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
     // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
@@ -151,18 +145,18 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
-        driverController.leftBumper().whileTrue(new AlignToReefLeft(drivetrain, maserCannon));
-        driverController.rightBumper().whileTrue(new AlignToReefRight(drivetrain, maserCannon));
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
+        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         // Groups commands for wrist and elevator to move to specific positions
-        driverController.x().onTrue(commandGroups.autoScoreL2());
-        driverController.y().onTrue(commandGroups.autoScoreL3());
+        driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
+        driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         // driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
         // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); // TESTING only
-        driverController.b().onTrue(commandGroups.autoScoreL4());
+        driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
