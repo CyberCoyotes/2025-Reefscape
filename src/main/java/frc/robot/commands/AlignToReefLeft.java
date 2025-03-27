@@ -35,7 +35,7 @@ public class AlignToReefLeft extends SequentialCommandGroup {
                     .withVelocityX(0)
                     .withVelocityY(Constants.STRAFE_SPEED_LT) // 
                     .withRotationalRate(0));
-            }).until(() -> maserSensor.getReefDistance() > Constants.YOU_SHALL_NOT_PASS),
+            }).until(() -> maserSensor.getReefDistance() < Constants.YOU_SHALL_NOT_PASS),
             
             // Stop briefly
             drivetrain.runOnce(() -> drivetrain.setControl(strafeRequest

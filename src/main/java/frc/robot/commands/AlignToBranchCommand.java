@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
 
@@ -18,7 +19,6 @@ public class AlignToBranchCommand extends SequentialCommandGroup {
     
     private static final double RIGHT_BRANCH_OFFSET =   1.600; //strafe for right branch
     private static final double LEFT_BRANCH_OFFSET =    3.300; // strafe for left branch 
-    private static final double YOU_SHALL_NOT_PASS =    400; // threshold for opening detection
 /*
     | YSNP  | RIGHT | LEFT | STRAFE_SPEED |
     |-------|-------|-------|--------------|
@@ -58,7 +58,7 @@ public class AlignToBranchCommand extends SequentialCommandGroup {
                     .withVelocityX(0)
                     .withVelocityY(-STRAFE_SPEED) // Negative Y is right in robot-centric frame
                     .withRotationalRate(0));
-            }).until(() -> tofSensor.getFrontDistance() > YOU_SHALL_NOT_PASS),
+            }).until(() -> tofSensor.getFrontDistance() > Constants.YOU_SHALL_NOT_PASS),
             
             // Stop briefly
             drivetrain.runOnce(() -> drivetrain.setControl(strafeRequest

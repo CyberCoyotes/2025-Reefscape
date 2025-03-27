@@ -295,7 +295,9 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 effectorCommands.autoScoreCoral(), 
 
                 // Move wrist to L3 position
-                wristCommands.setL3()
+                wristCommands.setL3(),
+                
+                elevatorCommands.setL2()
                 ).withName("AutoScoreL3Sequence");
 
     }
@@ -317,9 +319,9 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.autoScoreCoral(),
                 
-                wristCommands.setTravel(),
+                wristCommands.setL2(),
                 
-                elevatorCommands.setTravel()
+                elevatorCommands.setL2()
                 ).withName("AutoScoreL4Sequence");
     }
 
