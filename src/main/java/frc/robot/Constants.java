@@ -35,7 +35,7 @@ public class Constants {
     public static final int TOF_SENSOR_ID = 41;
 
     public static final double YSNP =    400; // FIXME Test this threshold for post or slope
-    public static final double YOU_SHALL_NOT_PASS =    250; // FIXME Test this threshold for post or slope
+    public static final double YOU_SHALL_NOT_PASS =    450; // FIXME Test this threshold for post or slope
     // Consider setting the elevator to a height that can detect the end of the post.
 
     public static final double STRAFE_SPEED_RT = -1.0; // TODO Verify

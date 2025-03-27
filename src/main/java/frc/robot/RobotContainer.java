@@ -151,8 +151,8 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
-        driverController.leftBumper().onTrue(new AlignToReefLeft(drivetrain, maserCannon));
-        driverController.rightBumper().onTrue(new AlignToReefRight(drivetrain, maserCannon));
+        driverController.leftBumper().whileTrue(new AlignToReefLeft(drivetrain, maserCannon));
+        driverController.rightBumper().whileTrue(new AlignToReefRight(drivetrain, maserCannon));
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));

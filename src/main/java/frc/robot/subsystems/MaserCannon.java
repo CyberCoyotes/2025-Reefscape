@@ -14,7 +14,6 @@ public class MaserCannon extends SubsystemBase {
     private double lastReefDistance = 1000.0;
 
     public MaserCannon() {
-        // Initialize both LaserCAN sensors
         reefMaser = new LaserCan(Constants.MASER_ID);
 
         // Configure sensors
@@ -24,7 +23,7 @@ public class MaserCannon extends SubsystemBase {
     private void configureMaser(LaserCan maser, String name) {
         try {
             maser.setRangingMode(LaserCan.RangingMode.SHORT);
-            maser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 10, 10));
+            maser.setRegionOfInterest(new LaserCan.RegionOfInterest(8, 8, 6, 6));
             maser.setTimingBudget(LaserCan.TimingBudget.TIMING_BUDGET_20MS);
         } catch (ConfigurationFailedException e) {
             System.out.println(name + " Laser configuration failed! " + e);
