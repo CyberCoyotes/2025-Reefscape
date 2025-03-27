@@ -25,15 +25,19 @@ import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.AlignToBranchCommand;
+import frc.robot.commands.AlignToReefLeft;
+import frc.robot.commands.AlignToReefRight;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
+import frc.robot.subsystems.MaserCannon;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.subsystems.wrist.WristSubsystem;
+
 
 @SuppressWarnings("unused")
 
@@ -53,8 +57,10 @@ public class RobotContainer {
     private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
-    // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
-    
+    private final MaserCannon maserCannon = new MaserCannon();
+    private final AlignToReefLeft alignToReefLeft = new AlignToReefLeft(drivetrain, maserCannon);
+    private final AlignToReefRight alignToReefRight = new AlignToReefRight(drivetrain, maserCannon);
+
     // 3 meters per second max speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     
@@ -163,8 +169,11 @@ public class RobotContainer {
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
         
         // Add reef branch alignment commands to POV buttons
-        driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
-        driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
+        // driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
+        // driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
+
+        driverController.povLeft().whileTrue(new AlignToReefLeft(drivetrain, maserCannon));
+        driverController.povRight().whileTrue(new AlignToReefRight(drivetrain, maserCannon));
 
         /***********************************************
          ** Operator Controls **
