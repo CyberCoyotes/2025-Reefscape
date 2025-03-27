@@ -17,7 +17,7 @@ import frc.robot.subsystems.FrontTOFSubsystem;
  */
 public class AlignToBranchCommand extends SequentialCommandGroup {
     
-    private static final double RIGHT_BRANCH_OFFSET =   1.600; //strafe for right branch
+    private static final double RIGHT_BRANCH_OFFSET =   1.600; // strafe for right branch
     private static final double LEFT_BRANCH_OFFSET =    3.300; // strafe for left branch 
 /*
     | YSNP  | RIGHT | LEFT | STRAFE_SPEED |
