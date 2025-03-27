@@ -274,33 +274,53 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Move elevator to L2 height
                 elevatorCommands.setL2(),
 
-                // Short delay to stabilize
-                // Commands.waitSeconds(0.2),
+                // Run effector command until coral leaves the end effector
+                effectorCommands.autoScoreCoral(),
+                
+                wristCommands.setL2()
+                ).withName("AutoScoreL2Sequence");
 
-                // Score the coral with timing appropriate for autonomous
-                effectorCommands.scoreCoralWithTimeout()).withName("AutoScoreL2Sequence");
+
+    }
+
+    public Command autoScoreL3() {
+        return Commands.sequence(
+                // Move wrist to L3 position for scoring
+                wristCommands.setL3(),
+
+                // Move elevator to L2 height
+                elevatorCommands.setL3(),
+
+                // Run effector command until coral leaves the end effector
+                effectorCommands.autoScoreCoral(), 
+
+                // Move wrist to L3 position
+                wristCommands.setL3()
+                ).withName("AutoScoreL3Sequence");
+
     }
 
     public Command autoScoreL4() {
         return Commands.sequence(
                 // Set the wrist to L2
                 wristCommands.setL2(),
+                
                 // Move the elevator to L4
                 elevatorCommands.setL4(),
+                
                 // Set wrist to L4
                 wristCommands.setL4(),
+
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
+                
                 // Score the coral with timing appropriate for autonomous
-                effectorCommands.autoScoreCoral(), // This should fix the elevator waiting to long
+                effectorCommands.autoScoreCoral(),
+                
                 wristCommands.setTravel(),
+                
                 elevatorCommands.setTravel()
-                );
-                // Move wrist to safe travel position if not already
-                // wristCommands.setL2(),
-
-                // Move the elevator to home position
-                // elevatorCommands.setHome()).withName("scoreL4Sequence");
+                ).withName("AutoScoreL4Sequence");
     }
 
     public Command autoRoadRunnerL4() {

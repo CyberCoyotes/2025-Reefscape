@@ -22,6 +22,8 @@ public class Constants {
 
     // public static final int CORAL_LASER_ID = 51;
     public static final int ELEVATOR_LASER_ID = 52;
+    public static final int MASER_ID = 54;
+
 
     // Time of flight sensor in end effector, detecting coral
     public static final int CORAL_SENSOR_ID = 42;
@@ -31,6 +33,13 @@ public class Constants {
 
     // Time of flight sensor by Limelight, determine robot distance
     public static final int TOF_SENSOR_ID = 41;
+
+    public static final double YOU_SHALL_NOT_PASS =    450; // FIXME Test this threshold for post or slope
+    // Consider setting the elevator to a height that can detect the end of the post.
+
+    public static final double STRAFE_SPEED_RT = -1.0; // TODO Verify
+    public static final double STRAFE_SPEED_LT = 1.0; // TODO Verify
+
 
     /**
      * Fun fact: Traditional Java uses ALL_CAPS_SNAKE_CASE. WPILib and CTRE use kCamelCase convention
