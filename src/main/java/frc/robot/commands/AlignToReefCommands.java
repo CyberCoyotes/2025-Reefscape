@@ -14,8 +14,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
  */
 public class AlignToReefCommands {
     // Strafe speed constant
-    private static final double STRAFE_RIGHT = 1.0; // meters per second, adjust as needed
-    private static final double STRAFE_LEFT = -STRAFE_RIGHT; // meters per second, adjust as needed
+    private static final double STRAFE_RIGHT = -1.0; // meters per second, adjust as needed
+    private static final double STRAFE_LEFT = STRAFE_RIGHT; // meters per second, adjust as needed
 
     /**
      * Creates a command that strafes left until the reef is detected
