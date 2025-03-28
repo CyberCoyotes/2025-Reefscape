@@ -108,7 +108,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
 
         // Configure current limits for both motors
-        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXED: Enable current limiting
+        leadConfig.CurrentLimits.StatorCurrentLimitEnable = true; // Changed from false to true
         leadConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply leader configuration
@@ -117,7 +117,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure follower motor with its specific settings
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true; // FIXED: Enable current limiting
+        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply follower configuration - FIXED: Use followerConfig instead of leadConfig
