@@ -25,8 +25,8 @@ public class ReefTOFSubsystem extends SubsystemBase {
     // NetworkTable entries for more reliable data publishing
     private final NetworkTable reef_sensorTable;
     private final NetworkTableEntry reef_distanceEntry;
-    // private final NetworkTableEntry front_isLoadedEntry;
-    private final NetworkTableEntry reef_thresholdEntry;
+    private final NetworkTableEntry reef_atReefTargetEntry;
+    private final NetworkTableEntry reef_thresholdEntry; // static
     
     // Constructor
     public ReefTOFSubsystem() {
@@ -37,27 +37,28 @@ public class ReefTOFSubsystem extends SubsystemBase {
         reef_sensorTable = NetworkTableInstance.getDefault().getTable("reefTOF");
         reef_distanceEntry = reef_sensorTable.getEntry("Distance");
         reef_thresholdEntry = reef_sensorTable.getEntry("DistanceThreshold");
+        reef_atReefTargetEntry = reef_sensorTable.getEntry("AtReefTarget");
         
         // Initialize threshold in NetworkTables
         reef_thresholdEntry.setDouble(YOU_SHALL_NOT_PASS);
         
         // Also set up SmartDashboard for visualization
         SmartDashboard.putString("reefTOF/Status", "Initialized");
-        SmartDashboard.putNumber("reefTOF/Distance Threshold", YOU_SHALL_NOT_PASS);
+        SmartDashboard.putNumber("reefTOF/You Shall Not Pass", YOU_SHALL_NOT_PASS);
         
         // Make distance threshold adjustable from dashboard
         SmartDashboard.setPersistent("reefTOF/Distance Threshold");
     }
 
     /**
-     * Gets the raw distance reading from the sensor to the nearest edge (in mm)
+     * Gets the raw distance reading from the sensor to the nearest object
      */
     public double getReefDistance() {
         return reefTOF.getRange();
     }
     
     /**
-     * Returns true if the note is loaded, false if not
+     * Returns true if the reef branch is reached, false if not
      */
     public boolean atReefTarget() {
         return (getReefDistance() > 0) && (getReefDistance() < YOU_SHALL_NOT_PASS);
@@ -80,19 +81,11 @@ public class ReefTOFSubsystem extends SubsystemBase {
         
         // Update NetworkTable entries - this ensures data is published
         reef_distanceEntry.setDouble(currentDistance);
-        // front_isLoadedEntry.setBoolean(frontDistanceReached);
-        
-        // Check if the dashboard has updated our threshold value
-        double dashThreshold = SmartDashboard.getNumber("reefTOF/YOU_SHALL_NOT_PASS", YOU_SHALL_NOT_PASS);
-        if (dashThreshold != YOU_SHALL_NOT_PASS) {
-            YOU_SHALL_NOT_PASS = (int) dashThreshold;
-            reef_thresholdEntry.setDouble(YOU_SHALL_NOT_PASS);
-        }
-        
+        reef_atReefTargetEntry.setBoolean(reefDistanceReached);
+       
         // Update SmartDashboard values
         SmartDashboard.putNumber("reefTOF/Raw Distance (mm)", currentDistance);
         
-        // Force a NetworkTables flush to ensure data is sent immediately
-        // NetworkTableInstance.getDefault().flush();
     }
-}
+
+} // end of class

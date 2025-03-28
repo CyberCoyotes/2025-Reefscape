@@ -12,7 +12,7 @@ import frc.robot.Constants;
  * Command for aligning to reef branches using LaserCan sensor and swerve drivetrain.
  * Strafe until we detect an opening (LaserCan distance is less than threshold)
  */
-public class AlignToReefRight extends SequentialCommandGroup {
+public class AlignToReefLeftWithEdgeDetection extends SequentialCommandGroup {
     
     // Request for robot-centric strafing
     private final SwerveRequest.RobotCentric strafeRequest = new SwerveRequest.RobotCentric();
@@ -23,16 +23,16 @@ public class AlignToReefRight extends SequentialCommandGroup {
      * @param drivetrain The swerve drivetrain subsystem
      * @param maserSensor The LaserCan sensor subsystem
      */
-    public AlignToReefRight(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
+    public AlignToReefLeftWithEdgeDetection(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
         addCommands(
             // Log the start of alignment process
-            Commands.runOnce(() -> System.out.println("Starting reef alignment for right")),
+            Commands.runOnce(() -> System.out.println("Starting reef alignment for left")),
             
             // Strafe until LaserCan sensor detects the branch; distance is less than threshold
             drivetrain.run(() -> {
                 drivetrain.setControl(strafeRequest
                     .withVelocityX(0)
-                    .withVelocityY(Constants.STRAFE_SPEED_RT) // Negative Y is right in robot-centric frame
+                    .withVelocityY(Constants.STRAFE_LEFT) // 
                     .withRotationalRate(0));
             }).until(() -> maserSensor.getReefDistance() <= Constants.YOU_SHALL_NOT_PASS && maserSensor.getReefDistance() >= 0),
             
@@ -42,7 +42,7 @@ public class AlignToReefRight extends SequentialCommandGroup {
                 .withVelocityY(0)
                 .withRotationalRate(0))),
                 
-            // Log detection of opening
+            // Log detection
             Commands.runOnce(() -> {
                 System.out.println("Object detected at distance: " + maserSensor.getReefDistance());
             }),
@@ -54,5 +54,4 @@ public class AlignToReefRight extends SequentialCommandGroup {
         
         addRequirements(drivetrain);
     }
-  
 }

@@ -35,7 +35,7 @@ public class ReefAlignmentCommands {
      * @return A command that aligns the robot to the reef by strafing right
      */
     public Command alignToReefRight() {
-        return new AlignToReefRight(drivetrain, maserSensor);
+        return new AlignToReefRightWithEdgeDetection(drivetrain, maserSensor);
     }
     
     /**
@@ -45,7 +45,7 @@ public class ReefAlignmentCommands {
      * @return A command that aligns the robot to the reef by strafing left
      */
     public Command alignToReefLeft() {
-        return new AlignToReefLeft(drivetrain, maserSensor);
+        return new AlignToReefLeftWithEdgeDetection(drivetrain, maserSensor);
     }
     
     /**
