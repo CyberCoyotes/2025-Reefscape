@@ -710,8 +710,8 @@ public class AutoRoutines {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
-                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
-                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A-Speedy", 0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A-Speedy", 1);
 
                 routine.active().onTrue(
                         Commands.sequence(
