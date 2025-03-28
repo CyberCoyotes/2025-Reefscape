@@ -617,15 +617,15 @@ public class AutoRoutines {
 
         public AutoRoutine MH() {
                 final AutoRoutine routine = m_factory.newRoutine("Mid-H");
-                final AutoTrajectory MH = routine.trajectory("Mid-H", 0);
-                final AutoTrajectory MH2 = routine.trajectory("Mid-H", 1);
+                final AutoTrajectory MH = routine.trajectory("Mid-H");
+        
 
                 routine.active().onTrue(
                         Commands.sequence(
                                 MH.resetOdometry(), // Always reset odometry first
                                 MH.cmd(), // Follow the path
-                                m_commandGroups.stopUntilCoralReleased(6.0)//,
-                              //  MH2.cmd()
+                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                m_drivetrain.stop().withTimeout(6.0)
 
                         ));
                 MH.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
