@@ -40,6 +40,7 @@ public class Constants {
 
     public static final double STRAFE_SPEED_RT = -1.0; // TODO Verify
     public static final double STRAFE_SPEED_LT = 1.0; // TODO Verify
+    public static final int REEF_SENSOR_ID = 102;
 
 
     /**
