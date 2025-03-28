@@ -12,7 +12,7 @@ import frc.robot.Constants;
  * Provides methods to create commands that align the robot to reef branches
  * by strafing left or right until an opening is detected.
  */
-public class ReefAlignmentCommands {
+public class AlignToReefWithMaserCommands {
     
     private final CommandSwerveDrivetrain drivetrain;
     private final MaserCannon maserSensor;
@@ -23,7 +23,7 @@ public class ReefAlignmentCommands {
      * @param drivetrain The swerve drivetrain subsystem
      * @param maserSensor The LaserCan sensor subsystem for reef detection
      */
-    public ReefAlignmentCommands(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
+    public AlignToReefWithMaserCommands(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
         this.drivetrain = drivetrain;
         this.maserSensor = maserSensor;
     }
@@ -35,7 +35,7 @@ public class ReefAlignmentCommands {
      * @return A command that aligns the robot to the reef by strafing right
      */
     public Command alignToReefRight() {
-        return new AlignToReefRightWithEdgeDetection(drivetrain, maserSensor);
+        return new AlignToReefRightWithMaser(drivetrain, maserSensor);
     }
     
     /**
@@ -45,7 +45,7 @@ public class ReefAlignmentCommands {
      * @return A command that aligns the robot to the reef by strafing left
      */
     public Command alignToReefLeft() {
-        return new AlignToReefLeftWithEdgeDetection(drivetrain, maserSensor);
+        return new AlignToReefLeftWithMaser(drivetrain, maserSensor);
     }
     
     /**

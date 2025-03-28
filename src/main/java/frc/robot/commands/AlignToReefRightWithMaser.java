@@ -12,7 +12,7 @@ import frc.robot.Constants;
  * Command for aligning to reef branches using LaserCan sensor and swerve drivetrain.
  * Strafe until we detect an opening (LaserCan distance is less than threshold)
  */
-public class AlignToReefRightWithEdgeDetection extends SequentialCommandGroup {
+public class AlignToReefRightWithMaser extends SequentialCommandGroup {
     
     // Request for robot-centric strafing
     private final SwerveRequest.RobotCentric strafeRequest = new SwerveRequest.RobotCentric();
@@ -23,7 +23,7 @@ public class AlignToReefRightWithEdgeDetection extends SequentialCommandGroup {
      * @param drivetrain The swerve drivetrain subsystem
      * @param maserSensor The LaserCan sensor subsystem
      */
-    public AlignToReefRightWithEdgeDetection(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
+    public AlignToReefRightWithMaser(CommandSwerveDrivetrain drivetrain, MaserCannon maserSensor) {
         addCommands(
             // Log the start of alignment process
             Commands.runOnce(() -> System.out.println("Starting reef alignment for right")),

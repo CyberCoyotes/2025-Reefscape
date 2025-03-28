@@ -9,7 +9,9 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.ReefTOFSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-
+/*
+ * Similar to Align with Maser (LaserCAN) commands, but using Time of Flight sensor
+ */
 public class AlignToReefCommands {
     // Strafe speed constant
     private static final double STRAFE_RIGHT = 1.0; // meters per second, adjust as needed

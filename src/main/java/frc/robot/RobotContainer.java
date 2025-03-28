@@ -25,8 +25,8 @@ import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.AlignToReefWithEdgeDetection;
-import frc.robot.commands.AlignToReefLeftWithEdgeDetection;
-import frc.robot.commands.AlignToReefRightWithEdgeDetection;
+import frc.robot.commands.AlignToReefLeftWithMaser;
+import frc.robot.commands.AlignToReefRightWithMaser;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
@@ -58,8 +58,8 @@ public class RobotContainer {
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
     private final MaserCannon maserCannon = new MaserCannon();
-    private final AlignToReefLeftWithEdgeDetection alignToReefLeft = new AlignToReefLeftWithEdgeDetection(drivetrain, maserCannon);
-    private final AlignToReefRightWithEdgeDetection alignToReefRight = new AlignToReefRightWithEdgeDetection(drivetrain, maserCannon);
+    private final AlignToReefLeftWithMaser alignToReefLeft = new AlignToReefLeftWithMaser(drivetrain, maserCannon);
+    private final AlignToReefRightWithMaser alignToReefRight = new AlignToReefRightWithMaser(drivetrain, maserCannon);
 
     // 3 meters per second max speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -172,8 +172,8 @@ public class RobotContainer {
         // driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
         // driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
 
-        driverController.povLeft().whileTrue(new AlignToReefLeftWithEdgeDetection(drivetrain, maserCannon));
-        driverController.povRight().whileTrue(new AlignToReefRightWithEdgeDetection(drivetrain, maserCannon));
+        driverController.povLeft().whileTrue(new AlignToReefLeftWithMaser(drivetrain, maserCannon));
+        driverController.povRight().whileTrue(new AlignToReefRightWithMaser(drivetrain, maserCannon));
 
         /***********************************************
          ** Operator Controls **
