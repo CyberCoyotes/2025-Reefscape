@@ -23,10 +23,6 @@ public class Constants {
     // public static final int CORAL_LASER_ID = 51;
     public static final int ELEVATOR_LASER_ID = 52;
     
-    // Marked for Removal
-    public static final int MASER_ID = 54;
-
-
     // Time of flight sensor in end effector, detecting coral
     public static final int CORAL_SENSOR_ID = 42;
 

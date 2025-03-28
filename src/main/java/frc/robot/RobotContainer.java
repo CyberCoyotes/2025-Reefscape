@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -25,13 +26,12 @@ import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.AlignToReefWithEdgeDetection;
-import frc.robot.commands.AlignToReefLeftWithMaser;
-import frc.robot.commands.AlignToReefRightWithMaser;
+import frc.robot.commands.AlignToReefCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
-import frc.robot.subsystems.MaserCannon;
+import frc.robot.subsystems.ReefTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
@@ -54,12 +54,10 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
+    private final ReefTOFSubsystem reefSensor = new ReefTOFSubsystem();
     private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
-    private final MaserCannon maserCannon = new MaserCannon();
-    private final AlignToReefLeftWithMaser alignToReefLeft = new AlignToReefLeftWithMaser(drivetrain, maserCannon);
-    private final AlignToReefRightWithMaser alignToReefRight = new AlignToReefRightWithMaser(drivetrain, maserCannon);
 
     // 3 meters per second max speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -172,8 +170,8 @@ public class RobotContainer {
         // driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
         // driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
 
-        driverController.povLeft().whileTrue(new AlignToReefLeftWithMaser(drivetrain, maserCannon));
-        driverController.povRight().whileTrue(new AlignToReefRightWithMaser(drivetrain, maserCannon));
+        driverController.povLeft().whileTrue(AlignToReefCommands.strafeLeftToReef(reefSensor, drivetrain));
+        driverController.povRight().whileTrue(AlignToReefCommands.strafeRightToReef(reefSensor, drivetrain));
 
         /***********************************************
          ** Operator Controls **
