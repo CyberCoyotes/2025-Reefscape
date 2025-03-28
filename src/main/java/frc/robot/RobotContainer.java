@@ -167,8 +167,6 @@ public class RobotContainer {
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
         
         // Add reef branch alignment commands to POV buttons
-        // driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
-        // driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
 
         driverController.povLeft().whileTrue(AlignToReefCommands.strafeLeftToReef(reefSensor, drivetrain));
         driverController.povRight().whileTrue(AlignToReefCommands.strafeRightToReef(reefSensor, drivetrain));
