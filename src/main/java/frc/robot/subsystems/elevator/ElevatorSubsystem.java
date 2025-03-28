@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         INTAKE_CORAL(1.92),
         TRAVEL(1.92),
         ALGAE3(2.45),
-        L4(4.7);
+        L4(4.165); // Previously 4.7
 
         private final double position;
 
