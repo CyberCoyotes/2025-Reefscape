@@ -59,7 +59,7 @@ public class FrontTOFSubsystem extends SubsystemBase {
     }
     
     /**
-     * Returns true if the note is loaded, false if not
+     * TODO Check logic, in edge detection you'd want this to be false
      */
     public boolean isFrontAtTarget() {
         return getFrontDistance() < frontTargetDistance;

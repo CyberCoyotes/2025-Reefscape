@@ -34,7 +34,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         INTAKE_CORAL(1.92),
         TRAVEL(1.92),
         ALGAE3(2.45),
-        L4(4.45); // Previously 4.7; 4.165 was too short
+        L4(4.2); // Previously 4.7 // 4.6 too tall at practice field
 
         private final double position;
 
