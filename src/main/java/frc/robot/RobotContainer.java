@@ -111,12 +111,12 @@ public class RobotContainer {
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
         
-        autoChooser.addRoutine("StartLeft->ScoreAL4", autoRoutines::STAL4);
-        autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
+        autoChooser.addRoutine("The LEFT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::STAL4);
+        //autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
         autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
-        autoChooser.addRoutine("StartRight->ScoreB4", autoRoutines::SBBL4);
-        autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
+        autoChooser.addRoutine("The RIGHT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::SBBL4);
+        //autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
         autoChooser.addRoutine("StartRight->ScoreEL4->ScoreBL4", autoRoutines::SBE4toBL4);
         // autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2",
