@@ -59,7 +59,7 @@ public class FrontTOFSubsystem extends SubsystemBase {
     }
     
     /**
-     * TODO Check logic, in edge detection you'd want this to be false
+     * Check logic, in edge detection you'd want this to be false
      */
     public boolean isFrontAtTarget() {
         return getFrontDistance() < frontTargetDistance;

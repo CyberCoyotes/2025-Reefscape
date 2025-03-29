@@ -55,7 +55,6 @@ public class AlignToReefCommands {
                     (interrupted ? " (interrupted)" : ""));
             }
             
-            // TODO Remove if I want manual control to interrupt?
             @Override
             public Set<Subsystem> getRequirements() {
                 return Set.of(drivetrain, reefSensor);

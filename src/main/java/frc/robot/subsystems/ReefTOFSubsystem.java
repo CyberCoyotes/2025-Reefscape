@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-@SuppressWarnings("unused") // Suppress warnings for unused imports and methods
-
 /**
  * Subsystem class to primarily use a Time of Flight sensor from 'Playing with Fusion'.
  */
@@ -20,7 +18,7 @@ public class ReefTOFSubsystem extends SubsystemBase {
     // Time of Flight sensor
     private final TimeOfFlight reefTOF = new TimeOfFlight(Constants.REEF_SENSOR_ID);
     
-    private int YOU_SHALL_NOT_PASS = 300; // TODO Determine empirically
+    private int YOU_SHALL_NOT_PASS = 300;
 
     // NetworkTable entries for more reliable data publishing
     private final NetworkTable reef_sensorTable;
