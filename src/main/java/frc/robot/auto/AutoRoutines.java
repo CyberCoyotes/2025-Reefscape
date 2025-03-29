@@ -663,9 +663,9 @@ public class AutoRoutines {
                                 //STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
 
-                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral());
+                STA.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
         public AutoRoutine SBEL4() {

@@ -115,7 +115,7 @@ public class RobotContainer {
         autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
         autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
-        
+        autoChooser.addRoutine("StartRight->ScoreB4", autoRoutines::SBBL4);
         autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
         autoChooser.addRoutine("StartRight->ScoreEL4->ScoreBL4", autoRoutines::SBE4toBL4);
         // autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
