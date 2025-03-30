@@ -2,8 +2,6 @@ package frc.robot;
 
 import com.ctre.phoenix6.CANBus;
 
-import edu.wpi.first.units.measure.LinearVelocity;
-
 public class Constants {
 
     // CAN ID excluding the drivetrain
