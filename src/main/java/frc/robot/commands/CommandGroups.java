@@ -69,6 +69,14 @@ public class CommandGroups {
                 elevatorCommands.setHome()).withName("MoveToHomeSequence");
     }
 
+    public Command moveToL1(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
+        return Commands.sequence(
+                // First move wrist to L2 - this must complete
+                wristCommands.setL1(), // Add timeout to prevent hanging
+                // Then move elevator - this will wait for the wrist
+                elevatorCommands.setL1()).withName("MoveToL1Sequence");
+    }
+
     public Command moveToL2(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
                 // First move wrist to L2 - this must complete
@@ -165,6 +173,7 @@ public class CommandGroups {
  * 
  * @return A command that safely intakes coral when properly positioned
  */
+/* DEPRECATED use autoIntakeCoral
 public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     // Create a loading range checker instance
     LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
@@ -173,7 +182,6 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
     Command intakeSequence = Commands.sequence(
     
         wristCommands.setL2(),
-            // This is the condition - use approximate comparison with tolerance
         
         // Move elevator to intake position
         elevatorCommands.setIntakeCoral(),
@@ -181,7 +189,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
         // Move wrist to intake position
         wristCommands.setIntakeCoral(),
         
-        // Activate the intake end effector
+        // Activate the end effector for intake
         effectorCommands.intakeCoral(),
         
         // After intaking, move the wrist back to L2 position
@@ -190,7 +198,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
         // Move the elevator back to L2 position
         elevatorCommands.setL2()
     ).withName("IntakeCoralSequence");
-    
+     
     // Create feedback command for when not in range
     Command outOfRangeFeedback = Commands.sequence(
         Commands.runOnce(() -> {
@@ -206,6 +214,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
     // Return conditional command that checks range first
     return rangeChecker.whenInLoadingRange(intakeSequence, outOfRangeFeedback);
     }
+    */
 
     // Test Implement this method
     public Command moveToIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands,
@@ -367,7 +376,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
     public Command autoIntakeCoral() {
         return Commands.sequence(
             // Move wrist to L2 position
-            wristCommands.setL2(),
+            // wristCommands.setIntakeCoral(),
             
             // Move elevator to intake position
             elevatorCommands.setIntakeCoral(),
@@ -375,11 +384,11 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             // Move wrist to intake position
             wristCommands.setIntakeCoral(),
             
-            // Start the intake
+            // Activate the end effector for intake
             effectorCommands.intakeCoral(),
             
-            // Wait for coral detection or timeout - THIS DOESN'T REQUIRE SUBSYSTEM EXCLUSIVITY
-            effectorCommands.waitForCoralLoadWithTimeout(6.0),
+            // Wait for coral detection or timeout
+            // effectorCommands.waitForCoralLoadWithTimeout(20),
             
             // Once loaded or timed out, move to safe position
             Commands.parallel(
