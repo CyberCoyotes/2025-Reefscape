@@ -668,6 +668,24 @@ public class AutoRoutines {
                 STA.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
+        public AutoRoutine STALB() {
+                final AutoRoutine routine = m_factory.newRoutine("ST-ABL4");
+                final AutoTrajectory STA = routine.trajectory("ST-ABlue", 0);
+                //final AutoTrajectory STA2 = routine.trajectory("ST-A", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                STA.resetOdometry(),
+                                STA.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
+                                //STA2.cmd()
+
+                        ));
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+
+                STA.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+                return routine;
+        }
         public AutoRoutine SBEL4() {
                 final AutoRoutine routine = m_factory.newRoutine("SB-EL4");
                 final AutoTrajectory SBE = routine.trajectory("SB-E", 0);

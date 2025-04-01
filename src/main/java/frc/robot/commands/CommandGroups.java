@@ -121,7 +121,7 @@ public class CommandGroups {
                 wristCommands.scoreAlgae(),
                 // Add small delay to ensure wrist command has started
                 // Then move the elevator to the algae scoring position
-                elevatorCommands.setScoreAlgae()).withName("ScoringAlgaeSequence");
+                elevatorCommands.setScoreAlgae());
     }
 
     public Command moveToTravel(/*WristCommands wristCommands, ElevatorCommands elevatorCommands*/) {

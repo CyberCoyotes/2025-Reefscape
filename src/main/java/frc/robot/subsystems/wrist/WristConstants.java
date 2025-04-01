@@ -84,7 +84,7 @@ public final class WristConstants {
         public static final double TRAVEL = 5.0; // Halfway between L4 and PICK_ALGAE
         public static final double INTAKE_CORAL = 12.25;
         public static final double PICK_ALGAE = 14.0;
-        public static final double SCORE_ALGAE = 18.0;
+        public static final double SCORE_ALGAE = 16.1;
     }
     
 } // end WristConstants
