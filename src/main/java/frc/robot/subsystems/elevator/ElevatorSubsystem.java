@@ -29,12 +29,12 @@ public class ElevatorSubsystem extends SubsystemBase {
         L1(0.00),
         SCORE_ALGAE(0.45), // Previously .5
         L2(0.45),
-        ALGAE2(1.1),
+        ALGAE2(1.3), // Previously was 1.1 but too low
         L3(1.85),
         INTAKE_CORAL(1.92),
         TRAVEL(1.92),
-        ALGAE3(2.45),
-        L4(4.7);
+        ALGAE3(2.65), // previously was 2.45 but too low
+        L4(4.2); // Previously 4.7 // 4.6 too tall at practice field
 
         private final double position;
 
@@ -108,7 +108,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         leadConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ElevatorConstants.REVERSE_LIMIT;
 
         // Configure current limits for both motors
-        leadConfig.CurrentLimits.StatorCurrentLimitEnable = false; // FIXED: Enable current limiting
+        leadConfig.CurrentLimits.StatorCurrentLimitEnable = true; // Changed from false to true
         leadConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply leader configuration
@@ -117,7 +117,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // Configure follower motor with its specific settings
         followerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         followerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true; // FIXED: Enable current limiting
+        followerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         followerConfig.CurrentLimits.StatorCurrentLimit = 40;
 
         // Apply follower configuration - FIXED: Use followerConfig instead of leadConfig

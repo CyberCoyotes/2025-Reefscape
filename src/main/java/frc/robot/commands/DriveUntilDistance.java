@@ -6,7 +6,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
-import frc.robot.subsystems.MaserCannon;
+import frc.robot.subsystems.ReefTOFSubsystem;
 import frc.robot.Constants;
 
 /**
@@ -24,12 +24,10 @@ public class DriveUntilDistance extends SequentialCommandGroup {
      * 
      * @param drivetrain The swerve drivetrain subsystem
      * @param tofSensor The Time of Flight sensor subsystem
-     * @param maserSensor The LaserCan sensor subsystem for reef detection
      */
     public DriveUntilDistance(
             CommandSwerveDrivetrain drivetrain, 
-            FrontTOFSubsystem tofSensor,
-            MaserCannon maserSensor) {
+            FrontTOFSubsystem tofSensor) {
         
         addCommands(
             // Log the start of the approach sequence

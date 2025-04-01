@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import frc.robot.auto.AutoRoutines;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -24,19 +25,19 @@ import frc.robot.commands.ElevatorCommands;
 import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
-import frc.robot.commands.AlignToBranchCommand;
-import frc.robot.commands.AlignToReefLeft;
-import frc.robot.commands.AlignToReefRight;
+import frc.robot.commands.AlignToReefWithEdgeDetection;
+import frc.robot.commands.AlignToReefCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverCameraSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
-import frc.robot.subsystems.MaserCannon;
+import frc.robot.subsystems.ReefTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
 import frc.robot.subsystems.elevator.ElevatorSubsystem;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.subsystems.wrist.WristSubsystem;
+
 
 @SuppressWarnings("unused")
 
@@ -53,14 +54,11 @@ public class RobotContainer {
     private final ClimberSubsystem climber = new ClimberSubsystem();
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
+    private final ReefTOFSubsystem reefSensor = new ReefTOFSubsystem();
     private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
-    private final MaserCannon maserCannon = new MaserCannon();
-    private final AlignToReefRight alignToReefRight = new AlignToReefRight(drivetrain, maserCannon);
-    private final AlignToReefLeft alignToReefLeft = new AlignToReefLeft(drivetrain, maserCannon);
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
-    // private final CoralSensorSubsystem coralSensor = new CoralSensorSubsystem();
-    
+
     // 3 meters per second max speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     
@@ -115,12 +113,12 @@ public class RobotContainer {
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
         
-        autoChooser.addRoutine("StartLeft->ScoreAL4", autoRoutines::STAL4);
-        autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
+        autoChooser.addRoutine("The LEFT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::STAL4);
+        //autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
         autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
-        
-        autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
+        autoChooser.addRoutine("The RIGHT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::SBBL4);
+        //autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
         autoChooser.addRoutine("StartRight->ScoreEL4->ScoreBL4", autoRoutines::SBE4toBL4);
         // autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
         // autoChooser.addRoutine("StartRight->ScoreE-L1&B-L2",
@@ -154,26 +152,27 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
-        driverController.leftBumper().onTrue(new AlignToReefLeft(drivetrain, maserCannon));
-        driverController.rightBumper().onTrue(new AlignToReefRight(drivetrain, maserCannon));
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
+        driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
         driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
 
         // Groups commands for wrist and elevator to move to specific positions
-        driverController.x().onTrue(commandGroups.autoScoreL2());
-        driverController.y().onTrue(commandGroups.autoScoreL3());
+        driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
+        driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         // driverController.a().onTrue(commandGroups.moveToHome(wristCommands, elevatorCommands));
         // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); // TESTING only
-        driverController.b().onTrue(commandGroups.autoScoreL4());
+        driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
         driverController.povUp().whileTrue(elevatorCommands.incrementUp());
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
         
         // Add reef branch alignment commands to POV buttons
-        driverController.povLeft().onTrue(AlignToBranchCommand.alignToLeftBranch(drivetrain, frontToF));
-        driverController.povRight().onTrue(AlignToBranchCommand.alignToRightBranch(drivetrain, frontToF));
+
+        driverController.povLeft().whileTrue(AlignToReefCommands.strafeLeftToReef(reefSensor, drivetrain));
+        driverController.povRight().whileTrue(AlignToReefCommands.strafeRightToReef(reefSensor, drivetrain));
 
         /***********************************************
          ** Operator Controls **

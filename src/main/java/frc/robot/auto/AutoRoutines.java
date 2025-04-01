@@ -626,22 +626,22 @@ public class AutoRoutines {
         }
 
         public AutoRoutine MH() {
-                final AutoRoutine routine = m_factory.newRoutine("Mid-H");
+                final AutoRoutine routine = m_factory.newRoutine("Mid-HL4");
                 final AutoTrajectory MH = routine.trajectory("Mid-H", 0);
-                final AutoTrajectory MH2 = routine.trajectory("Mid-H", 1);
+                //final AutoTrajectory MH2 = routine.trajectory("Mid-H", 1);
 
                 routine.active().onTrue(
                         Commands.sequence(
-                                MH.resetOdometry(), // Always reset odometry first
-                                MH.cmd(), // Follow the path
+                                MH.resetOdometry(),
+                                MH.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0)//,
-                              //  MH2.cmd()
+                                //MH2.cmd()
 
                         ));
                 MH.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
-                
-                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)                
-                //MH2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                //MH2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
                 return routine;
         }
         
@@ -695,9 +695,9 @@ public class AutoRoutines {
                                 //STA2.cmd()
 
                         ));
-                STA.atTime("scoreL1").onTrue(m_commandGroups.autoScoreL4());
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
 
-                STA.atTime("Load").onTrue(m_effectorCommands.intakeCoral());
+                STA.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
         public AutoRoutine SBEL4() {
@@ -742,8 +742,8 @@ public class AutoRoutines {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
                 final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
-                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
-                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
+                final AutoTrajectory CSA = routine.trajectory("CS1-A-Speedy", 0);
+                final AutoTrajectory CSA2 = routine.trajectory("CS1-A-Speedy", 1);
 
                 routine.active().onTrue(
                         Commands.sequence(
@@ -782,21 +782,15 @@ public class AutoRoutines {
                         Commands.sequence(
                                 STJS1.resetOdometry(),
 
-                                // TODO Start moving to L4 score position
-
                                 //  Drives from Start to Branch J
                                 STJS1.cmd(),
                                     
                                 m_commandGroups.stopUntilCoralReleased(6.0),
                                 
-                                // TODO Start moving intaking coral
-
                                 // Drives from Branch J to Coral Station, stops & waits to load
                                 STJS2.cmd(),             
                                 
-                                m_commandGroups.stopUntilCoralLoaded(6.0), // FIXME testing
-
-                                // TODO Start moving to L4 score position
+                                m_commandGroups.stopUntilCoralLoaded(6.0),
                                 
                                 // Drives from Coral Station to Branch A, stops & waits to score L4
                                 CSSA1.cmd(),
@@ -807,11 +801,9 @@ public class AutoRoutines {
                                 CSSA2.cmd()
                         ));
 
-                // TODO Test movement of wristPosition.L3 && elevatorPosition.TRAVEL to make scoring faster
                 // STJ.atTime("preScore").onTrue(m_commandGroups.autoPreScore());
                 STJS1.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
 
-                // TODO Test movement of wristPosition.TRAVEL && elevatorPosition.TRAVEL to make coral intake faster
                 // STJ2.atTime("postScore").onTrue(m_commandGroups.moveToTravel());
                 STJS2.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
                 CSSA1.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());

@@ -11,6 +11,7 @@ import frc.robot.subsystems.wrist.WristConstants;
 import frc.robot.subsystems.wrist.WristSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
+import frc.robot.subsystems.ReefTOFSubsystem;
 import frc.robot.subsystems.endEffector.EffectorConstants;
 import frc.robot.subsystems.endEffector.EffectorSubsystem;
 
@@ -295,7 +296,9 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 effectorCommands.autoScoreCoral(), 
 
                 // Move wrist to L3 position
-                wristCommands.setL3()
+                wristCommands.setL3(),
+                
+                elevatorCommands.setL2()
                 ).withName("AutoScoreL3Sequence");
 
     }
@@ -317,9 +320,9 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.autoScoreCoral(),
                 
-                wristCommands.setTravel(),
+                wristCommands.setL2(),
                 
-                elevatorCommands.setTravel()
+                elevatorCommands.setL2()
                 ).withName("AutoScoreL4Sequence");
     }
 

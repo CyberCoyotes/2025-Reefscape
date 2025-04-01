@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FrontTOFSubsystem;
 
@@ -14,11 +15,10 @@ import frc.robot.subsystems.FrontTOFSubsystem;
  * 1. Strafe right until we detect an opening (TOF distance exceeds threshold)
  * 2. Strafe left by a predefined distance based on which branch we're targeting
  */
-public class AlignToBranchCommand extends SequentialCommandGroup {
+public class AlignToReefWithEdgeDetection extends SequentialCommandGroup {
     
-    private static final double RIGHT_BRANCH_OFFSET =   1.600; //strafe for right branch
+    private static final double RIGHT_BRANCH_OFFSET =   1.600; // strafe for right branch
     private static final double LEFT_BRANCH_OFFSET =    3.300; // strafe for left branch 
-    private static final double YOU_SHALL_NOT_PASS =    400; // threshold for opening detection
 /*
     | YSNP  | RIGHT | LEFT | STRAFE_SPEED |
     |-------|-------|-------|--------------|
@@ -45,7 +45,7 @@ public class AlignToBranchCommand extends SequentialCommandGroup {
      * @param tofSensor The time of flight sensor subsystem
      * @param isLeftBranch Whether to align to the left branch (true) or right branch (false)
      */
-    public AlignToBranchCommand(CommandSwerveDrivetrain drivetrain, FrontTOFSubsystem tofSensor, boolean isLeftBranch) {
+    public AlignToReefWithEdgeDetection(CommandSwerveDrivetrain drivetrain, FrontTOFSubsystem tofSensor, boolean isLeftBranch) {
         // Step 1: Strafe right until we detect an opening
         addCommands(
             // Log the start of alignment process
@@ -58,7 +58,7 @@ public class AlignToBranchCommand extends SequentialCommandGroup {
                     .withVelocityX(0)
                     .withVelocityY(-STRAFE_SPEED) // Negative Y is right in robot-centric frame
                     .withRotationalRate(0));
-            }).until(() -> tofSensor.getFrontDistance() > YOU_SHALL_NOT_PASS),
+            }).until(() -> tofSensor.getFrontDistance() > Constants.YOU_SHALL_NOT_PASS),
             
             // Stop briefly
             drivetrain.runOnce(() -> drivetrain.setControl(strafeRequest
@@ -127,13 +127,13 @@ public class AlignToBranchCommand extends SequentialCommandGroup {
      * Factory method to create a command for left branch alignment.
      */
     public static Command alignToLeftBranch(CommandSwerveDrivetrain drivetrain, FrontTOFSubsystem tofSensor) {
-        return new AlignToBranchCommand(drivetrain, tofSensor, true);
+        return new AlignToReefWithEdgeDetection(drivetrain, tofSensor, true);
     }
     
     /**
      * Factory method to create a command for right branch alignment.
      */
     public static Command alignToRightBranch(CommandSwerveDrivetrain drivetrain, FrontTOFSubsystem tofSensor) {
-        return new AlignToBranchCommand(drivetrain, tofSensor, false);
+        return new AlignToReefWithEdgeDetection(drivetrain, tofSensor, false);
     }
 }
