@@ -860,4 +860,23 @@ public class AutoRoutines {
                 CSB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
                 return routine;
         }
+
+        public AutoRoutine A_Two_B() {
+                final AutoRoutine routine = m_factory.newRoutine("A_2_B");
+                final AutoTrajectory A_Two = routine.trajectory("A_2_B", 0);
+                final AutoTrajectory Two_B = routine.trajectory("A_2_B", 1);
+                // final AutoTrajectory 2toB = routine.trajectory("CS2-B", 0);
+                // final AutoTrajectory CSB2 = routine.trajectory("CS2-B", 1);
+                routine.active().onTrue(
+                        Commands.sequence(
+                                A_Two.resetOdometry(),
+                                A_Two.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                Two_B.cmd(),
+                                m_commandGroups.stopUntilCoralLoaded(6.0)
+                        ));
+                A_Two.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
+                Two_B.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
+                return routine;
+        }
 }
