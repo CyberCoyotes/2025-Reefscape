@@ -24,29 +24,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         SAFETY      // Reduced speed, testing/practice mode
     }
 
-    public enum ElevatorPosition {
-        HOME(0.00),
-        L1(0.00),
-        SCORE_ALGAE(0.45), // Previously .5
-        L2(0.45),
-        ALGAE2(1.3), // Previously was 1.1 but too low
-        L3(1.85),
-        INTAKE_CORAL(1.92),
-        TRAVEL(1.92),
-        ALGAE3(2.65), // previously was 2.45 but too low
-        L4(4.2); // Previously 4.7 // 4.6 too tall at practice field
-
-        private final double position;
-
-        ElevatorPosition(double position) {
-            this.position = position;
-        }
-
-        public double getPosition() {
-            return position;
-        }
-    }
-
     // Hardware
     private final TalonFX elevatorLeader;
     private final TalonFX elevatorFollower;
