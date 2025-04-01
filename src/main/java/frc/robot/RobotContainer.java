@@ -111,7 +111,8 @@ public class RobotContainer {
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
         
-        autoChooser.addRoutine("The LEFT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::STAL4);
+        autoChooser.addRoutine("The RED LEFT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::STAL4);
+        autoChooser.addRoutine("The BLUE LEFT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::STALB);
         //autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
         autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);

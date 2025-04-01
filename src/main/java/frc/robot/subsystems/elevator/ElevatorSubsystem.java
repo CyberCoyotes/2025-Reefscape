@@ -27,7 +27,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public enum ElevatorPosition {
         HOME(0.00),
         L1(0.00),
-        SCORE_ALGAE(0.45), // Previously .5
+        SCORE_ALGAE(0.235), // Previously .5
         L2(0.45),
         ALGAE2(1.3), // Previously was 1.1 but too low
         L3(1.85),
