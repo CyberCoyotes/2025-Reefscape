@@ -861,10 +861,10 @@ public class AutoRoutines {
                 return routine;
         }
 
-        public AutoRoutine A_Two_B() {
-                final AutoRoutine routine = m_factory.newRoutine("A_2_B");
-                final AutoTrajectory A_Two = routine.trajectory("A_2_B", 0);
-                final AutoTrajectory Two_B = routine.trajectory("A_2_B", 1);
+        public AutoRoutine A_Middle_B() {
+                final AutoRoutine routine = m_factory.newRoutine("A_Middle_B");
+                final AutoTrajectory A_Two = routine.trajectory("A_Middle_B", 0);
+                final AutoTrajectory Two_B = routine.trajectory("A_Middle_B", 1);
                 // final AutoTrajectory 2toB = routine.trajectory("CS2-B", 0);
                 // final AutoTrajectory CSB2 = routine.trajectory("CS2-B", 1);
                 routine.active().onTrue(
