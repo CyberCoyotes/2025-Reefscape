@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
@@ -20,9 +16,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.ClimberCommands;
 import frc.robot.commands.CommandGroups;
-import frc.robot.commands.DriveDistanceCommands;
+import frc.robot.commands.DriveCommands;
 import frc.robot.commands.ElevatorCommands;
-import frc.robot.commands.SlowMoDriveCommand;
 import frc.robot.commands.WristCommands;
 import frc.robot.commands.EndEffectorCommands;
 import frc.robot.commands.AlignToReefWithEdgeDetection;
@@ -57,7 +52,7 @@ public class RobotContainer {
     private final ReefTOFSubsystem reefSensor = new ReefTOFSubsystem();
     private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
-    private final DriveDistanceCommands driveCommands = new DriveDistanceCommands(drivetrain);
+    private final DriveCommands driveCommands = new DriveCommands(drivetrain);
 
     // 3 meters per second max speed
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -153,7 +148,7 @@ public class RobotContainer {
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
-        driverController.rightTrigger().whileTrue(new SlowMoDriveCommand(drivetrain, driverController, 0.50));
+        driverController.rightTrigger().whileTrue(driveCommands.slowMoDrive(driverController, 0.50));
 
         // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
