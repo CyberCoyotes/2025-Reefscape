@@ -20,6 +20,7 @@ import frc.robot.Constants;
 
 public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
+    private final TalonFX motorTwo = new TalonFX(Constants.EFFECTOR_MOTOR_TWO_ID, Constants.kCANBus);
     
     private TimeOfFlight coralSensor = new TimeOfFlight(Constants.CORAL_SENSOR_ID);
 
@@ -81,6 +82,7 @@ public class EffectorSubsystem extends SubsystemBase {
         
         // Apply configuration
         motor.getConfigurator().apply(config);
+        motorTwo.getConfigurator().apply(config);
     }
 
 
@@ -91,11 +93,13 @@ public class EffectorSubsystem extends SubsystemBase {
      */
     public void setEffectorOutput(double output) {
         motor.setControl(dutyCycleRequest.withOutput(output));
+        motorTwo.setControl(dutyCycleRequest.withOutput(output));
     }
 
    // Stops the motor
     public void stopMotor() {
         motor.setControl(dutyCycleRequest.withOutput(0));
+        motorTwo.setControl(dutyCycleRequest.withOutput(0));
     }
 
     /*******************************
