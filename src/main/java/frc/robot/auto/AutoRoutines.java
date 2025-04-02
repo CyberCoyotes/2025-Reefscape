@@ -879,4 +879,21 @@ public class AutoRoutines {
                 Two_B.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
                 return routine;
         }
+
+        public AutoRoutine A_Middle_AL2() {
+                final AutoRoutine routine = m_factory.newRoutine("A_Middle_AL2");
+                final AutoTrajectory A_Mid = routine.trajectory("A_Middle_AL2", 0);
+                final AutoTrajectory Mid_A = routine.trajectory("A_Middle_AL2", 1);
+                routine.active().onTrue(
+                        Commands.sequence(
+                                A_Mid.resetOdometry(),
+                                A_Mid.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                Mid_A.cmd(),
+                                m_commandGroups.stopUntilCoralLoaded(6.0)
+                        ));
+                A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
+                // Mid_A.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL2()); // FIXME
+                return routine;
+        }
 }
