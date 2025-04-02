@@ -286,35 +286,28 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
         return Commands.sequence(
                 // Move wrist to L2 position for scoring
                 wristCommands.setL2(),
-
                 // Move elevator to L2 height
                 elevatorCommands.setL2(),
-
                 // Run effector command until coral leaves the end effector
                 effectorCommands.autoScoreCoral(),
-                
-                wristCommands.setL2()
-                ).withName("AutoScoreL2Sequence");
-
-
+                // Move wrist and elevator to L2 position
+                wristCommands.setL2(),
+                elevatorCommands.setL2()
+                );
     }
 
     public Command autoScoreL3() {
         return Commands.sequence(
                 // Move wrist to L3 position for scoring
                 wristCommands.setL3(),
-
-                // Move elevator to L2 height
+                // Move elevator to L3 height
                 elevatorCommands.setL3(),
-
                 // Run effector command until coral leaves the end effector
                 effectorCommands.autoScoreCoral(), 
-
-                // Move wrist to L3 position
-                wristCommands.setL3(),
-                
+                // Move wrist and elevator to L2 position
+                wristCommands.setL2(),
                 elevatorCommands.setL2()
-                ).withName("AutoScoreL3Sequence");
+                );
 
     }
 
@@ -322,23 +315,18 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
         return Commands.sequence(
                 // Set the wrist to L2
                 wristCommands.setL2(),
-                
                 // Move the elevator to L4
                 elevatorCommands.setL4(),
-                
                 // Set wrist to L4
                 wristCommands.setL4(),
-
                 // Short delay to stabilize
                 Commands.waitSeconds(0.05),
-                
                 // Score the coral with timing appropriate for autonomous
                 effectorCommands.autoScoreCoral(),
-                
+                // Move wrist and elevator to L2 position
                 wristCommands.setL2(),
-                
                 elevatorCommands.setL2()
-                ).withName("AutoScoreL4Sequence");
+                );
     }
 
     public Command autoRoadRunnerL4() {
@@ -356,26 +344,6 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                 wristCommands.setL3(),
                 elevatorCommands.setL2()
                 // moveToTravel(wristCommands, elevatorCommands)
-                    .withName("scoreL4Sequence"));
-    }
-
-    public Command autoBeepBeepL4() {
-        return Commands.sequence(
-                moveToTravel(),
-
-                // Test to make sure this does not hit reef going up - Appears to hit the reef!
-                elevatorCommands.setL4(),
-
-                // Set wrist to L4
-                wristCommands.setL4(),
-
-                // Short delay to stabilize
-                Commands.waitSeconds(0.05),
-
-                // Score the coral with timing appropriate for autonomous
-                effectorCommands.autoScoreCoral(), 
-
-                moveToTravel()
                     .withName("scoreL4Sequence"));
     }
 
@@ -399,6 +367,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             // Once loaded or timed out, move to safe position
             Commands.parallel(
                 wristCommands.setL3(),
+
                 Commands.sequence(
                     Commands.waitSeconds(0.05), // Give wrist time to start moving
                     elevatorCommands.setL3() // Changed from L2
@@ -407,12 +376,40 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
         ).withName("AutoIntakeCoralSequence");
     }
 
+    public Command autoIntakCoralWithDrive() {
+        return Commands.sequence(
+            // Move wrist to L2 position
+            wristCommands.setIntakeCoral(),
+            // Move elevator to intake position
+            elevatorCommands.setIntakeCoral(),
+            // Move wrist to intake position
+            wristCommands.setIntakeCoral(),      
+            // Activate the end effector for intake
+            effectorCommands.intakeCoral(),
+   
+            // Wait for coral detection or timeout
+            // effectorCommands.waitForCoralLoadWithTimeout(20),
+            
+            // Once loaded or timed out, move to safe position
+            Commands.parallel(
+                wristCommands.setL3(),
+
+                Commands.sequence(
+                    Commands.waitSeconds(0.05), // Give wrist time to start moving
+                    elevatorCommands.setL3() // Changed from L2
+                )
+            )
+        ).withName("AutoIntakeCoralSequence");
+    }
+
+    /* @deprecated
     public Command autoPreScore() {
         return Commands.sequence(
                 wristCommands.setL3(),
                 elevatorCommands.setTravel()
                 .withName("AutoScoreL2Sequence"));
-    }
+    } 
+    */
 
     /**
      * Creates a command that stops the drivetrain until coral is loaded or timeout expires.
