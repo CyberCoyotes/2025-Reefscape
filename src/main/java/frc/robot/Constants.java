@@ -12,6 +12,7 @@ public class Constants {
     
     public static final int EFFECTOR_MOTOR_ID = 22;
     public static final int EFFECTOR_MOTOR_TWO_ID = 26; 
+    public static final int TOP_ROLLER_MOTOR_ID = 27; // Added constant for top roller motor
 
     public static final int ELEVATOR_FOLLOW_ID = 23;
     public static final int ELEVATOR_LEAD_ID = 24;

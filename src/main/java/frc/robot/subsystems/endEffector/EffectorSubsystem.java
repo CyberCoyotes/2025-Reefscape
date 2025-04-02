@@ -94,12 +94,27 @@ public class EffectorSubsystem extends SubsystemBase {
      */
     public void setEffectorOutput(double output) {
         motor.setControl(dutyCycleRequest.withOutput(output));
+    }
+
+    /**
+     * Sets the top roller output using duty cycle control
+     * 
+     * @param output The desired output (-1 to 1 for duty cycle)
+     */
+    public void setTopRollerOutput(double output) {
         motorTwo.setControl(dutyCycleRequest.withOutput(output));
     }
 
    // Stops the motor
     public void stopMotor() {
         motor.setControl(dutyCycleRequest.withOutput(0));
+        motorTwo.setControl(dutyCycleRequest.withOutput(0));
+    }
+
+    /**
+     * Stops the top roller motor
+     */
+    public void stopTopRoller() {
         motorTwo.setControl(dutyCycleRequest.withOutput(0));
     }
 
