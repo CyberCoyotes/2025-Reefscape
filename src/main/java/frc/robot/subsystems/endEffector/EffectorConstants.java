@@ -7,9 +7,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class EffectorConstants {
 
     public static final double INTAKE_CORAL = 0.25;
-    public static final double SCORE_CORAL = 0.25;
-    public static final double SCORE_SLOW_CORAL = 0.15;
-    public static final double SCORE_CORAL_INVERTED = -0.3;
+    public static final double SCORE_CORAL = -0.25;
+    public static final double SCORE_SLOW_CORAL = -0.15;
+    public static final double SCORE_CORAL_INVERTED = 0.3;
 
     public static final double INTAKE_ALGAE = -0.40; // Opposite power of INTAKE
     public static final double SCORE_ALGAE = 0.40;

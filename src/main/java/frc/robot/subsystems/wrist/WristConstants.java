@@ -23,7 +23,7 @@ public final class WristConstants {
     public static final double GEAR_RATIO = 80.0;
     public static final double REVERSE_LIMIT = 0.0; // In rotations
     public static final double FORWARD_LIMIT = 22.0; // In rotations
-    public static final double INCREMENT = 0.50; // Using the value from subsystem as it's likely more tested
+    public static final double INCREMENT = 0.25; // Using the value from subsystem as it's likely more tested
     public static final double TOLERANCE = 0.04; // Increased from 0.02 -> 0.04 Position Tolerance in rotations
 
     // Motion Magic parameters
@@ -82,7 +82,7 @@ public final class WristConstants {
         public static final double L3 = 1.75;
         public static final double L4 = 3.25; // 3.25 seemed to test well on practice field // Originally 4.2 which is near vertical
         public static final double TRAVEL = 5.0; // Halfway between L4 and PICK_ALGAE
-        public static final double INTAKE_CORAL = 16.00; // TODO Test the Intake Coral position
+        public static final double INTAKE_CORAL = 15.55; // TODO Test the Intake Coral position
         public static final double PICK_ALGAE = 14.00;
         public static final double SCORE_ALGAE = 16.1;
     }

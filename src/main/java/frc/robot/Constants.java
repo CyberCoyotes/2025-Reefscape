@@ -22,13 +22,13 @@ public class Constants {
     public static final int ELEVATOR_LASER_ID = 52;
     
     // Time of flight sensor in end effector, detecting coral
-    public static final int CORAL_SENSOR_ID = 42;
+    public static final int CORAL_SENSOR_ID = 102;
 
     // Time of flight sensor by Playing with Fusion, mounted on right side
     public static final int TOF_SENSOR_ID = 41;
 
     // Time of flight sensor by Playing with Fusion, determine reef branch distance
-    public static final int REEF_SENSOR_ID = 102;
+    public static final int REEF_SENSOR_ID = 42;
     
     public static final double YOU_SHALL_NOT_PASS =    250; // distance in mm to reef
 

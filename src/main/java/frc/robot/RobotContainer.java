@@ -154,8 +154,8 @@ public class RobotContainer {
         // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
-        driverController.a().onTrue(commandGroups.moveToL1(wristCommands, elevatorCommands));
-        // driverController.a().onTrue(commandGroups.intakeCoralMinimum(wristCommands, elevatorCommands)); // TESTING only
+        // driverController.a().onTrue(commandGroups.moveToL1(wristCommands, elevatorCommands));
+        driverController.a().onTrue(commandGroups.autoIntakeCoral()); // TESTING only
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands
@@ -164,9 +164,10 @@ public class RobotContainer {
         
         // Add reef branch alignment commands to POV buttons
 
-        driverController.povLeft().whileTrue(AlignToReefCommands.strafeLeftToReef(reefSensor, drivetrain));
-        driverController.povRight().whileTrue(AlignToReefCommands.strafeRightToReef(reefSensor, drivetrain));
-
+        // driverController.povLeft().whileTrue(AlignToReefCommands.strafeLeftToReef(reefSensor, drivetrain));
+        // driverController.povRight().whileTrue(AlignToReefCommands.strafeRightToReef(reefSensor, drivetrain));
+        driverController.povLeft().whileTrue(wristCommands.incrementIn());
+        driverController.povRight().whileTrue(wristCommands.incrementOut());
         /***********************************************
          ** Operator Controls **
          ***********************************************/

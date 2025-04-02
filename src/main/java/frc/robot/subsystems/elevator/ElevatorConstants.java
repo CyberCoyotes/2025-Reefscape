@@ -83,7 +83,7 @@ public final class ElevatorConstants {
         L2(0.45),
         ALGAE2(1.3), // Previously was 1.1 but too low
         L3(1.85),
-        INTAKE_CORAL(1.92),
+        INTAKE_CORAL(0.15),
         TRAVEL(1.92),
         ALGAE3(2.65), // previously was 2.45 but too low
         L4(4.2); // Previously 4.7 // 4.6 too tall at practice field
