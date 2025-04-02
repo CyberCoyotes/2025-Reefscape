@@ -155,7 +155,7 @@ public class RobotContainer {
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));
         driverController.y().onTrue(commandGroups.moveToL3(wristCommands, elevatorCommands));
         // driverController.a().onTrue(commandGroups.moveToL1(wristCommands, elevatorCommands));
-        driverController.a().onTrue(commandGroups.autoIntakeCoral()); // TESTING only
+        driverController.a().onTrue(commandGroups.autoIntakeCoral()); //
         driverController.b().onTrue(commandGroups.moveToL4(wristCommands, elevatorCommands));
 
         // Manual Elevator Commands

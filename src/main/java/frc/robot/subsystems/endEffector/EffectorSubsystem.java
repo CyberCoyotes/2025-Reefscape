@@ -78,11 +78,12 @@ public class EffectorSubsystem extends SubsystemBase {
 
 
     private void configureMotor() {
-        var config = EffectorConstants.EFFECTOR_CONFIG;
-        
+        var effectorConfig = EffectorConstants.EFFECTOR_CONFIG;
+        var effectorTwoConfig = EffectorConstants.EFFECTOR_TWO_CONFIG;
+       
         // Apply configuration
-        motor.getConfigurator().apply(config);
-        motorTwo.getConfigurator().apply(config);
+        motor.getConfigurator().apply(effectorConfig);
+        motorTwo.getConfigurator().apply(effectorTwoConfig);
     }
 
 
@@ -118,112 +119,6 @@ public class EffectorSubsystem extends SubsystemBase {
         return coralSensor.getRange() < coralDetectionDistance; // return NoteDistance.
     }
 
-
-    /******************************
-     * Command Factories
-     ******************************/
-
-     /* Testing removal */
-     /*
-    public Command intakeCoralBasic() {
-        return run(() -> {
-            setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-        });
-    }
-
-    public Command intakeCoralNoSensor() {
-        return new RunCommand(() -> {
-            setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-     */
-    /**
-     * Creates a command that runs the effector motor until a coral is detected by
-     * the sensor.
-     * If a coral is detected, the motor will stop.
-     *
-     * @return A command that runs the effector motor with sensor feedback.
-     */
-    /*
-    public Command intakeCoralWithSensor() {
-
-        return new RunCommand(() -> {
-            // Check coral sensor
-            if (isCoralLoaded()) {
-                stopMotor();
-            } else {
-                // No coral detected, run the intake as normal
-                setEffectorOutput(EffectorConstants.INTAKE_CORAL);
-            }
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-
-    public Command reverseCoralNoSensor() {
-        return new RunCommand(() -> {
-            setEffectorOutput(-EffectorConstants.INTAKE_CORAL*0.55);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-    
-
-    public Command scoreCoral() {
-        return new RunCommand(() -> {
-            setEffectorOutput(EffectorConstants.SCORE_CORAL);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-    
-    public Command slowCoral() {
-        return new RunCommand(() -> {
-            setEffectorOutput(EffectorConstants.lSCORE_CORAL);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-
-    public Command intakeAlgae() {
-        return new RunCommand(() -> {
-            setEffectorOutput(EffectorConstants.INTAKE_ALGAE);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-
-    public Command scoreAlgae() {
-        return new RunCommand(() -> {
-            setEffectorOutput(EffectorConstants.SCORE_ALGAE);
-        }, this) {
-            @Override
-            public void end(boolean interrupted) {
-                stopMotor();
-            }
-        };
-    }
-    */
     @Override
     public void periodic() {
         // stopIfDetected();

@@ -6,8 +6,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class EffectorConstants {
 
-    public static final double INTAKE_CORAL = 0.25;
-    public static final double SCORE_CORAL = -0.25;
+    public static final double INTAKE_CORAL = 0.55;
+    public static final double SCORE_CORAL = 0.55;
     public static final double SCORE_SLOW_CORAL = -0.15;
     public static final double SCORE_CORAL_INVERTED = 0.3;
 
@@ -23,15 +23,28 @@ public class EffectorConstants {
     public static final double SCORE_CURRENT_AMPS = -5.0; // Negative for opposite direction
 
     public static final TalonFXConfiguration EFFECTOR_CONFIG = new TalonFXConfiguration();
+    public static final TalonFXConfiguration EFFECTOR_TWO_CONFIG = new TalonFXConfiguration();
 
     static {
         // Motor output settings
         EFFECTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
 
         // Current limiting settings
         EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current
         EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    }
+
+    static {
+        // Motor output settings
+        EFFECTOR_TWO_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        EFFECTOR_TWO_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+
+        // Current limiting settings
+        EFFECTOR_TWO_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current
+        EFFECTOR_TWO_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
 
     }
 }
