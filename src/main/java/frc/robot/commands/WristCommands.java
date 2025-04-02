@@ -46,6 +46,10 @@ public class WristCommands {
         return moveToPosition(WristSubsystem.WristPositions.STOWED.getRotations());
     }
 
+    public Command setL1() {
+        return moveToPosition(WristSubsystem.WristPositions.L1.getRotations());
+    }
+
     public Command setL2() {
         return moveToPosition(WristSubsystem.WristPositions.L2.getRotations());
     }
