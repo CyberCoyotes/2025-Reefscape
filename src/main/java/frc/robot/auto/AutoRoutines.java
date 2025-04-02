@@ -724,6 +724,25 @@ public class AutoRoutines {
                 //SBB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
                 return routine;
         }
+        public AutoRoutine SBAL4() {
+                final AutoRoutine routine = m_factory.newRoutine("SB-AL4");
+                final AutoTrajectory SBB = routine.trajectory("SB-A", 0);
+                //final AutoTrajectory SBB2 = routine.trajectory("SB-B", 1);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBB.resetOdometry(),
+                                SBB.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0)//,
+                                //SBB2.cmd()
+
+                        ));
+                SBB.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+
+                // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
+                //SBB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
+                return routine;
+        }
         public AutoRoutine STJ4toAL4() {
                 final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
                 final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
@@ -863,18 +882,22 @@ public class AutoRoutines {
 
         public AutoRoutine A_Middle_B() {
                 final AutoRoutine routine = m_factory.newRoutine("A_Middle_B");
+                final AutoTrajectory STA = routine.trajectory("ST-A", 0);
                 final AutoTrajectory A_Two = routine.trajectory("A_Middle_B", 0);
                 final AutoTrajectory Two_B = routine.trajectory("A_Middle_B", 1);
                 // final AutoTrajectory 2toB = routine.trajectory("CS2-B", 0);
                 // final AutoTrajectory CSB2 = routine.trajectory("CS2-B", 1);
                 routine.active().onTrue(
                         Commands.sequence(
-                                A_Two.resetOdometry(),
+                                STA.resetOdometry(),
+                                STA.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
                                 A_Two.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0),
                                 Two_B.cmd(),
                                 m_commandGroups.stopUntilCoralLoaded(6.0)
                         ));
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                 A_Two.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
                 Two_B.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL4());
                 return routine;
@@ -882,18 +905,23 @@ public class AutoRoutines {
 
         public AutoRoutine A_Middle_AL2() {
                 final AutoRoutine routine = m_factory.newRoutine("A_Middle_AL2");
+                final AutoTrajectory STA = routine.trajectory("ST-A", 0);
                 final AutoTrajectory A_Mid = routine.trajectory("A_Middle_AL2", 0);
                 final AutoTrajectory Mid_A = routine.trajectory("A_Middle_AL2", 1);
                 routine.active().onTrue(
                         Commands.sequence(
-                                A_Mid.resetOdometry(),
-                                A_Mid.cmd(),
+                                STA.resetOdometry(),
+                                STA.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0),
+                                A_Mid.cmd(),
+                                m_commandGroups.stopUntilCoralLoaded(6.0),
                                 Mid_A.cmd(),
-                                m_commandGroups.stopUntilCoralLoaded(6.0)
+                                m_commandGroups.stopUntilCoralReleased(6.0)
                         ));
+                
+                STA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
                 A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
-                // Mid_A.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL2()); // FIXME
+                Mid_A.atTime("score").onTrue(m_commandGroups.autoScoreL2()); // FIXME
                 return routine;
         }
 }
