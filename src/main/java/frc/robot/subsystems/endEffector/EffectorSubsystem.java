@@ -41,7 +41,7 @@ public class EffectorSubsystem extends SubsystemBase {
 
     public EffectorSubsystem() {
 
-        /* ToF SENSOR SETUP */
+        /* TOF SENSOR SETUP */
         // Initialize sensor with short ranging mode and fast update rate (20ms)
         coralSensor.setRangingMode(RangingMode.Short, 1);
 

@@ -105,22 +105,26 @@ public class CommandGroups {
 
     public Command moveToPickAlgae2(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
-                // Move to safe wrist position first
-                wristCommands.setL2(), // Add timeout to prevent hanging
-                // Move elevator up to algae position
-                elevatorCommands.setAlgae2(),
                 // Move the wrist to the picking position
-                wristCommands.pickAlgae()).withName("MoveToAlgae2Sequence");
+                wristCommands.pickAlgae(),
+                // Move the elevator to the algae picking position
+                elevatorCommands.setAlgae2(),
+                // Turn on top end effector motor
+                // TODO Test to see if this locks up the subsystem or it can be interrupted
+                effectorCommands.intakeAlgae().withTimeout(2) 
+        );         
     }
 
     public Command moveToPickAlgae3(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
         return Commands.sequence(
-                // Move to safe wrist position
-                wristCommands.setL3(), // Add timeout to prevent hanging
-                // Move elevator up to algae position
-                elevatorCommands.setAlgae3(),
                 // Move the wrist to the picking position
-                wristCommands.pickAlgae()).withName("MoveToAlgae3Sequence");
+                wristCommands.pickAlgae(),
+                // Move the elevator to the algae picking position
+                elevatorCommands.setAlgae3(),
+                // Turn on top end effector motor
+                // TODO Test to see if this locks up the subsystem or it can be interrupted
+                effectorCommands.intakeAlgae().withTimeout(2) 
+        ); 
     }
 
     public Command moveToScoreAlgae(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
@@ -173,7 +177,9 @@ public class CommandGroups {
  * 
  * @return A command that safely intakes coral when properly positioned
  */
-/* DEPRECATED use autoIntakeCoral
+
+/* DEPRECATED. Instead use autoIntakeCoral
+
 public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
     // Create a loading range checker instance
     LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
