@@ -20,11 +20,11 @@ import frc.robot.Constants;
 
 public class EffectorSubsystem extends SubsystemBase {
     private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
-    private final TalonFX motorTwo = new TalonFX(Constants.EFFECTOR_MOTOR_TWO_ID, Constants.kCANBus);
+    private final TalonFX motorTop = new TalonFX(Constants.TOP_EFFECTOR_MOTOR_ID, Constants.kCANBus);
     
     private TimeOfFlight coralSensor = new TimeOfFlight(Constants.CORAL_SENSOR_ID);
 
-    private int coralDetectionDistance = 80; // mm 
+    private int coralDetectionDistance = 50; // mm 
 
     // NetworkTable entries for more reliable data publishing
     private final NetworkTable sensorTable;
@@ -57,9 +57,8 @@ public class EffectorSubsystem extends SubsystemBase {
          // Also set up SmartDashboard for visualization
          SmartDashboard.putString("CoralSensor/Status", "Initialized");
          SmartDashboard.putNumber("CoralSensor/Distance Threshold", coralDetectionDistance);
-         
          // Make distance threshold adjustable from dashboard
-         SmartDashboard.setPersistent("CoralSensor/Distance Threshold");
+         SmartDashboard.setPersistent("CoralSensor/Adjust Distance Threshold");
 
          /* MOTOR */
         // Configure status signals
@@ -83,7 +82,7 @@ public class EffectorSubsystem extends SubsystemBase {
        
         // Apply configuration
         motor.getConfigurator().apply(effectorConfig);
-        motorTwo.getConfigurator().apply(effectorTwoConfig);
+        motorTop.getConfigurator().apply(effectorTwoConfig);
     }
 
 
@@ -102,20 +101,20 @@ public class EffectorSubsystem extends SubsystemBase {
      * @param output The desired output (-1 to 1 for duty cycle)
      */
     public void setTopRollerOutput(double output) {
-        motorTwo.setControl(dutyCycleRequest.withOutput(output));
+        motorTop.setControl(dutyCycleRequest.withOutput(output));
     }
 
    // Stops the motor
     public void stopMotor() {
         motor.setControl(dutyCycleRequest.withOutput(0));
-        motorTwo.setControl(dutyCycleRequest.withOutput(0));
+        motorTop.setControl(dutyCycleRequest.withOutput(0));
     }
 
     /**
      * Stops the top roller motor
      */
     public void stopTopRoller() {
-        motorTwo.setControl(dutyCycleRequest.withOutput(0));
+        motorTop.setControl(dutyCycleRequest.withOutput(0));
     }
 
     /*******************************
