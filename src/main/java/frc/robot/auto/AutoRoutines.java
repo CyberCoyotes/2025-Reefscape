@@ -726,18 +726,18 @@ public class AutoRoutines {
         }
         public AutoRoutine SBAL4() {
                 final AutoRoutine routine = m_factory.newRoutine("SB-AL4");
-                final AutoTrajectory SBB = routine.trajectory("SB-A", 0);
+                final AutoTrajectory SBA = routine.trajectory("SB-A", 0);
                 //final AutoTrajectory SBB2 = routine.trajectory("SB-B", 1);
 
                 routine.active().onTrue(
                         Commands.sequence(
-                                SBB.resetOdometry(),
-                                SBB.cmd(),
+                                SBA.resetOdometry(),
+                                SBA.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0)//,
                                 //SBB2.cmd()
 
                         ));
-                SBB.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                SBA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
 
                 // Consider using m_commandGroups.autoIntakeCoral(m_wristCommands, m_elevatorCommands, m_wrist)
                 //SBB2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral().withTimeout(6.0));
@@ -903,7 +903,7 @@ public class AutoRoutines {
                 return routine;
         }
 
-        public AutoRoutine A_Middle_AL2() {
+        public AutoRoutine LEFTA_Middle_AL2() {
                 final AutoRoutine routine = m_factory.newRoutine("A_Middle_AL2");
                 final AutoTrajectory STA = routine.trajectory("ST-A", 0);
                 final AutoTrajectory A_Mid = routine.trajectory("A_Middle_AL2", 0);
@@ -924,7 +924,27 @@ public class AutoRoutines {
                 Mid_A.atTime("score").onTrue(m_commandGroups.autoScoreL2()); // FIXME
                 return routine;
         }
-
+        public AutoRoutine RIGHTA_Middle_AL2() {
+                final AutoRoutine routine = m_factory.newRoutine("A_Middle_AL2");
+                final AutoTrajectory SBA = routine.trajectory("SB-A", 0);
+                final AutoTrajectory A_Mid = routine.trajectory("A_Middle_AL2", 0);
+                final AutoTrajectory Mid_A = routine.trajectory("A_Middle_AL2", 1);
+                routine.active().onTrue(
+                        Commands.sequence(
+                                SBA.resetOdometry(),
+                                SBA.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                A_Mid.cmd(),
+                                m_commandGroups.stopUntilCoralLoaded(6.0),
+                                Mid_A.cmd(),
+                                m_commandGroups.stopUntilCoralReleased(6.0)
+                        ));
+                
+                SBA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
+                A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
+                Mid_A.atTime("score").onTrue(m_commandGroups.autoScoreL2()); // FIXME
+                return routine;
+        }
         public AutoRoutine autoIntakeWithDriveRoutine() {
                 final AutoRoutine routine = m_factory.newRoutine("AutoIntakeWithDrive");
                 final AutoTrajectory intakeTrajectory = routine.trajectory("AutoIntakeWithDrive", 0);
