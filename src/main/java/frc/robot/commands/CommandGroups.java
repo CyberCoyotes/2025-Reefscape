@@ -170,59 +170,6 @@ public class CommandGroups {
                 effectorCommands.intakeCoral()).withName("IntakeCoralSequence");
     }
 
-    /**
- * Creates a command that checks if the robot is within loading range before
- * attempting to intake coral. If the robot is in the correct distance range,
- * it will run the intake sequence. Otherwise, it will log a message and wait.
- * 
- * @return A command that safely intakes coral when properly positioned
- */
-
-/* DEPRECATED. Instead use autoIntakeCoral
-
-public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands elevatorCommands) {
-    // Create a loading range checker instance
-    LoadingRangeChecker rangeChecker = new LoadingRangeChecker(frontToF);
-    
-    // Create the command to execute when in range
-    Command intakeSequence = Commands.sequence(
-    
-        wristCommands.setL2(),
-        
-        // Move elevator to intake position
-        elevatorCommands.setIntakeCoral(),
-        
-        // Move wrist to intake position
-        wristCommands.setIntakeCoral(),
-        
-        // Activate the end effector for intake
-        effectorCommands.intakeCoral(),
-        
-        // After intaking, move the wrist back to L2 position
-        wristCommands.setL2(),
-        
-        // Move the elevator back to L2 position
-        elevatorCommands.setL2()
-    ).withName("IntakeCoralSequence");
-     
-    // Create feedback command for when not in range
-    Command outOfRangeFeedback = Commands.sequence(
-        Commands.runOnce(() -> {
-            double currentDistance = frontToF.getFrontDistance();
-            System.out.println("Cannot intake coral: Robot not in loading position.");
-            System.out.println("Current distance: " + currentDistance + " mm");
-            System.out.println("Required range: " + LoadingRangeChecker.LOADING_RANGE_MIN + 
-                               " to " + LoadingRangeChecker.LOADING_RANGE_MAX + " mm");
-        }),
-        Commands.waitSeconds(1.0) // Short delay to prevent message spam
-    ).withName("OutOfLoadingRange");
-    
-    // Return conditional command that checks range first
-    return rangeChecker.whenInLoadingRange(intakeSequence, outOfRangeFeedback);
-    }
-    */
-
-    // Test Implement this method
     public Command moveToIntakeCoral(WristCommands wristCommands, ElevatorCommands elevatorCommands,
             WristSubsystem wrist) {
         return Commands.sequence(
@@ -399,7 +346,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
                     elevatorCommands.setL3() // Changed from L2
                 )
             )
-        ).withName("AutoIntakeCoralSequence");
+        ).withName("AutoIntakeCoralWithDrive");
     }
 
     /* @deprecated
