@@ -797,45 +797,6 @@ public class AutoRoutines {
                 return routine;
         }
 
-         /************************************************
-         * `LeftSideBeepBeep` auto routine
-         *************************************************/
-        public AutoRoutine LeftSideBeepBeep() {
-                final AutoRoutine routine = m_factory.newRoutine("ST-J->CS1-A");
-                final AutoTrajectory STJ = routine.trajectory("ST-J", 0);
-                final AutoTrajectory STJ2 = routine.trajectory("ST-J", 1);
-                final AutoTrajectory CSA = routine.trajectory("CS1-A", 0);
-                final AutoTrajectory CSA2 = routine.trajectory("CS1-A", 1);
-
-                routine.active().onTrue(
-                        Commands.sequence(
-                                STJ.resetOdometry(),                                
-                                
-                                //  Drives from Start to Branch J
-                                STJ.cmd(),                                
-
-                                m_commandGroups.stopUntilCoralReleased(6),
-
-                                // Drives from Branch J to Coral Station, stops & waits to load
-                                STJ2.cmd(),             
-
-                                m_commandGroups.stopUntilCoralLoaded(6),
-
-                                // Drives from Coral Station to Branch A, stops & waits to score L4
-                                CSA.cmd(),
-
-                                m_commandGroups.stopUntilCoralReleased(6),
-
-                                // Drives from Branch A to Coral Station, stops & waits to load
-                                CSA2.cmd()
-                        ));
-                STJ.atTime("scoreL1").onTrue(m_commandGroups.autoBeepBeepL4());
-                STJ2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
-                CSA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
-                CSA2.atTime("Load").onTrue(m_commandGroups.autoIntakeCoral());
-                return routine;
-        }
-
         public AutoRoutine SBE4toBL4() {
                 final AutoRoutine routine = m_factory.newRoutine("SB-EL4");
                 final AutoTrajectory SBE = routine.trajectory("SB-E", 0);
