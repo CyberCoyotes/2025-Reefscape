@@ -81,12 +81,15 @@ public final class ElevatorConstants {
         L1(0.00),
         SCORE_ALGAE(0.45), // Previously .5
         L2(0.42), // was .45
-        ALGAE2(0.37),// Previously was 1.1 but too low
-        L3(1.85),
+        ALGAE2(0.60),// Previously 0.37
+        L3(1.92),
         INTAKE_CORAL(0.00),
         TRAVEL(1.92),
         ALGAE3(1.70), // previously was 2.45 but too low
-        L4(4.37); // 4.2 was too shortPreviously 4.7 // 4.6 too tall at practice field
+        L4(4.05); 
+        // 4.05 Needed to lower and angle so bumpers can be on the base board
+        // 4.37 practice field 
+        // 4.2 was too shortPreviously
 
         private final double position;
 

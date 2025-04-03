@@ -80,10 +80,13 @@ public final class WristConstants {
         public static final double L1 = 0.5;
         public static final double L2 = 1.1; // Previously 1.75
         public static final double L3 = 1.1; // Previously 1.75
-        public static final double L4 = 3.25; // Previously 3.25 seemed to test well on practice field
+        public static final double L4 = 1.82;
+        // 1.82 for a lower EL, angled L4 
+        // 3.25 was good with a high elevator, but need to lower elevator and angle wrist to get bumpers on based board
+
         public static final double TRAVEL = 5.0;
-        public static final double INTAKE_CORAL = 15.00; // TODO Test the Intake Coral position
-        public static final double PICK_ALGAE = 8.84;
+        public static final double INTAKE_CORAL = 15.00;
+        public static final double PICK_ALGAE = 8.9;
         public static final double SCORE_ALGAE = 16.1;
     }
     
