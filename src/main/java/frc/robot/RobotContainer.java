@@ -185,13 +185,13 @@ public class RobotContainer {
         operatorController.leftBumper().whileTrue(climberCommands.incrementUp());
         operatorController.rightBumper().whileTrue(climberCommands.incrementDown());
 
-        // operatorController.leftTrigger().whileTrue(endEffectorCommands.intakeAlgae());
+        operatorController.leftTrigger().whileTrue(endEffectorCommands.intakeAlgae());
         // operatorController.rightTrigger().whileTrue(endEffectorCommands.scoreAlgae());
 
         // Algae Commands
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
-        operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
+        // operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
         operatorController.b().onTrue(commandGroups.autoIntakeCoral()); // TODO Test
 
         // Manual Elevator Commands

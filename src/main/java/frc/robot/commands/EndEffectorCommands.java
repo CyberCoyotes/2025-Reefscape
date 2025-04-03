@@ -218,7 +218,7 @@ public Command autoScoreCoral() {
      * @return A command to intake algae
      */
     public Command intakeAlgae() {
-        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.INTAKE_ALGAE),
+        return new RunCommand(() -> effector.setTopEffector(EffectorConstants.INTAKE_ALGAE),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("IntakeAlgae");
     }

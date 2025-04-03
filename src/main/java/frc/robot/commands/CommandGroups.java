@@ -111,7 +111,7 @@ public class CommandGroups {
                 elevatorCommands.setAlgae2(),
                 // Turn on top end effector motor
                 // TODO Test to see if this locks up the subsystem or it can be interrupted
-                effectorCommands.intakeAlgae().withTimeout(2) 
+                effectorCommands.intakeAlgae() 
         );         
     }
 
@@ -123,7 +123,7 @@ public class CommandGroups {
                 elevatorCommands.setAlgae3(),
                 // Turn on top end effector motor
                 // TODO Test to see if this locks up the subsystem or it can be interrupted
-                effectorCommands.intakeAlgae().withTimeout(2) 
+                effectorCommands.intakeAlgae() 
         ); 
     }
 
