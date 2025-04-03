@@ -19,12 +19,12 @@ import frc.robot.Constants;
 @SuppressWarnings("unused")
 
 public class EffectorSubsystem extends SubsystemBase {
-    private final TalonFX motor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
-    private final TalonFX motorTwo = new TalonFX(Constants.EFFECTOR_MOTOR_TWO_ID, Constants.kCANBus);
+    private final TalonFX sideMotor = new TalonFX(Constants.EFFECTOR_MOTOR_ID, Constants.kCANBus);
+    private final TalonFX topMotor = new TalonFX(Constants.TOP_EFFECTOR_MOTOR_ID, Constants.kCANBus);
     
     private TimeOfFlight coralSensor = new TimeOfFlight(Constants.CORAL_SENSOR_ID);
 
-    private int coralDetectionDistance = 80; // mm 
+    private int coralDetectionDistance = 50; // mm 
 
     // NetworkTable entries for more reliable data publishing
     private final NetworkTable sensorTable;
@@ -36,8 +36,10 @@ public class EffectorSubsystem extends SubsystemBase {
     private final DutyCycleOut dutyCycleRequest = new DutyCycleOut(0);
 
     // Status signals for monitoring
-    private final StatusSignal<Voltage> supplyVoltage;
-    private final StatusSignal<Voltage> motorVoltage;
+    private final StatusSignal<Voltage> sideSupplyVoltage;
+    private final StatusSignal<Voltage> sideMotorVoltage;
+    private final StatusSignal<Voltage> topSupplyVoltage;
+    private final StatusSignal<Voltage> topMotorVoltage;
 
     public EffectorSubsystem() {
 
@@ -57,33 +59,33 @@ public class EffectorSubsystem extends SubsystemBase {
          // Also set up SmartDashboard for visualization
          SmartDashboard.putString("CoralSensor/Status", "Initialized");
          SmartDashboard.putNumber("CoralSensor/Distance Threshold", coralDetectionDistance);
-         
          // Make distance threshold adjustable from dashboard
-         SmartDashboard.setPersistent("CoralSensor/Distance Threshold");
-
-         /* MOTOR */
+         SmartDashboard.setPersistent("CoralSensor/Adjust Distance Threshold");
         // Configure status signals
-        supplyVoltage = motor.getSupplyVoltage();
-        motorVoltage = motor.getMotorVoltage();
+        sideSupplyVoltage = sideMotor.getSupplyVoltage();
+        sideMotorVoltage = sideMotor.getMotorVoltage();
+        topSupplyVoltage = topMotor.getSupplyVoltage();
+        topMotorVoltage = topMotor.getMotorVoltage();
 
         // Set update frequencies
-        supplyVoltage.setUpdateFrequency(50); // 50 Hz = 20 ms
-        motorVoltage.setUpdateFrequency(50); // 50 Hz
+        sideSupplyVoltage.setUpdateFrequency(50); // 50 Hz = 20 ms
+        sideMotorVoltage.setUpdateFrequency(50); // 50 Hz
+        topSupplyVoltage.setUpdateFrequency(50); // 50 Hz = 20 ms
+        topMotorVoltage.setUpdateFrequency(50); // 50 Hz
 
         configureMotor();
 
-        StatusSignal.refreshAll(supplyVoltage, motorVoltage);
+        StatusSignal.refreshAll(sideSupplyVoltage, sideMotorVoltage, topSupplyVoltage, topMotorVoltage);
 
     }
 
-
     private void configureMotor() {
         var effectorConfig = EffectorConstants.EFFECTOR_CONFIG;
-        var effectorTwoConfig = EffectorConstants.EFFECTOR_TWO_CONFIG;
+        var topEffectorConfig = EffectorConstants.TOP_EFFECTOR_CONFIG;
        
         // Apply configuration
-        motor.getConfigurator().apply(effectorConfig);
-        motorTwo.getConfigurator().apply(effectorTwoConfig);
+        sideMotor.getConfigurator().apply(effectorConfig);
+        topMotor.getConfigurator().apply(topEffectorConfig);
     }
 
 
@@ -92,15 +94,30 @@ public class EffectorSubsystem extends SubsystemBase {
      * 
      * @param output The desired output (-1 to 1 for duty cycle)
      */
-    public void setEffectorOutput(double output) {
-        motor.setControl(dutyCycleRequest.withOutput(output));
-        motorTwo.setControl(dutyCycleRequest.withOutput(output));
+    public void setSideEffector(double output) {
+        sideMotor.setControl(dutyCycleRequest.withOutput(output));
+    }
+
+    /**
+     * Sets the top roller output using duty cycle control
+     * 
+     * @param output The desired output (-1 to 1 for duty cycle)
+     */
+    public void setTopEffector(double output) {
+        topMotor.setControl(dutyCycleRequest.withOutput(output));
     }
 
    // Stops the motor
     public void stopMotor() {
-        motor.setControl(dutyCycleRequest.withOutput(0));
-        motorTwo.setControl(dutyCycleRequest.withOutput(0));
+        sideMotor.setControl(dutyCycleRequest.withOutput(0));
+        topMotor.setControl(dutyCycleRequest.withOutput(0));
+    }
+
+    /**
+     * Stops the top roller motor
+     */
+    public void stopTopRoller() {
+        topMotor.setControl(dutyCycleRequest.withOutput(0));
     }
 
     /*******************************
