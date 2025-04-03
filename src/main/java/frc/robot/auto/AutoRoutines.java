@@ -920,7 +920,7 @@ public class AutoRoutines {
                         ));
                 
                 STA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
-                A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
+                A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeWithDrive());
                 Mid_A.atTime("score").onTrue(m_commandGroups.autoScoreL2()); // FIXME
                 return routine;
         }
@@ -941,7 +941,7 @@ public class AutoRoutines {
                         ));
                 
                 SBA.atTime("scoreL1").onTrue(m_commandGroups.autoRoadRunnerL4());
-                A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeCoral());
+                A_Mid.atTime("load").onTrue(m_commandGroups.autoIntakeWithDrive());
                 Mid_A.atTime("score").onTrue(m_commandGroups.autoScoreL2()); // FIXME
                 return routine;
         }

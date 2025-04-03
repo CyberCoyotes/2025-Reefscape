@@ -386,7 +386,6 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             
             // Move elevator to intake position
             elevatorCommands.setIntakeCoral(),
-            
             // Move wrist to intake position
             wristCommands.setIntakeCoral(),
             
@@ -465,7 +464,7 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
             
             // Drive forward for 15 cm at 1.5 m/s or until isCoralLoaded() returns true
             Commands.race(
-                new DriveCommands(drivetrain).driveForward15cm(1.5),
+                // new DriveCommands(drivetrain).driveForward15cm(1.5),
                 Commands.waitUntil(() -> effector.isCoralLoaded())
             )
         ).withName("AutoIntakeWithDrive");
