@@ -35,7 +35,7 @@ public class EndEffectorCommands {
      * @return A command to intake coral
      */
     public Command intakeCoralNoSensor() {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.INTAKE_CORAL),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("IntakeCoralNoSensor");
     }
@@ -75,7 +75,8 @@ public class EndEffectorCommands {
                     if (effector.isCoralLoaded()) {
                         effector.stopMotor();
                     } else {
-                        effector.setEffectorOutput(EffectorConstants.INTAKE_CORAL);
+                        effector.setSideEffector(EffectorConstants.INTAKE_CORAL);
+                        effector.setTopEffector(EffectorConstants.INTAKE_CORAL);
                     }
                 },
                 // end
@@ -94,7 +95,7 @@ public class EndEffectorCommands {
         return new RunCommand(() ->
         // -0.25 * 0.55 = -0.1375
         // Replacing 0.15 * -1
-        effector.setEffectorOutput(EffectorConstants.SCORE_SLOW_CORAL * -1),
+        effector.setSideEffector(EffectorConstants.SCORE_SLOW_CORAL * -1),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("ReverseCoralNoSensor");
     }
@@ -105,7 +106,7 @@ public class EndEffectorCommands {
      * @return A command to score coral
      */
     public Command scoreCoral() {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.SCORE_CORAL),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("ScoreCoral");
     }
@@ -118,7 +119,7 @@ public class EndEffectorCommands {
      * @return A command to score coral that times out after specified duration
      */
     public Command scoreCoralWithTimeout(double timeoutSeconds) {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.SCORE_CORAL),
                 effector).withTimeout(timeoutSeconds)
                 .finallyDo((interrupted) -> effector.stopMotor())
                 .withName("ScoreCoral(" + timeoutSeconds + "s)");
@@ -138,7 +139,7 @@ public class EndEffectorCommands {
      * @return A command to score coral slowly
      */
     public Command scoreCoralSlow() {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.SCORE_SLOW_CORAL),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.SCORE_SLOW_CORAL),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("SlowCoral");
     }
@@ -167,13 +168,13 @@ public Command scoreCoralWithDelayedStopSimple() {
     return Commands.sequence(
         // First, run until coral is no longer detected
         Commands.run(
-            () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            () -> effector.setSideEffector(EffectorConstants.SCORE_CORAL),
             effector
         ).until(() -> !effector.isCoralLoaded()),
         
         // Then continue running for 0.2 seconds
         Commands.run(
-            () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            () -> effector.setSideEffector(EffectorConstants.SCORE_CORAL),
             effector
         ).withTimeout(0.2)
     ).finallyDo((interrupted) -> effector.stopMotor())
@@ -193,7 +194,7 @@ public Command autoScoreCoral() {
         // First, run until coral is no longer detected or timeout occurs
         Commands.race(
             Commands.run(
-                () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+                () -> effector.setSideEffector(EffectorConstants.SCORE_CORAL),
                 effector
             ).until(() -> !effector.isCoralLoaded()),
             Commands.waitSeconds(0.75)  // Back-up timeout just in cased for auton
@@ -201,7 +202,7 @@ public Command autoScoreCoral() {
         
         // Then continue running for 0.2 seconds; try 0.1
         Commands.run(
-            () -> effector.setEffectorOutput(EffectorConstants.SCORE_CORAL),
+            () -> effector.setSideEffector(EffectorConstants.SCORE_CORAL),
             effector
         ).withTimeout(0.1)
     ).finallyDo((interrupted) -> effector.stopMotor())
@@ -217,7 +218,7 @@ public Command autoScoreCoral() {
      * @return A command to intake algae
      */
     public Command intakeAlgae() {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.INTAKE_ALGAE),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.INTAKE_ALGAE),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("IntakeAlgae");
     }
@@ -227,7 +228,7 @@ public Command autoScoreCoral() {
      * @return A command to score algae
      */
     public Command scoreAlgae() {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.SCORE_ALGAE),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.SCORE_ALGAE),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("ScoreAlgae");
     }
@@ -237,7 +238,7 @@ public Command autoScoreCoral() {
      * @return A command to hold algae
      */
     public Command holdAlgae() {
-        return new RunCommand(() -> effector.setEffectorOutput(EffectorConstants.HOLD_ALGAE),
+        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.HOLD_ALGAE),
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("HoldAlgae");
     }

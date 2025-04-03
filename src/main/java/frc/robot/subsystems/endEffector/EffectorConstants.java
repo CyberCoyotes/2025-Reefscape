@@ -19,11 +19,11 @@ public class EffectorConstants {
     
     public static final double STOP = 0.0; // Fully stopped
 
-    public static final double INTAKE_CURRENT_AMPS = 5.0; // Start low and tune up
-    public static final double SCORE_CURRENT_AMPS = -5.0; // Negative for opposite direction
+    // public static final double INTAKE_CURRENT_AMPS = 5.0; // Start low and tune up
+    // public static final double SCORE_CURRENT_AMPS = -5.0; // Negative for opposite direction
 
     public static final TalonFXConfiguration EFFECTOR_CONFIG = new TalonFXConfiguration();
-    public static final TalonFXConfiguration EFFECTOR_TWO_CONFIG = new TalonFXConfiguration();
+    public static final TalonFXConfiguration TOP_EFFECTOR_CONFIG = new TalonFXConfiguration();
 
     static {
         // Motor output settings
@@ -32,19 +32,19 @@ public class EffectorConstants {
 
 
         // Current limiting settings
-        EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current
+        EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0;
         EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
 
     }
 
     static {
         // Motor output settings
-        EFFECTOR_TWO_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        EFFECTOR_TWO_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        TOP_EFFECTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        TOP_EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Current limiting settings
-        EFFECTOR_TWO_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current
-        EFFECTOR_TWO_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
+        TOP_EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current
+        TOP_EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimitEnable = true;
 
     }
 }
