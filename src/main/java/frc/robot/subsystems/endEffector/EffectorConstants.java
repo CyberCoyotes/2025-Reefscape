@@ -28,7 +28,7 @@ public class EffectorConstants {
     static {
         // Motor output settings
         EFFECTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
 
         // Current limiting settings
@@ -40,7 +40,7 @@ public class EffectorConstants {
     static {
         // Motor output settings
         TOP_EFFECTOR_CONFIG.MotorOutput.NeutralMode = NeutralModeValue.Coast;
-        TOP_EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        TOP_EFFECTOR_CONFIG.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         // Current limiting settings
         TOP_EFFECTOR_CONFIG.CurrentLimits.StatorCurrentLimit = 40.0; // Maximum allowed current

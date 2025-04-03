@@ -10,8 +10,8 @@ public class Constants {
     public static final int WRIST_MOTOR_ID = 20;
     public static final int WRIST_ENCODER_ID = 21;
     
-    public static final int EFFECTOR_MOTOR_ID = 22;
-    public static final int TOP_EFFECTOR_MOTOR_ID = 26; 
+    public static final int EFFECTOR_MOTOR_ID = 26; // 
+    public static final int TOP_EFFECTOR_MOTOR_ID = 22; // backwards with other motor 
 
     public static final int ELEVATOR_FOLLOW_ID = 23;
     public static final int ELEVATOR_LEAD_ID = 24;
