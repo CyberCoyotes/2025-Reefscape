@@ -896,4 +896,18 @@ public class AutoRoutines {
                 // Mid_A.atTime("score").onTrue(m_commandGroups.autoRoadRunnerL2()); // FIXME
                 return routine;
         }
+
+        public AutoRoutine autoIntakeWithDriveRoutine() {
+                final AutoRoutine routine = m_factory.newRoutine("AutoIntakeWithDrive");
+                final AutoTrajectory intakeTrajectory = routine.trajectory("AutoIntakeWithDrive", 0);
+
+                routine.active().onTrue(
+                        Commands.sequence(
+                                intakeTrajectory.resetOdometry(),
+                                intakeTrajectory.cmd(),
+                                m_commandGroups.autoIntakeWithDrive()
+                        ));
+
+                return routine;
+        }
 }
