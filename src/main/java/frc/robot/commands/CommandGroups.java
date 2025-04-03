@@ -458,4 +458,17 @@ public Command intakeCoralMinimum(WristCommands wristCommands, ElevatorCommands 
         ).withName("StopUntilCoralReleased");
     }
 
+    public Command autoIntakeWithDrive() {
+        return Commands.sequence(
+            // Trigger the autoIntakeCoral() command
+            autoIntakeCoral(),
+            
+            // Drive forward for 15 cm at 1.5 m/s or until isCoralLoaded() returns true
+            Commands.race(
+                new DriveCommands(drivetrain).driveForward15cm(1.5),
+                Commands.waitUntil(() -> effector.isCoralLoaded())
+            )
+        ).withName("AutoIntakeWithDrive");
+    }
+
 } // End of CommandGroups class
