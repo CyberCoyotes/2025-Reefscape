@@ -151,11 +151,13 @@ public class RobotContainer {
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
-        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
+        // driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoral()); // Includes a sensor to auto stop
+        driverController.leftBumper().whileTrue(endEffectorCommands.intakeCoralNoSensor()); // Includes a sensor to auto stop
+
         driverController.rightBumper().whileTrue(endEffectorCommands.scoreCoral()); // No Sensor
 
         driverController.leftTrigger().whileTrue(endEffectorCommands.reverseCoralNoSensor());
-        driverController.rightTrigger().whileTrue(driveCommands.slowMoDrive(driverController, 0.50));
+        driverController.rightTrigger().whileTrue(driveCommands.slowMoDrive(driverController, 0.65));
 
         // Groups commands for wrist and elevator to move to specific positions
         driverController.x().onTrue(commandGroups.moveToL2(wristCommands, elevatorCommands));

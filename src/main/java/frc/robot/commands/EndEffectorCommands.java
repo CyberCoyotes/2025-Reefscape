@@ -35,7 +35,11 @@ public class EndEffectorCommands {
      * @return A command to intake coral
      */
     public Command intakeCoralNoSensor() {
-        return new RunCommand(() -> effector.setSideEffector(EffectorConstants.INTAKE_CORAL),
+        return new RunCommand(() -> {
+                effector.setSideEffector(EffectorConstants.INTAKE_CORAL);
+                effector.setTopEffector(EffectorConstants.INTAKE_CORAL);
+                },  // Set the motor to intake coral
+                
                 effector).finallyDo((interrupted) -> effector.stopMotor())
                 .withName("IntakeCoralNoSensor");
     }
