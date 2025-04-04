@@ -893,7 +893,7 @@ public class AutoRoutines {
                                 STA.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0),
                                 A_Two.cmd(),
-                                m_commandGroups.stopUntilCoralReleased(6.0),
+                                m_commandGroups.stopUntilCoralReleased(15.0),
                                 Two_B.cmd(),
                                 m_commandGroups.stopUntilCoralLoaded(6.0)
                         ));
@@ -914,7 +914,7 @@ public class AutoRoutines {
                                 STA.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0),
                                 A_Mid.cmd(),
-                                m_commandGroups.stopUntilCoralLoaded(6.0),
+                                m_commandGroups.stopUntilCoralLoaded(15.0),
                                 Mid_A.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0)
                         ));
@@ -935,7 +935,7 @@ public class AutoRoutines {
                                 SBA.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0),
                                 A_Mid.cmd(),
-                                m_commandGroups.stopUntilCoralLoaded(6.0),
+                                 m_commandGroups.stopUntilCoralLoaded(15.0),
                                 Mid_A.cmd(),
                                 m_commandGroups.stopUntilCoralReleased(6.0)
                         ));
