@@ -24,7 +24,7 @@ import frc.robot.commands.AlignToReefWithEdgeDetection;
 import frc.robot.commands.AlignToReefCommands;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.DriverCameraSubsystem;
+// import frc.robot.subsystems.DriverCameraSubsystem;
 import frc.robot.subsystems.FrontTOFSubsystem;
 import frc.robot.subsystems.ReefTOFSubsystem;
 import frc.robot.subsystems.climber.ClimberSubsystem;
@@ -50,7 +50,7 @@ public class RobotContainer {
     private final ClimberCommands climberCommands = new ClimberCommands(climber, wrist);
     private final FrontTOFSubsystem frontToF = new FrontTOFSubsystem();
     private final ReefTOFSubsystem reefSensor = new ReefTOFSubsystem();
-    private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
+    // private final DriverCameraSubsystem m_cameraSubsystem = new DriverCameraSubsystem();
     private final CommandGroups commandGroups = new CommandGroups(wristCommands, elevatorCommands, endEffector, endEffectorCommands, frontToF, drivetrain);
     private final DriveCommands driveCommands = new DriveCommands(drivetrain);
 
@@ -192,7 +192,7 @@ public class RobotContainer {
         operatorController.x().onTrue(commandGroups.moveToPickAlgae2(wristCommands, elevatorCommands));
         operatorController.y().onTrue(commandGroups.moveToPickAlgae3(wristCommands, elevatorCommands));
         // operatorController.a().onTrue(commandGroups.moveToScoreAlgae(wristCommands, elevatorCommands));
-        operatorController.b().onTrue(commandGroups.autoIntakeCoral()); // TODO Test
+        operatorController.b().onTrue(commandGroups.autoIntakeCoral());
 
         // Manual Elevator Commands
         operatorController.povUp().whileTrue(elevatorCommands.incrementUp());
