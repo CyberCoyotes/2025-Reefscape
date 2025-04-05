@@ -147,7 +147,8 @@ public class RobotContainer {
          ** Driver Controls **
          ***********************************************/
       
-        driverController.back().onTrue(wristCommands.setStowed()); // TESTING button only
+        // driverController.back().onTrue(wristCommands.setStowed()); // TESTING button only
+        driverController.back().onTrue(wristCommands.resetWrist());
         driverController.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Handle End Effector Commands for Coral
