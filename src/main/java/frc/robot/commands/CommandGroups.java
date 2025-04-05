@@ -110,7 +110,6 @@ public class CommandGroups {
                 // Move the elevator to the algae picking position
                 elevatorCommands.setAlgae2(),
                 // Turn on top end effector motor
-                // TODO Test to see if this locks up the subsystem or it can be interrupted
                 effectorCommands.intakeAlgae() 
         );         
     }
@@ -122,7 +121,6 @@ public class CommandGroups {
                 // Move the elevator to the algae picking position
                 elevatorCommands.setAlgae3(),
                 // Turn on top end effector motor
-                // TODO Test to see if this locks up the subsystem or it can be interrupted
                 effectorCommands.intakeAlgae() 
         ); 
     }
