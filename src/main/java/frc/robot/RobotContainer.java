@@ -105,8 +105,8 @@ public class RobotContainer {
         // autoChooser.addRoutine("StartLeft->ScoreJ&A-L1", autoRoutines::STJtoAL1);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A-L2", autoRoutines::STJtoAL12);
         // autoChooser.addRoutine("StartLeft->ScoreJ-L1&A+AL2",
-        
-        autoChooser.addRoutine("The LEFT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::STAL4);
+        autoChooser.addRoutine("Sit", null);
+        autoChooser.addRoutine("The LEFT PIECE IS REAL", autoRoutines::STAL4);
         autoChooser.addRoutine("Left->AL4->AL2", autoRoutines::LEFTA_Middle_AL2);
         autoChooser.addRoutine("RIGHT->AL4->AL2", autoRoutines::RIGHTA_Middle_AL2);
 
@@ -114,7 +114,7 @@ public class RobotContainer {
         //autoChooser.addRoutine("StartLeft->ScoreJL4", autoRoutines::STJL4);
        // autoChooser.addRoutine("StartLeft->ScoreJL4->ScoreAL4", autoRoutines::STJ4toAL4);
         // autoChooser.addRoutine("Left Road Runner", autoRoutines::LeftSideRoadRunner);
-        autoChooser.addRoutine("The RIGHT PIECE IS RRRRREEEEEEEEEEEEEEEAAAAAAAAAAAAAALLLLLLLLLLLLL", autoRoutines::SBAL4);
+        autoChooser.addRoutine("The RIGHT PIECE IS REAL", autoRoutines::SBAL4);
         //autoChooser.addRoutine("StartRight->ScoreEL4", autoRoutines::SBEL4);
        // autoChooser.addRoutine("StartRight->ScoreEL4->ScoreBL4", autoRoutines::SBE4toBL4);
         // autoChooser.addRoutine("StartRight->ScoreE&B-L1", autoRoutines::SBEtoBL1);
@@ -172,7 +172,6 @@ public class RobotContainer {
         driverController.povDown().whileTrue(elevatorCommands.incrementDown());
         
         // Add reef branch alignment commands to POV buttons
-
         // driverController.povLeft().whileTrue(AlignToReefCommands.strafeLeftToReef(reefSensor, drivetrain));
         // driverController.povRight().whileTrue(AlignToReefCommands.strafeRightToReef(reefSensor, drivetrain));
         driverController.povLeft().whileTrue(wristCommands.incrementIn());
